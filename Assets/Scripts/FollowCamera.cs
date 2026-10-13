@@ -16,4 +16,13 @@ void LateUpdate()
         Vector3 desired = new Vector3(target.position.x + lookAhead.x, target.position.y + lookAhead.y, transform.position.z);
         transform.position = Vector3.SmoothDamp(transform.position, desired, ref velocity, smoothTime);
     }
+
+
+public void SnapToTarget()
+    {
+        if (target == null) return;
+        Vector3 lookAhead = target.right * lookAheadDistance;
+        transform.position = new Vector3(target.position.x + lookAhead.x, target.position.y + lookAhead.y, transform.position.z);
+        velocity = Vector3.zero;
+    }
 }
