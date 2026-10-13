@@ -9,6 +9,7 @@ public class CrosshairController : MonoBehaviour
     public RectTransform canvasRect;
 
     int currentStyle;
+    bool crosshairVisible = true;
 
     void Awake()
     {
@@ -26,11 +27,28 @@ public class CrosshairController : MonoBehaviour
         ApplyStyle();
     }
 
-    void ApplyStyle()
+public void SetCrosshairVisible(bool visible)
+    {
+        crosshairVisible = visible;
+        if (!visible)
+        {
+            for (int i = 0; i < styleRoots.Length; i++)
+            {
+                styleRoots[i].gameObject.SetActive(false);
+            }
+        }
+        else
+        {
+            ApplyStyle();
+        }
+    }
+
+
+void ApplyStyle()
     {
         for (int i = 0; i < styleRoots.Length; i++)
         {
-            styleRoots[i].gameObject.SetActive(i == currentStyle);
+            styleRoots[i].gameObject.SetActive(crosshairVisible && i == currentStyle);
         }
     }
 

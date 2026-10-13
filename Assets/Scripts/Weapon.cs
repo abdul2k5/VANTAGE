@@ -11,13 +11,16 @@ public class Weapon : MonoBehaviour
 
     int currentAmmo;
     float fireTimer;
+    WeaponFeedback feedback;
 
     public int CurrentAmmo { get { return currentAmmo; } }
     public int MaxAmmo { get { return maxAmmo; } }
 
-    void Awake()
+void Awake()
     {
         currentAmmo = maxAmmo;
+        feedback = GetComponent<WeaponFeedback>();
+        if (feedback == null) feedback = gameObject.AddComponent<WeaponFeedback>();
     }
 
     void Update()
@@ -38,12 +41,15 @@ public class Weapon : MonoBehaviour
         }
     }
 
-    public void Fire()
+public void Fire()
     {
         currentAmmo--;
         Vector2 origin = transform.position;
         Vector2 dir = transform.right;
         RaycastHit2D hit = Physics2D.Raycast(origin, dir, range, hitMask);
+
+        Vector2 end = hit.collider != null ? hit.point : origin + dir * range;
+
         if (hit.collider != null)
         {
             var sentinel = hit.collider.GetComponent<Sentinel>();
@@ -52,6 +58,8 @@ public class Weapon : MonoBehaviour
                 sentinel.TakeDamage(damage);
             }
         }
+
+        if (feedback != null) feedback.PlayShot(origin, end);
     }
 
     public void Reload()
