@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 5f;
+    public float acceleration = 40f;
 
     Rigidbody2D rb;
     Vector2 moveInput;
@@ -44,13 +45,14 @@ public class PlayerController : MonoBehaviour
         Vector2 dir = (Vector2)world - (Vector2)transform.position;
         if (dir.sqrMagnitude > 0.0001f)
         {
-            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0f, 0f, angle);
         }
     }
 
     void FixedUpdate()
     {
-        rb.linearVelocity = moveInput * moveSpeed;
+        Vector2 target = moveInput * moveSpeed;
+        rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, target, acceleration * Time.fixedDeltaTime);
     }
 }
