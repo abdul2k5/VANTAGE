@@ -2,6 +2,20 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 5: re-sequenced into 8 rooms
+
+**What changed:** Went from 6 rooms to 8, one lesson per room, danger always preceded by a safe practice moment:
+
+- **Range** (old Room 1, relabeled) - added `Sentinel_Range_Target`, a Sentinel with `range = 0` so `CanSeePlayer()` is geometrically always false - it can never see or fire. Pure hit-marker/weak-point-preview feedback before anything can shoot back.
+- **Weak Point** (new room) - one Hold-mode Sentinel with `damagePerHit = 10`, a ~0.8s reaction delay, and a new per-instance `bodyDamageMultiplier = 0.5` (half body damage, 4 hits to kill) while a headshot still one-taps. The fight itself teaches "go for the head," not just the objective text.
+- **Holding Angle** (old Room 2, Sentinel flipped Patrol→Hold) - this room's Sentinel used to patrol back and forth; now it holds the doorway it's named for. First room in the game to actually use Phase 2's Hold behavior - every other Sentinel had been Patrol-only since Hold was built.
+- **Recon** (new room) - a partition wall blocks direct line-of-sight from the entry to a Hold-mode Sentinel tucked behind it. Recon Dart is gated to unlock here (`AbilityController.reconDartUnlocked` was hardcoded available from the start since Phase 3, flagged in its own comment as this exact Phase 5 TODO) - this is the first room where throwing it before rounding the corner has a real reason to exist.
+- **Smoke / Flash / Dash / The Round** (old Rooms 3-6, relabeled only) - same content, ability unlocks shifted to match the new room indices (4/5/6; The Round's Breach Charge from Phase 4 untouched).
+
+**Why:** The brief wants one thing taught per room with a safe rep before the real test. Two gaps this surfaced while building it: Recon Dart had never actually been gated to a room (always on since Phase 3), and Hold mode had never actually been used anywhere despite being built in Phase 2 - both fixed as part of giving each new room a real reason to exist, not just a new label.
+
+**How the new rooms were built:** rooms are not a contiguous corridor - `RoomManager.EnterRoom()` teleports the player to each room's `entryPoint` with a fade, so array order (not world position) determines the sequence. All room geometry is plain Cube/Plane primitives with no prefabs, and Sentinels are a ~15-object hand-built hierarchy under one root - both were deep-cloned (fresh fileIDs, translated position) rather than hand-authored from scratch, verified end-to-end before each commit (position/field checks + a batch-mode Unity load with zero `error CS`). `Corridor3D/NavMesh.asset` was rebaked headlessly (`Assets/Editor/RebakeNavMesh.cs`) to cover the two new rooms - any Sentinel not on valid NavMesh throws on `agent.isStopped`, even one that never moves.
+
 ## Cleanup: removed the old 2D prototype scene
 
 **What changed:** Deleted `Assets/Scenes/Corridor.unity` (+ `.meta`) - the original 2D prototype (`SpriteRenderer`/`BoxCollider2D`/`Rigidbody2D`), superseded by `Corridor3D.unity` and no longer in Build Settings or referenced by any script. `Corridor3D.unity` was not touched.
