@@ -408,7 +408,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: LMB to shoot, R to reload. Cross the lane or go around the cover.
+  m_Text: LMB to shoot, R to reload. It's holding this angle, watching - it won't come to you.
 --- !u!222 &25733856
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1730,11 +1730,9 @@ MonoBehaviour:
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
-  behaviorMode: 0
+  behaviorMode: 1
   holdPoint: {fileID: 0}
-  patrolPoints:
-  - {fileID: 955546588}
-  - {fileID: 1448792177}
+  patrolPoints: []
   patrolSpeed: 2
   turnSpeed: 8
   waypointArriveDistance: 0.3
@@ -1797,14 +1795,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 113820425}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 37, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 145841307}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &115549204
 GameObject:
   m_ObjectHideFlags: 0
@@ -10916,37 +10914,6 @@ Transform:
   - {fileID: 491676782}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &955546587
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 955546588}
-  m_Layer: 0
-  m_Name: WP_R2_01_A
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &955546588
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 955546587}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 37, y: 0, z: 5}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &968231467
 GameObject:
   m_ObjectHideFlags: 0
@@ -15511,8 +15478,8 @@ MonoBehaviour:
     objective: Standing still is accurate. Moving isn't. Get a feel for it, then reach the door.
     entryPoint: {fileID: 1848493664}
     introPanel: {fileID: 153265614}
-  - title: Cross or go around
-    objective: Get past the Sentinel and reach the door.
+  - title: Holding Angle
+    objective: It's holding this doorway, not patrolling - time your cross or take the shot.
     entryPoint: {fileID: 339743820}
     introPanel: {fileID: 1785429454}
   - title: Close the line
@@ -16080,37 +16047,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1441393655}
   m_CullTransparentMesh: 1
---- !u!1 &1448792176
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1448792177}
-  m_Layer: 0
-  m_Name: WP_R2_01_B
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1448792177
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1448792176}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 43, y: 0, z: 5}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1449978164
 GameObject:
   m_ObjectHideFlags: 0
