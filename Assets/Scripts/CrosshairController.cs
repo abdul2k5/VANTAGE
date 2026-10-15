@@ -1,12 +1,11 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
+/// <summary>Fixed screen-center crosshair (FPS aim is screen-locked, unlike the old mouse-follow version).</summary>
 public class CrosshairController : MonoBehaviour
 {
     public static CrosshairController Instance;
 
     public RectTransform[] styleRoots;
-    public RectTransform canvasRect;
 
     int currentStyle;
     bool crosshairVisible = true;
@@ -14,7 +13,6 @@ public class CrosshairController : MonoBehaviour
     void Awake()
     {
         Instance = this;
-        Cursor.visible = false;
         currentStyle = PlayerPrefs.GetInt("VantageCrosshairStyle", 0);
         ApplyStyle();
     }
@@ -27,24 +25,13 @@ public class CrosshairController : MonoBehaviour
         ApplyStyle();
     }
 
-public void SetCrosshairVisible(bool visible)
+    public void SetCrosshairVisible(bool visible)
     {
         crosshairVisible = visible;
-        if (!visible)
-        {
-            for (int i = 0; i < styleRoots.Length; i++)
-            {
-                styleRoots[i].gameObject.SetActive(false);
-            }
-        }
-        else
-        {
-            ApplyStyle();
-        }
+        ApplyStyle();
     }
 
-
-void ApplyStyle()
+    void ApplyStyle()
     {
         for (int i = 0; i < styleRoots.Length; i++)
         {
@@ -52,28 +39,8 @@ void ApplyStyle()
         }
     }
 
-    void Update()
-    {
-        var mouse = Mouse.current;
-        if (mouse == null || canvasRect == null) return;
-
-        Vector2 screenPos = mouse.position.ReadValue();
-        Vector2 localPoint;
-        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPos, null, out localPoint))
-        {
-            for (int i = 0; i < styleRoots.Length; i++)
-            {
-                if (styleRoots[i].gameObject.activeSelf)
-                {
-                    styleRoots[i].anchoredPosition = localPoint;
-                }
-            }
-        }
-    }
-
     void OnDestroy()
     {
         if (Instance == this) Instance = null;
-        Cursor.visible = true;
     }
 }

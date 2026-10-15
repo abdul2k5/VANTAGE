@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (MainMenuController.IsOpen) return;
+        if (MainMenuController.IsOpen || Cursor.lockState != CursorLockMode.Locked) return;
 
         var kb = Keyboard.current;
         float x = 0f, y = 0f;

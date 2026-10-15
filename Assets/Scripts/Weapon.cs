@@ -34,7 +34,7 @@ public class Weapon : MonoBehaviour
 
     void Update()
     {
-        if (MainMenuController.IsOpen) return;
+        if (MainMenuController.IsOpen || Cursor.lockState != CursorLockMode.Locked) return;
 
         fireTimer -= Time.deltaTime;
 

@@ -12,9 +12,10 @@ public void OnPointerClick(PointerEventData eventData)
         bool opening = !panel.activeSelf;
         panel.SetActive(opening);
 
-        // While the settings panel is open the player needs the real OS pointer
-        // to pick an option; the custom crosshair is for aiming, not for menus.
+        // While the settings panel is open the player needs the real OS pointer,
+        // unlocked, to pick an option; mouse-look is suspended for the same reason.
         Cursor.visible = opening;
+        Cursor.lockState = opening ? CursorLockMode.None : CursorLockMode.Locked;
         if (CrosshairController.Instance != null)
         {
             CrosshairController.Instance.SetCrosshairVisible(!opening);

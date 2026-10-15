@@ -12,7 +12,7 @@ public class FollowCamera : MonoBehaviour
 
     void Update()
     {
-        if (MainMenuController.IsOpen) return;
+        if (MainMenuController.IsOpen || Cursor.lockState != CursorLockMode.Locked) return;
 
         var mouse = Mouse.current;
         if (mouse == null) return;
