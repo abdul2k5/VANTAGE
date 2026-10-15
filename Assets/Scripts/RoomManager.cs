@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class RoomDefinition
 {
     public string title = "READ THE LINE";
+    public string objective = "";
     public Transform entryPoint;
     public GameObject introPanel;
 }
@@ -18,6 +19,7 @@ public class RoomManager : MonoBehaviour
     public Transform player;
     public Image fadeOverlay;
     public Text roomTitleLabel;
+    public Text objectiveLabel;
     public FollowCamera followCamera;
     public AbilityController abilities;
     public float fadeSeconds = 0.35f;
@@ -55,9 +57,11 @@ public void EnterRoom(int index, bool movePlayer = true)
 
         if (movePlayer && player != null && room.entryPoint != null)
         {
+            var cc = player.GetComponent<CharacterController>();
+            if (cc != null) cc.enabled = false;
             player.position = room.entryPoint.position;
-            var rb = player.GetComponent<Rigidbody2D>();
-            if (rb != null) rb.linearVelocity = Vector2.zero;
+            player.rotation = room.entryPoint.rotation;
+            if (cc != null) cc.enabled = true;
 
             var health = player.GetComponent<PlayerHealth>();
             if (health != null) health.SetRespawnPoint(room.entryPoint.position);
@@ -87,9 +91,15 @@ public void EnterRoom(int index, bool movePlayer = true)
 
     void UpdateTitle()
     {
-        if (roomTitleLabel == null) return;
         var room = rooms[currentRoom];
-        roomTitleLabel.text = "ROOM " + (currentRoom + 1) + " / " + rooms.Length + "   " + room.title.ToUpper();
+        if (roomTitleLabel != null)
+        {
+            roomTitleLabel.text = "ROOM " + (currentRoom + 1) + " / " + rooms.Length + "   " + room.title.ToUpper();
+        }
+        if (objectiveLabel != null)
+        {
+            objectiveLabel.text = string.IsNullOrEmpty(room.objective) ? "" : "OBJECTIVE: " + room.objective;
+        }
     }
 
     IEnumerator TransitionTo(int index)

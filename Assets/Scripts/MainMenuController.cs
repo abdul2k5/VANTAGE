@@ -16,6 +16,7 @@ public class MainMenuController : MonoBehaviour
         IsOpen = menuPanel != null && menuPanel.activeSelf;
         Cursor.visible = IsOpen;
         Cursor.lockState = IsOpen ? CursorLockMode.None : CursorLockMode.Locked;
+        Time.timeScale = IsOpen ? 0f : 1f;
     }
 
     public void OnPointerClickStart(PointerEventData eventData)
@@ -29,6 +30,7 @@ public class MainMenuController : MonoBehaviour
         if (menuPanel != null) menuPanel.SetActive(false);
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        Time.timeScale = 1f;
     }
 
     void OnDestroy()
