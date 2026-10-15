@@ -9,6 +9,7 @@ public class AbilityHudUI : MonoBehaviour
         public GameObject root;
         public Image border;
         public Image cooldownOverlay;
+        public Image icon;
         public Text keyLabel;
         public Text nameLabel;
     }
@@ -36,6 +37,7 @@ public class AbilityHudUI : MonoBehaviour
             if (slots[i].keyLabel != null) slots[i].keyLabel.text = ability.keyLabel;
             if (slots[i].nameLabel != null) slots[i].nameLabel.text = ability.abilityName.ToUpper();
             if (slots[i].border != null) slots[i].border.color = ability.IsReady ? readyColor : notReadyColor;
+            if (slots[i].icon != null && ability.icon != null) slots[i].icon.sprite = ability.icon;
 
             if (slots[i].cooldownOverlay != null)
             {

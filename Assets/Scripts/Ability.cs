@@ -5,6 +5,7 @@ public abstract class Ability : MonoBehaviour
     public string abilityName = "Ability";
     public string keyLabel = "Q";
     public float cooldown = 6f;
+    public Sprite icon;
 
     float cooldownRemaining;
 

@@ -6,6 +6,7 @@ public class UltimateHudUI : MonoBehaviour
 {
     public UltimateController controller;
     public Image[] pips;
+    public Image icon;
     public Text label;
     public Text descriptionLabel;
 
