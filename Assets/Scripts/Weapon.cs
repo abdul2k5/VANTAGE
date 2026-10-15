@@ -81,6 +81,11 @@ public class Weapon : MonoBehaviour
             fireTimer = fireRate;
         }
 
+        if (!isReloading && currentAmmo <= 0)
+        {
+            StartReload();
+        }
+
         var kb = Keyboard.current;
         if (kb != null && kb.rKey.wasPressedThisFrame && !isReloading && currentAmmo < maxAmmo)
         {
