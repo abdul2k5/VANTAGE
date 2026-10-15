@@ -10,6 +10,10 @@ public class PlayerController : MonoBehaviour
     Rigidbody2D rb;
     Vector2 moveInput;
 
+    public Vector2 MoveInput { get { return moveInput; } }
+    /// <summary>Set while an ability (e.g. Dash) is driving the body itself.</summary>
+    public bool SuppressMovement { get; set; }
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -50,8 +54,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+void FixedUpdate()
     {
+        if (SuppressMovement) return;
+
         Vector2 target = moveInput * moveSpeed;
         rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, target, acceleration * Time.fixedDeltaTime);
     }

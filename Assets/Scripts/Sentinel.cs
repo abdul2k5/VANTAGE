@@ -13,10 +13,21 @@ public class Sentinel : MonoBehaviour
 
     float fireTimer;
     float currentHealth;
+    float blindRemaining;
+    SightlineVisualizer visualizer;
 
-    void Awake()
+    public bool IsBlinded { get { return blindRemaining > 0f; } }
+
+void Awake()
     {
         currentHealth = maxHealth;
+        visualizer = GetComponent<SightlineVisualizer>();
+    }
+
+    public void Blind(float seconds)
+    {
+        if (seconds > blindRemaining) blindRemaining = seconds;
+        if (visualizer != null) visualizer.SetBlinded(true);
     }
 
     void Start()
@@ -28,8 +39,18 @@ public class Sentinel : MonoBehaviour
         }
     }
 
-    void Update()
+void Update()
     {
+        if (blindRemaining > 0f)
+        {
+            blindRemaining -= Time.deltaTime;
+            if (blindRemaining <= 0f)
+            {
+                blindRemaining = 0f;
+                if (visualizer != null) visualizer.SetBlinded(false);
+            }
+        }
+
         if (player == null) return;
 
         if (CanSeePlayer())
@@ -47,8 +68,10 @@ public class Sentinel : MonoBehaviour
         }
     }
 
-    public bool CanSeePlayer()
+public bool CanSeePlayer()
     {
+        if (blindRemaining > 0f) return false;
+
         Vector2 toPlayer = (Vector2)player.position - (Vector2)transform.position;
         float distance = toPlayer.magnitude;
         if (distance > range) return false;

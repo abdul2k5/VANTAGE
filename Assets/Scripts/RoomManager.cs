@@ -19,6 +19,7 @@ public class RoomManager : MonoBehaviour
     public Image fadeOverlay;
     public Text roomTitleLabel;
     public FollowCamera followCamera;
+    public AbilityController abilities;
     public float fadeSeconds = 0.35f;
     public float holdSeconds = 0.45f;
 
@@ -64,6 +65,12 @@ public void EnterRoom(int index, bool movePlayer = true)
 
         // The camera must not smooth-slide across the gap between rooms.
         if (followCamera != null) followCamera.SnapToTarget();
+
+        if (abilities != null)
+        {
+            abilities.UnlockForRoom(currentRoom);
+            abilities.ResetAllCooldowns();
+        }
 
         ShowOnlyCurrentPanel();
         UpdateTitle();

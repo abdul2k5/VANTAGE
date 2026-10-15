@@ -8,6 +8,8 @@ public class PlayerHealth : MonoBehaviour
     Vector3 respawnPosition;
 
     public float CurrentHealth { get { return currentHealth; } }
+    /// <summary>True during a Dash, so crossing an exposed lane is survivable by design.</summary>
+    public bool Invulnerable { get; set; }
     public float MaxHealth { get { return maxHealth; } }
 
     void Awake()
@@ -21,8 +23,10 @@ public class PlayerHealth : MonoBehaviour
         respawnPosition = point;
     }
 
-    public void TakeDamage(float amount)
+public void TakeDamage(float amount)
     {
+        if (Invulnerable) return;
+
         currentHealth -= amount;
         if (currentHealth <= 0f)
         {

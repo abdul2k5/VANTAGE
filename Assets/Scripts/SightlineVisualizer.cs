@@ -8,6 +8,8 @@ public class SightlineVisualizer : MonoBehaviour
     public float halfAngleDegrees = 28f;
     public Color fillColor = new Color(0.886f, 0.647f, 0.235f, 0.25f);
     public Color outlineColor = new Color(1f, 0.78f, 0.35f, 0.9f);
+    public Color blindedFill = new Color(0.45f, 0.48f, 0.42f, 0.12f);
+    public Color blindedOutline = new Color(0.55f, 0.58f, 0.52f, 0.4f);
 
     void OnEnable()
     {
@@ -51,5 +53,24 @@ void BuildCone()
         line.startColor = outlineColor;
         line.endColor = outlineColor;
         line.sortingOrder = 1;
+    }
+
+
+public void SetBlinded(bool blinded)
+    {
+        var mesh = GetComponent<MeshFilter>().sharedMesh;
+        if (mesh != null)
+        {
+            Color c = blinded ? blindedFill : fillColor;
+            mesh.colors = new[] { c, c, c };
+        }
+
+        var line = GetComponent<LineRenderer>();
+        if (line != null)
+        {
+            Color lc = blinded ? blindedOutline : outlineColor;
+            line.startColor = lc;
+            line.endColor = lc;
+        }
     }
 }
