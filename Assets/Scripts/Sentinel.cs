@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(SightlineVisualizer))]
 [RequireComponent(typeof(NavMeshAgent))]
 public class Sentinel : MonoBehaviour
 {
@@ -27,7 +26,6 @@ public class Sentinel : MonoBehaviour
     float fireTimer;
     float currentHealth;
     float blindRemaining;
-    SightlineVisualizer visualizer;
     NavMeshAgent agent;
 
     public bool IsBlinded { get { return blindRemaining > 0f; } }
@@ -35,7 +33,6 @@ public class Sentinel : MonoBehaviour
     void Awake()
     {
         currentHealth = maxHealth;
-        visualizer = GetComponent<SightlineVisualizer>();
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false; // facing is driven manually so Alert can snap to the player
         agent.speed = patrolSpeed;
@@ -44,7 +41,6 @@ public class Sentinel : MonoBehaviour
     public void Blind(float seconds)
     {
         if (seconds > blindRemaining) blindRemaining = seconds;
-        if (visualizer != null) visualizer.SetBlinded(true);
     }
 
     void Start()
@@ -66,11 +62,7 @@ public class Sentinel : MonoBehaviour
         if (blindRemaining > 0f)
         {
             blindRemaining -= Time.deltaTime;
-            if (blindRemaining <= 0f)
-            {
-                blindRemaining = 0f;
-                if (visualizer != null) visualizer.SetBlinded(false);
-            }
+            if (blindRemaining <= 0f) blindRemaining = 0f;
         }
 
         if (player == null) return;
