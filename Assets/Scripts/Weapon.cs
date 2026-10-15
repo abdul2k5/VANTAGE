@@ -126,9 +126,10 @@ public class Weapon : MonoBehaviour
 
                 bool aliveBefore = sentinel.gameObject.activeSelf;
                 sentinel.TakeDamage(dealt);
-                if (aliveBefore && !sentinel.gameObject.activeSelf && UltimateController.Instance != null)
+                if (aliveBefore && !sentinel.gameObject.activeSelf)
                 {
-                    UltimateController.Instance.AddCharge(UltimateController.Instance.chargePerKill);
+                    if (UltimateController.Instance != null) UltimateController.Instance.AddCharge(UltimateController.Instance.chargePerKill);
+                    if (KillFeedUI.Instance != null) KillFeedUI.Instance.AddKill(headshot);
                 }
 
                 if (HitFeedbackUI.Instance != null) HitFeedbackUI.Instance.ShowHitMarker(headshot);
