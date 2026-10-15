@@ -6,7 +6,7 @@ Running log of design decisions and the reasoning behind them, kept for the Game
 
 **What changed:** Deleted `Assets/Scenes/Corridor.unity` (+ `.meta`) - the original 2D prototype (`SpriteRenderer`/`BoxCollider2D`/`Rigidbody2D`), superseded by `Corridor3D.unity` and no longer in Build Settings or referenced by any script. `Corridor3D.unity` was not touched.
 
-**Why:** It was dead weight sitting in the repo - not built, not loaded, not referenced - and kept growing every time it got touched by an untargeted commit. `RoomGoalTrigger.cs` and `RoomIntroTrigger.cs` (both use `OnTriggerEnter2D`, unused in `Corridor3D.unity`) are the only remaining trace of it - left alone for now since removing scripts wasn't asked for, but worth revisiting if Phase 5's room rebuild doesn't end up needing them.
+**Why:** It was dead weight sitting in the repo - not built, not loaded, not referenced - and kept growing every time it got touched by an untargeted commit. `RoomGoalTrigger.cs` and `RoomIntroTrigger.cs` (both used `OnTriggerEnter2D`, the only places that method appeared in the project) were the last remaining trace of it - confirmed unreferenced anywhere else and deleted in a follow-up pass.
 
 ---
 
