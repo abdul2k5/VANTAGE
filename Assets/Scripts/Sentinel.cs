@@ -169,7 +169,7 @@ public class Sentinel : MonoBehaviour
         if (feedback != null) feedback.PlayShot(origin, end);
 
         var health = player.GetComponent<PlayerHealth>();
-        if (health != null) health.TakeDamage(damagePerHit);
+        if (health != null) health.TakeDamage(damagePerHit, transform.position);
     }
 
     public void TakeDamage(float amount)

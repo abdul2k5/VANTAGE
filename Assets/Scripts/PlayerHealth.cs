@@ -25,9 +25,17 @@ public class PlayerHealth : MonoBehaviour
 
 public void TakeDamage(float amount)
     {
+        TakeDamage(amount, transform.position);
+    }
+
+    /// <summary>sourceWorldPosition drives the on-screen damage-direction indicator.</summary>
+    public void TakeDamage(float amount, Vector3 sourceWorldPosition)
+    {
         if (Invulnerable) return;
 
         currentHealth -= amount;
+        if (HitFeedbackUI.Instance != null) HitFeedbackUI.Instance.ShowDamageDirection(sourceWorldPosition);
+
         if (currentHealth <= 0f)
         {
             Die();

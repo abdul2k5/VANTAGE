@@ -6,15 +6,29 @@ public class CrosshairController : MonoBehaviour
     public static CrosshairController Instance;
 
     public RectTransform[] styleRoots;
+    [Tooltip("Scale multiplier applied to the active crosshair at full spread (1 = no widening).")]
+    public float maxSpreadScale = 2.2f;
 
     int currentStyle;
     bool crosshairVisible = true;
+    float spreadFraction01;
 
     void Awake()
     {
         Instance = this;
         currentStyle = PlayerPrefs.GetInt("VantageCrosshairStyle", 0);
         ApplyStyle();
+    }
+
+    /// <summary>0 = tight/accurate, 1 = max spread. Widens the active crosshair so the player can see why they missed.</summary>
+    public void SetSpreadFraction(float frac01)
+    {
+        spreadFraction01 = Mathf.Clamp01(frac01);
+        float scale = Mathf.Lerp(1f, maxSpreadScale, spreadFraction01);
+        for (int i = 0; i < styleRoots.Length; i++)
+        {
+            if (i == currentStyle) styleRoots[i].localScale = Vector3.one * scale;
+        }
     }
 
     public void SetStyle(int index)
