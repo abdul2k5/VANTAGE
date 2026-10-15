@@ -72,6 +72,9 @@ public class UltimateController : MonoBehaviour
         }
 
         if (health != null) health.DamageMultiplier = damageReductionMultiplier;
+        // The effect itself (reveal, damage reduction) has no guaranteed on-screen presence -
+        // this is what actually tells the player it fired and is still running.
+        if (UltimateActiveOverlay.Instance != null) UltimateActiveOverlay.Instance.Play(ultimateDuration);
 
         yield return new WaitForSeconds(ultimateDuration);
 

@@ -59,3 +59,14 @@ Running log of design decisions and the reasoning behind them, kept for the Game
 **Note:** `reconDartUnlocked` currently defaults to `true` (available from room 1) since the room-to-ability unlock mapping is being fully rebuilt in Phase 5 anyway - not worth tuning a threshold that's about to be replaced. Ult orb placement is also deferred to Phase 5, once the actual room layout exists to place "exposed/risky" spots in.
 
 **What to playtest:** Recon Dart's reveal radius (8u) and duration (3s) - does it give enough info to commit confidently, or too much to make the peek decision trivial? Ultimate's charge rate (4 kills) and effect duration (6s, 50% reduction) - these are first-guess numbers, not tuned against real play yet.
+
+---
+
+## Fix: HUD bleeding through overlay screens + ultimate feedback
+
+**What changed:**
+- `MainMenuPanel` and `LevelCompletePanel` weren't the last sibling in the Canvas, so HUD elements added in later sessions (objective label, hit marker, damage indicator, the ultimate HUD) rendered on top of them - visible as readable "Overwatch Protocol" text over the main menu before pressing Start. Fixed at the source: both panels now call `SetAsLastSibling()` themselves the moment they're shown, so this doesn't silently break again as more UI gets added in Phase 4-6. Also bumped both panels to fully opaque (were 0.95-0.97 alpha, letting a faint ghost bleed through even once ordering was fixed).
+- Re-verified the "5 kills not 4" report by actually killing 4 Sentinels through the real `Weapon.cs` path in a clean test: charge hit exactly 100 on kill #4, no off-by-one, no floating-point drift. The ultimate's logic was correct - the problem was that it gave almost no feedback. Reveal markers only appear if a Sentinel happens to be hidden somewhere on screen, and the damage reduction has no visual presence at all, so a player could activate it and perceive nothing happening.
+- Added `UltimateActiveOverlay`: a full-screen flash the instant the ultimate fires, a steady screen tint for its whole duration, and an "OVERWATCH ACTIVE - Ns" countdown label - so activation is unmistakable even with zero Sentinels in view. The charge pips now pulse once fully charged (previously just a static color change, easy to miss mid-fight) and a permanent one-line description ("REVEALS ALL SENTINELS + REDUCES DAMAGE TAKEN") now sits under the ultimate HUD at all times.
+
+**Why:** Both are the same lesson - a mechanic that's correct in code but invisible in play doesn't actually read as working. The ordering bug meant a finished screen looked unfinished; the ultimate's lack of feedback meant a finished mechanic felt broken or confusing. Fixing visibility, not logic, was the right call in both cases.
