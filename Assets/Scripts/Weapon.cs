@@ -124,7 +124,12 @@ public class Weapon : MonoBehaviour
                 bool headshot = weakpoint != null;
                 float dealt = headshot ? damage * headshotMultiplier : damage;
 
+                bool aliveBefore = sentinel.gameObject.activeSelf;
                 sentinel.TakeDamage(dealt);
+                if (aliveBefore && !sentinel.gameObject.activeSelf && UltimateController.Instance != null)
+                {
+                    UltimateController.Instance.AddCharge(UltimateController.Instance.chargePerKill);
+                }
 
                 if (HitFeedbackUI.Instance != null) HitFeedbackUI.Instance.ShowHitMarker(headshot);
                 if (headshot && headshotSound != null && audioSource != null) audioSource.PlayOneShot(headshotSound);

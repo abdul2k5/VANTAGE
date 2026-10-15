@@ -10,6 +10,8 @@ public class PlayerHealth : MonoBehaviour
     public float CurrentHealth { get { return currentHealth; } }
     /// <summary>True during a Dash, so crossing an exposed lane is survivable by design.</summary>
     public bool Invulnerable { get; set; }
+    /// <summary>Scales incoming damage; 1 = normal, &lt;1 = reduced (set by the ultimate).</summary>
+    public float DamageMultiplier { get; set; } = 1f;
     public float MaxHealth { get { return maxHealth; } }
 
     void Awake()
@@ -33,7 +35,7 @@ public void TakeDamage(float amount)
     {
         if (Invulnerable) return;
 
-        currentHealth -= amount;
+        currentHealth -= amount * DamageMultiplier;
         if (HitFeedbackUI.Instance != null) HitFeedbackUI.Instance.ShowDamageDirection(sourceWorldPosition);
 
         if (currentHealth <= 0f)

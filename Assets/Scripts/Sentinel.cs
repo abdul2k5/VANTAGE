@@ -46,11 +46,14 @@ public class Sentinel : MonoBehaviour
     float fireTimer;
     float currentHealth;
     float blindRemaining;
+    float revealRemaining;
     NavMeshAgent agent;
     WeaponFeedback feedback;
     AudioSource hoverAudioSource;
 
     public bool IsBlinded { get { return blindRemaining > 0f; } }
+    /// <summary>True while a Recon Dart (or the ultimate) is showing this Sentinel through walls.</summary>
+    public bool IsRevealed { get { return revealRemaining > 0f; } }
 
     void Awake()
     {
@@ -80,6 +83,11 @@ public class Sentinel : MonoBehaviour
         if (seconds > blindRemaining) blindRemaining = seconds;
     }
 
+    public void Reveal(float seconds)
+    {
+        if (seconds > revealRemaining) revealRemaining = seconds;
+    }
+
     void Start()
     {
         if (player == null)
@@ -100,6 +108,12 @@ public class Sentinel : MonoBehaviour
         {
             blindRemaining -= Time.deltaTime;
             if (blindRemaining <= 0f) blindRemaining = 0f;
+        }
+
+        if (revealRemaining > 0f)
+        {
+            revealRemaining -= Time.deltaTime;
+            if (revealRemaining <= 0f) revealRemaining = 0f;
         }
 
         if (player == null) return;
