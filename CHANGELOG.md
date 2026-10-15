@@ -2,6 +2,14 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 6a: fix overexposure, wire up URP post-processing
+
+**What changed:** Every room's floor and sky were clipping to pure white under direct light - not a tuning problem, a structural one: there was no `Volume` component anywhere in the scene, and the Main Camera had no `UniversalAdditionalCameraData` component at all, so post-processing could not run regardless of what was configured in `DefaultVolumeProfile.asset` (which was itself empty - `components: []`). Added the camera component, a global `Volume` referencing the profile, and configured Tonemapping (Neutral), Color Adjustments (exposure pulled down, contrast/saturation up slightly), a light Bloom, and a subtle Vignette.
+
+**Why:** This is foundational for everything else in Phase 6 - the planned procedural material pass (6b) needs working exposure to read correctly, and "looks unfinished" was the single most visible presentation problem before any of the other polish work.
+
+**How it was caught:** Live Play-mode screenshots via Unity MCP across all 8 rooms, before and after - confirmed by eye, not just by checking that components were wired. Same lesson as the crosshair fix: correct-looking configuration isn't the same as correct-looking output.
+
 ## Fix + feature: crosshair visibility and color options
 
 **What changed:** Diagnosed live in a running build via Unity MCP (play-mode + screenshots, first use of this workflow) rather than reading code alone. The crosshair wasn't actually broken - the Dot style's hitbox was 5x5px at 1920x1080, next to nothing compared to Cross/Brackets' ~16-20px reach, so it read as "missing" even though every wiring/field check came back clean. Bumped it to 8x8. Separately, the Settings menu's style-picker buttons had never had a preview graphic - just the CROSS/DOT/BRACKETS text labels over an empty box - so added real shape previews (clones of the actual crosshair graphics, click-through disabled so they don't intercept the button's own click). Also added a 5-color picker (orange/white/red/green/cyan) that applies across whichever style is active and persists the same way style does.
