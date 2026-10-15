@@ -13,6 +13,7 @@ public class PlayerHealth : MonoBehaviour
     /// <summary>Scales incoming damage; 1 = normal, &lt;1 = reduced (set by the ultimate).</summary>
     public float DamageMultiplier { get; set; } = 1f;
     public float MaxHealth { get { return maxHealth; } }
+    public AudioClip damageSound;
 
     void Awake()
     {
@@ -37,6 +38,7 @@ public void TakeDamage(float amount)
 
         currentHealth -= amount * DamageMultiplier;
         if (HitFeedbackUI.Instance != null) HitFeedbackUI.Instance.ShowDamageDirection(sourceWorldPosition);
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(damageSound);
 
         if (currentHealth <= 0f)
         {

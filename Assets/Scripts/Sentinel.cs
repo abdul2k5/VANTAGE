@@ -36,6 +36,7 @@ public class Sentinel : MonoBehaviour
     [Tooltip("Looping 3D hover hum, so the player can hear a Sentinel before seeing it. Leave unassigned until Phase 6.")]
     public AudioClip hoverHum;
     public float hoverHumVolume = 0.5f;
+    public AudioClip deathSound;
 
     enum State { Patrol, Alert }
     State state = State.Patrol;
@@ -278,6 +279,11 @@ public class Sentinel : MonoBehaviour
         currentHealth -= amount;
         if (currentHealth <= 0f)
         {
+            if (deathSound != null)
+            {
+                float scale = AudioManager.Instance != null ? AudioManager.Instance.ResolvedSfxVolume : 1f;
+                AudioSource.PlayClipAtPoint(deathSound, transform.position, scale);
+            }
             gameObject.SetActive(false);
         }
     }

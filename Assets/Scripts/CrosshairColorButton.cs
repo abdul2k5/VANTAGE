@@ -11,5 +11,6 @@ public class CrosshairColorButton : MonoBehaviour, IPointerClickHandler
         {
             CrosshairController.Instance.SetColor(colorIndex);
         }
+        if (AudioManager.Instance != null) AudioManager.Instance.PlayUIClick();
     }
 }

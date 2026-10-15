@@ -16,6 +16,7 @@ public class BreachChargeSite : MonoBehaviour
     public GameObject progressRoot;
     public Image progressFill;
     public Text progressLabel;
+    public AudioClip plantCompleteSound;
 
     float plantProgress;
     bool planted;
@@ -105,6 +106,7 @@ public class BreachChargeSite : MonoBehaviour
     {
         planted = true;
         if (progressRoot != null) progressRoot.SetActive(false);
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(plantCompleteSound);
 
         if (RoundController.Instance != null)
         {

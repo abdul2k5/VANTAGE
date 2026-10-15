@@ -11,5 +11,6 @@ public class CrosshairOptionButton : MonoBehaviour, IPointerClickHandler
         {
             CrosshairController.Instance.SetStyle(styleIndex);
         }
+        if (AudioManager.Instance != null) AudioManager.Instance.PlayUIClick();
     }
 }

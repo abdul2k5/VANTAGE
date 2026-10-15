@@ -19,6 +19,7 @@ public class UltimateController : MonoBehaviour
     public float chargePerKill = 25f;
     public float ultimateDuration = 6f;
     public float damageReductionMultiplier = 0.5f;
+    public AudioClip activateSound;
 
     float currentCharge;
     bool active;
@@ -58,6 +59,7 @@ public class UltimateController : MonoBehaviour
 
         currentCharge = 0f;
         StartCoroutine(RunUltimate());
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(activateSound);
         return true;
     }
 

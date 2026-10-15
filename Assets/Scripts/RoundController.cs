@@ -20,10 +20,13 @@ public class RoundController : MonoBehaviour
     public Sentinel[] siteDefenders;
     public float[] waveDelaysSeconds = { 0f, 10f, 20f };
 
-    [Header("Audio - accelerating beep as detonation nears, hook only until Phase 6")]
+    [Header("Audio - accelerating beep as detonation nears")]
     public AudioClip beepSound;
     public float beepIntervalStart = 1.5f;
     public float beepIntervalEnd = 0.2f;
+    public AudioClip detonationSound;
+    public AudioClip winSound;
+    public AudioClip loseSound;
 
     [Header("Win/Lose")]
     public GameObject winPanel;
@@ -88,7 +91,7 @@ public class RoundController : MonoBehaviour
             beepTimer -= Time.deltaTime;
             if (beepTimer <= 0f)
             {
-                if (beepSound != null && audioSource != null) audioSource.PlayOneShot(beepSound);
+                PlaySfx(beepSound);
                 beepTimer = beepInterval;
             }
 
@@ -104,6 +107,7 @@ public class RoundController : MonoBehaviour
         if (roundActive)
         {
             roundActive = false;
+            PlaySfx(detonationSound);
             ShowWin();
         }
     }
@@ -116,11 +120,19 @@ public class RoundController : MonoBehaviour
         ShowLose();
     }
 
+    void PlaySfx(AudioClip clip)
+    {
+        if (clip == null || audioSource == null) return;
+        float scale = AudioManager.Instance != null ? AudioManager.Instance.ResolvedSfxVolume : 1f;
+        audioSource.PlayOneShot(clip, scale);
+    }
+
     void ShowWin()
     {
         if (timerLabel != null) timerLabel.gameObject.SetActive(false);
         if (winPanel != null) winPanel.transform.SetAsLastSibling();
         if (winPanel != null) winPanel.SetActive(true);
+        PlaySfx(winSound);
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
@@ -130,6 +142,7 @@ public class RoundController : MonoBehaviour
         if (timerLabel != null) timerLabel.gameObject.SetActive(false);
         if (losePanel != null) losePanel.transform.SetAsLastSibling();
         if (losePanel != null) losePanel.SetActive(true);
+        PlaySfx(loseSound);
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }

@@ -32,6 +32,8 @@ public class SettingsPanelToggle : MonoBehaviour, IPointerClickHandler
     {
         if (panel == null) return;
 
+        if (AudioManager.Instance != null) AudioManager.Instance.PlayUIClick();
+
         bool opening = !panel.activeSelf;
         if (opening) panel.transform.SetAsLastSibling(); // render on top of any HUD added since this was authored
         panel.SetActive(opening);

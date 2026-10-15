@@ -6,6 +6,7 @@ public abstract class Ability : MonoBehaviour
     public string keyLabel = "Q";
     public float cooldown = 6f;
     public Sprite icon;
+    public AudioClip activateSound;
 
     float cooldownRemaining;
 
@@ -28,6 +29,7 @@ public abstract class Ability : MonoBehaviour
         if (!OnUse()) return false;
 
         cooldownRemaining = cooldown;
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(activateSound);
         return true;
     }
 

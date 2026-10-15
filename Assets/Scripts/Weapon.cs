@@ -21,6 +21,12 @@ public class Weapon : MonoBehaviour
     public float headshotMultiplier = 2.5f;
     public AudioClip headshotSound;
 
+    [Header("Audio")]
+    public AudioClip gunshotSound;
+    public AudioClip reloadSound;
+    public AudioClip emptyClickSound;
+    public AudioClip hitSound;
+
     /// <summary>Where the visible tracer/muzzle flash originates. The hit-detection raycast still fires from the camera center.</summary>
     public Transform muzzle;
 
@@ -80,6 +86,10 @@ public class Weapon : MonoBehaviour
             Fire();
             fireTimer = fireRate;
         }
+        else if (mouse != null && mouse.leftButton.wasPressedThisFrame && !isReloading && currentAmmo <= 0)
+        {
+            PlaySfx(emptyClickSound);
+        }
 
         if (!isReloading && currentAmmo <= 0)
         {
@@ -103,9 +113,17 @@ public class Weapon : MonoBehaviour
         if (CrosshairController.Instance != null) CrosshairController.Instance.SetSpreadFraction(speedFrac);
     }
 
+    void PlaySfx(AudioClip clip)
+    {
+        if (clip == null || audioSource == null) return;
+        float scale = AudioManager.Instance != null ? AudioManager.Instance.ResolvedSfxVolume : 1f;
+        audioSource.PlayOneShot(clip, scale);
+    }
+
     public void Fire()
     {
         currentAmmo--;
+        PlaySfx(gunshotSound);
         Vector3 origin = cam != null ? cam.transform.position : transform.position;
         Vector3 forward = cam != null ? cam.transform.forward : transform.forward;
         Vector3 dir = ApplySpread(forward, currentSpreadDegrees);
@@ -133,7 +151,7 @@ public class Weapon : MonoBehaviour
                 }
 
                 if (HitFeedbackUI.Instance != null) HitFeedbackUI.Instance.ShowHitMarker(headshot);
-                if (headshot && headshotSound != null && audioSource != null) audioSource.PlayOneShot(headshotSound);
+                PlaySfx(headshot ? headshotSound : hitSound);
             }
         }
 
@@ -156,6 +174,7 @@ public class Weapon : MonoBehaviour
     {
         isReloading = true;
         reloadTimer = reloadSeconds;
+        PlaySfx(reloadSound);
     }
 
     /// <summary>Instant reload, kept for callers (e.g. RoomManager on respawn) that want ammo topped up with no delay.</summary>

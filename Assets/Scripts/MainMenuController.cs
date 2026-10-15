@@ -34,6 +34,11 @@ public class MainMenuController : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         Time.timeScale = 1f;
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayUIClick();
+            AudioManager.Instance.PlayGameplayMusic();
+        }
     }
 
     void OnDestroy()
