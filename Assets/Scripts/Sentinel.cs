@@ -23,10 +23,14 @@ public class Sentinel : MonoBehaviour
     int patrolIndex;
     int patrolDir = 1;
 
+    /// <summary>Where the tracer/muzzle flash originates. Falls back to eye height if unset.</summary>
+    public Transform muzzle;
+
     float fireTimer;
     float currentHealth;
     float blindRemaining;
     NavMeshAgent agent;
+    WeaponFeedback feedback;
 
     public bool IsBlinded { get { return blindRemaining > 0f; } }
 
@@ -36,6 +40,8 @@ public class Sentinel : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false; // facing is driven manually so Alert can snap to the player
         agent.speed = patrolSpeed;
+        feedback = GetComponent<WeaponFeedback>();
+        if (feedback == null) feedback = gameObject.AddComponent<WeaponFeedback>();
     }
 
     public void Blind(float seconds)
@@ -158,6 +164,10 @@ public class Sentinel : MonoBehaviour
 
     void Fire()
     {
+        Vector3 origin = muzzle != null ? muzzle.position : transform.position + Vector3.up * 1f;
+        Vector3 end = player.position + Vector3.up * 0.9f;
+        if (feedback != null) feedback.PlayShot(origin, end);
+
         var health = player.GetComponent<PlayerHealth>();
         if (health != null) health.TakeDamage(damagePerHit);
     }

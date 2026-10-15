@@ -12,6 +12,9 @@ public class Weapon : MonoBehaviour
     public float reloadSeconds = 1.4f;
     public LayerMask hitMask;
 
+    /// <summary>Where the visible tracer/muzzle flash originates. The hit-detection raycast still fires from the camera center.</summary>
+    public Transform muzzle;
+
     int currentAmmo;
     float fireTimer;
     bool isReloading;
@@ -84,7 +87,9 @@ public class Weapon : MonoBehaviour
             }
         }
 
-        if (feedback != null) feedback.PlayShot(origin, end);
+        // Raycast stays camera-centered for accuracy; the visible tracer starts at the gun's muzzle.
+        Vector3 visualOrigin = muzzle != null ? muzzle.position : origin;
+        if (feedback != null) feedback.PlayShot(visualOrigin, end);
     }
 
     public void StartReload()
