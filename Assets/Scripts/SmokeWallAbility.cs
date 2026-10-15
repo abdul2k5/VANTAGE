@@ -3,11 +3,12 @@ using UnityEngine;
 
 public class SmokeWallAbility : Ability
 {
-    public float distanceAhead = 2.2f;
+    public float distanceAhead = 2.5f;
     public float wallWidth = 3.2f;
-    public float wallThickness = 0.5f;
+    public float wallHeight = 2.2f;
+    public float wallThickness = 0.4f;
     public float duration = 6f;
-    public Color smokeColor = new Color(0.286f, 0.702f, 0.651f, 0.75f);
+    public Color smokeColor = new Color(0.286f, 0.702f, 0.651f, 0.6f);
 
     void Awake()
     {
@@ -17,30 +18,26 @@ public class SmokeWallAbility : Ability
 
     protected override bool OnUse()
     {
-        Vector3 forward = transform.right;
+        Vector3 forward = transform.forward;
         Vector3 spawnPos = transform.position + forward * distanceAhead;
-        spawnPos.z = 0f;
+        spawnPos.y = wallHeight * 0.5f;
 
-        var wall = new GameObject("SmokeWall");
+        var wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        wall.name = "SmokeWall";
         wall.transform.position = spawnPos;
         // The wall spans across the facing direction, so it blocks the lane you're looking down.
-        wall.transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(forward.y, forward.x) * Mathf.Rad2Deg + 90f);
+        wall.transform.rotation = Quaternion.LookRotation(transform.right, Vector3.up);
+        wall.transform.localScale = new Vector3(wallWidth, wallHeight, wallThickness);
         wall.layer = LayerMask.NameToLayer("Blocking");
 
-        var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        Destroy(quad.GetComponent<MeshCollider>());
-        quad.transform.SetParent(wall.transform, false);
-        quad.transform.localScale = new Vector3(wallWidth, wallThickness, 1f);
-        var mat = new Material(Shader.Find("Sprites/Default"));
+        var mat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+        mat.SetFloat("_Surface", 1f); // transparent
+        mat.SetFloat("_Blend", 0f);
         mat.color = smokeColor;
-        quad.GetComponent<MeshRenderer>().sharedMaterial = mat;
-        quad.GetComponent<MeshRenderer>().sortingOrder = 8;
+        mat.renderQueue = 3000;
+        wall.GetComponent<MeshRenderer>().sharedMaterial = mat;
 
-        var col = wall.AddComponent<BoxCollider2D>();
-        col.offset = Vector2.zero;
-        col.size = new Vector2(wallWidth, wallThickness);
-
-        StartCoroutine(ExpireAfter(wall, quad.GetComponent<MeshRenderer>()));
+        StartCoroutine(ExpireAfter(wall, wall.GetComponent<MeshRenderer>()));
         return true;
     }
 

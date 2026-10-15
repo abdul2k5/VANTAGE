@@ -30,11 +30,20 @@ public class WeaponFeedback : MonoBehaviour
         flashGo.transform.SetParent(transform, false);
         flashGo.transform.localPosition = new Vector3(0.55f, 0f, 0f);
         muzzleFlash = flashGo.AddComponent<SpriteRenderer>();
-        muzzleFlash.sprite = UnityEngine.Resources.GetBuiltinResource<Sprite>("UI/Skin/Knob.psd");
+        muzzleFlash.sprite = MakeDotSprite();
         muzzleFlash.color = flashColor;
         muzzleFlash.sortingOrder = 21;
         flashGo.transform.localScale = new Vector3(0.35f, 0.35f, 1f);
         muzzleFlash.enabled = false;
+    }
+
+    static Sprite MakeDotSprite()
+    {
+        var tex = new Texture2D(2, 2);
+        var pixels = new Color[4] { Color.white, Color.white, Color.white, Color.white };
+        tex.SetPixels(pixels);
+        tex.Apply();
+        return Sprite.Create(tex, new Rect(0, 0, 2, 2), new Vector2(0.5f, 0.5f), 2f);
     }
 
     public void PlayShot(Vector3 origin, Vector3 end)

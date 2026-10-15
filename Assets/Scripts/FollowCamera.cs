@@ -1,28 +1,31 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
+/// <summary>Mouse-look pitch for the camera, which sits as a child of the player (which handles yaw).</summary>
 public class FollowCamera : MonoBehaviour
 {
-    public Transform target;
-    public float smoothTime = 0.15f;
-    public float lookAheadDistance = 1.5f;
+    public float mouseSensitivity = 2f;
+    public float minPitch = -80f;
+    public float maxPitch = 80f;
 
-    Vector3 velocity;
+    float pitch;
 
-void LateUpdate()
+    void Update()
     {
-        if (target == null) return;
+        if (MainMenuController.IsOpen) return;
 
-        Vector3 lookAhead = target.right * lookAheadDistance;
-        Vector3 desired = new Vector3(target.position.x + lookAhead.x, target.position.y + lookAhead.y, transform.position.z);
-        transform.position = Vector3.SmoothDamp(transform.position, desired, ref velocity, smoothTime);
+        var mouse = Mouse.current;
+        if (mouse == null) return;
+
+        float mouseY = mouse.delta.ReadValue().y * mouseSensitivity * 0.1f;
+        pitch = Mathf.Clamp(pitch - mouseY, minPitch, maxPitch);
+        transform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
     }
 
-
-public void SnapToTarget()
+    /// <summary>Called by RoomManager on every room transition so a carried-over head tilt doesn't leak into the next room.</summary>
+    public void SnapToTarget()
     {
-        if (target == null) return;
-        Vector3 lookAhead = target.right * lookAheadDistance;
-        transform.position = new Vector3(target.position.x + lookAhead.x, target.position.y + lookAhead.y, transform.position.z);
-        velocity = Vector3.zero;
+        pitch = 0f;
+        transform.localRotation = Quaternion.identity;
     }
 }

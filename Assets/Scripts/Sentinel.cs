@@ -1,6 +1,8 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 [RequireComponent(typeof(SightlineVisualizer))]
+[RequireComponent(typeof(NavMeshAgent))]
 public class Sentinel : MonoBehaviour
 {
     public Transform player;
@@ -11,17 +13,32 @@ public class Sentinel : MonoBehaviour
     public float fireInterval = 0.8f;
     public float maxHealth = 50f;
 
+    [Header("Patrol")]
+    public Transform[] patrolPoints;
+    public float patrolSpeed = 2f;
+    public float turnSpeed = 8f;
+    public float waypointArriveDistance = 0.3f;
+
+    enum State { Patrol, Alert }
+    State state = State.Patrol;
+    int patrolIndex;
+    int patrolDir = 1;
+
     float fireTimer;
     float currentHealth;
     float blindRemaining;
     SightlineVisualizer visualizer;
+    NavMeshAgent agent;
 
     public bool IsBlinded { get { return blindRemaining > 0f; } }
 
-void Awake()
+    void Awake()
     {
         currentHealth = maxHealth;
         visualizer = GetComponent<SightlineVisualizer>();
+        agent = GetComponent<NavMeshAgent>();
+        agent.updateRotation = false; // facing is driven manually so Alert can snap to the player
+        agent.speed = patrolSpeed;
     }
 
     public void Blind(float seconds)
@@ -37,9 +54,14 @@ void Awake()
             var p = GameObject.FindGameObjectWithTag("Player");
             if (p != null) player = p.transform;
         }
+
+        if (patrolPoints != null && patrolPoints.Length > 0)
+        {
+            agent.SetDestination(patrolPoints[patrolIndex].position);
+        }
     }
 
-void Update()
+    void Update()
     {
         if (blindRemaining > 0f)
         {
@@ -53,8 +75,14 @@ void Update()
 
         if (player == null) return;
 
-        if (CanSeePlayer())
+        bool seesPlayer = CanSeePlayer();
+        state = seesPlayer ? State.Alert : State.Patrol;
+
+        if (state == State.Alert)
         {
+            agent.isStopped = true;
+            FaceTowards(player.position);
+
             fireTimer -= Time.deltaTime;
             if (fireTimer <= 0f)
             {
@@ -65,23 +93,73 @@ void Update()
         else
         {
             fireTimer = 0f;
+            RunPatrol();
         }
     }
 
-public bool CanSeePlayer()
+    void RunPatrol()
+    {
+        if (patrolPoints == null || patrolPoints.Length == 0) return;
+
+        agent.isStopped = false;
+
+        if (agent.velocity.sqrMagnitude > 0.05f)
+        {
+            FaceTowards(transform.position + agent.velocity.normalized);
+        }
+
+        if (!agent.pathPending && agent.remainingDistance <= waypointArriveDistance)
+        {
+            AdvanceWaypoint();
+        }
+    }
+
+    void AdvanceWaypoint()
+    {
+        if (patrolPoints.Length == 1) return;
+
+        patrolIndex += patrolDir;
+        if (patrolIndex >= patrolPoints.Length)
+        {
+            patrolIndex = patrolPoints.Length - 2;
+            patrolDir = -1;
+        }
+        else if (patrolIndex < 0)
+        {
+            patrolIndex = 1;
+            patrolDir = 1;
+        }
+
+        agent.SetDestination(patrolPoints[patrolIndex].position);
+    }
+
+    void FaceTowards(Vector3 worldPoint)
+    {
+        Vector3 dir = worldPoint - transform.position;
+        dir.y = 0f;
+        if (dir.sqrMagnitude < 0.0001f) return;
+        Quaternion target = Quaternion.LookRotation(dir.normalized, Vector3.up);
+        transform.rotation = Quaternion.Slerp(transform.rotation, target, turnSpeed * Time.deltaTime);
+    }
+
+    public bool CanSeePlayer()
     {
         if (blindRemaining > 0f) return false;
 
-        Vector2 toPlayer = (Vector2)player.position - (Vector2)transform.position;
+        Vector3 eye = transform.position + Vector3.up * 1f;
+        Vector3 playerPoint = player.position + Vector3.up * 1f;
+        Vector3 toPlayer = playerPoint - eye;
         float distance = toPlayer.magnitude;
         if (distance > range) return false;
 
-        Vector2 forward = transform.up;
-        float angle = Vector2.Angle(forward, toPlayer);
+        float angle = Vector3.Angle(transform.forward, toPlayer);
         if (angle > halfAngleDegrees) return false;
 
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, toPlayer.normalized, distance, blockingMask);
-        if (hit.collider != null) return false;
+        RaycastHit hit;
+        if (Physics.Raycast(eye, toPlayer.normalized, out hit, distance, blockingMask))
+        {
+            return false;
+        }
 
         return true;
     }

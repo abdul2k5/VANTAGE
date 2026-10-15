@@ -37,9 +37,10 @@ public void TakeDamage(float amount)
     void Die()
     {
         currentHealth = maxHealth;
-        transform.position = respawnPosition;
 
-        var rb = GetComponent<Rigidbody2D>();
-        if (rb != null) rb.linearVelocity = Vector2.zero;
+        var cc = GetComponent<CharacterController>();
+        if (cc != null) cc.enabled = false;
+        transform.position = respawnPosition;
+        if (cc != null) cc.enabled = true;
     }
 }

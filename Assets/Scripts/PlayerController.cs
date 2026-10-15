@@ -1,14 +1,18 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 5f;
     public float acceleration = 40f;
+    public float mouseSensitivity = 2f;
+    public float gravity = -20f;
 
-    Rigidbody2D rb;
+    CharacterController cc;
     Vector2 moveInput;
+    Vector3 currentVelocity;
+    float verticalVelocity;
 
     public Vector2 MoveInput { get { return moveInput; } }
     /// <summary>Set while an ability (e.g. Dash) is driving the body itself.</summary>
@@ -16,13 +20,13 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        rb.gravityScale = 0f;
-        rb.freezeRotation = true;
+        cc = GetComponent<CharacterController>();
     }
 
     void Update()
     {
+        if (MainMenuController.IsOpen) return;
+
         var kb = Keyboard.current;
         float x = 0f, y = 0f;
         if (kb != null)
@@ -35,30 +39,43 @@ public class PlayerController : MonoBehaviour
         moveInput = new Vector2(x, y);
         if (moveInput.sqrMagnitude > 1f) moveInput.Normalize();
 
-        AimAtMouse();
+        ApplyYaw();
+        ApplyMovement();
     }
 
-    void AimAtMouse()
+    void ApplyYaw()
     {
         var mouse = Mouse.current;
-        var cam = Camera.main;
-        if (mouse == null || cam == null) return;
+        if (mouse == null) return;
 
-        Vector2 screenPos = mouse.position.ReadValue();
-        Vector3 world = cam.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, -cam.transform.position.z));
-        Vector2 dir = (Vector2)world - (Vector2)transform.position;
-        if (dir.sqrMagnitude > 0.0001f)
-        {
-            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0f, 0f, angle);
-        }
+        float mouseX = mouse.delta.ReadValue().x * mouseSensitivity * 0.1f;
+        transform.Rotate(Vector3.up, mouseX, Space.World);
     }
 
-void FixedUpdate()
+    void ApplyMovement()
     {
-        if (SuppressMovement) return;
+        Vector3 desired = (transform.right * moveInput.x + transform.forward * moveInput.y) * moveSpeed;
 
-        Vector2 target = moveInput * moveSpeed;
-        rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, target, acceleration * Time.fixedDeltaTime);
+        if (SuppressMovement)
+        {
+            // An ability (Dash) is driving horizontal motion directly via Move(); still apply gravity.
+            verticalVelocity += gravity * Time.deltaTime;
+            cc.Move(new Vector3(0f, verticalVelocity, 0f) * Time.deltaTime);
+            return;
+        }
+
+        currentVelocity = Vector3.MoveTowards(currentVelocity, desired, acceleration * Time.deltaTime);
+
+        if (cc.isGrounded && verticalVelocity < 0f) verticalVelocity = -1f;
+        verticalVelocity += gravity * Time.deltaTime;
+
+        Vector3 motion = (currentVelocity + new Vector3(0f, verticalVelocity, 0f)) * Time.deltaTime;
+        cc.Move(motion);
+    }
+
+    /// <summary>Moves the controller directly, used by DashAbility to bypass normal acceleration.</summary>
+    public void DashMove(Vector3 worldVelocity)
+    {
+        cc.Move(worldVelocity * Time.deltaTime);
     }
 }

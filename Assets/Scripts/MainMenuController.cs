@@ -1,0 +1,38 @@
+using UnityEngine;
+using UnityEngine.EventSystems;
+
+/// <summary>
+/// Gates player/weapon input while the start overlay is up. IsOpen defaults to false so
+/// early milestones (no menu built yet) can test movement/shooting without it being blocked.
+/// </summary>
+public class MainMenuController : MonoBehaviour
+{
+    public GameObject menuPanel;
+
+    public static bool IsOpen { get; private set; }
+
+    void Awake()
+    {
+        IsOpen = menuPanel != null && menuPanel.activeSelf;
+        Cursor.visible = IsOpen;
+        Cursor.lockState = IsOpen ? CursorLockMode.None : CursorLockMode.Locked;
+    }
+
+    public void OnPointerClickStart(PointerEventData eventData)
+    {
+        StartGame();
+    }
+
+    public void StartGame()
+    {
+        IsOpen = false;
+        if (menuPanel != null) menuPanel.SetActive(false);
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    void OnDestroy()
+    {
+        IsOpen = false;
+    }
+}

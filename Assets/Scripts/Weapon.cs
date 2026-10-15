@@ -1,56 +1,81 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 public class Weapon : MonoBehaviour
 {
     public int maxAmmo = 12;
     public float fireRate = 0.25f;
-    public float range = 10f;
+    public float range = 50f;
     public float damage = 25f;
+    public float reloadSeconds = 1.4f;
     public LayerMask hitMask;
 
     int currentAmmo;
     float fireTimer;
+    bool isReloading;
+    float reloadTimer;
     WeaponFeedback feedback;
+    Camera cam;
 
     public int CurrentAmmo { get { return currentAmmo; } }
     public int MaxAmmo { get { return maxAmmo; } }
+    public bool IsReloading { get { return isReloading; } }
+    public float ReloadProgress01 { get { return isReloading ? 1f - (reloadTimer / reloadSeconds) : 0f; } }
 
-void Awake()
+    void Awake()
     {
         currentAmmo = maxAmmo;
         feedback = GetComponent<WeaponFeedback>();
         if (feedback == null) feedback = gameObject.AddComponent<WeaponFeedback>();
+        cam = Camera.main;
     }
 
     void Update()
     {
+        if (MainMenuController.IsOpen) return;
+
         fireTimer -= Time.deltaTime;
 
+        if (isReloading)
+        {
+            reloadTimer -= Time.deltaTime;
+            if (reloadTimer <= 0f)
+            {
+                isReloading = false;
+                currentAmmo = maxAmmo;
+            }
+        }
+
+        // A click meant for UI (settings, crosshair options) must never also fire the gun.
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
+
         var mouse = Mouse.current;
-        if (mouse != null && mouse.leftButton.isPressed && fireTimer <= 0f && currentAmmo > 0)
+        if (mouse != null && mouse.leftButton.isPressed && !isReloading && fireTimer <= 0f && currentAmmo > 0)
         {
             Fire();
             fireTimer = fireRate;
         }
 
         var kb = Keyboard.current;
-        if (kb != null && kb.rKey.wasPressedThisFrame)
+        if (kb != null && kb.rKey.wasPressedThisFrame && !isReloading && currentAmmo < maxAmmo)
         {
-            Reload();
+            StartReload();
         }
     }
 
-public void Fire()
+    public void Fire()
     {
         currentAmmo--;
-        Vector2 origin = transform.position;
-        Vector2 dir = transform.right;
-        RaycastHit2D hit = Physics2D.Raycast(origin, dir, range, hitMask);
+        Vector3 origin = cam != null ? cam.transform.position : transform.position;
+        Vector3 dir = cam != null ? cam.transform.forward : transform.forward;
+        RaycastHit hit;
+        bool didHit = Physics.Raycast(origin, dir, out hit, range, hitMask);
 
-        Vector2 end = hit.collider != null ? hit.point : origin + dir * range;
+        Vector3 end = didHit ? hit.point : origin + dir * range;
 
-        if (hit.collider != null)
+        if (didHit)
         {
             var sentinel = hit.collider.GetComponent<Sentinel>();
             if (sentinel != null)
@@ -62,8 +87,16 @@ public void Fire()
         if (feedback != null) feedback.PlayShot(origin, end);
     }
 
+    public void StartReload()
+    {
+        isReloading = true;
+        reloadTimer = reloadSeconds;
+    }
+
+    /// <summary>Instant reload, kept for callers (e.g. RoomManager on respawn) that want ammo topped up with no delay.</summary>
     public void Reload()
     {
+        isReloading = false;
         currentAmmo = maxAmmo;
     }
 }
