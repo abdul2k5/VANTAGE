@@ -122,7 +122,7 @@ public class Weapon : MonoBehaviour
             {
                 var weakpoint = hit.collider.GetComponent<Weakpoint>();
                 bool headshot = weakpoint != null;
-                float dealt = headshot ? damage * headshotMultiplier : damage;
+                float dealt = headshot ? damage * headshotMultiplier : damage * sentinel.bodyDamageMultiplier;
 
                 bool aliveBefore = sentinel.gameObject.activeSelf;
                 sentinel.TakeDamage(dealt);

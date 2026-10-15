@@ -11,6 +11,8 @@ public class Sentinel : MonoBehaviour
     public float damagePerHit = 20f;
     public float fireInterval = 0.8f;
     public float maxHealth = 50f;
+    [Tooltip("Scales incoming body-shot damage only - headshots stay full price. 1 = normal, 0.5 = armored body (teaches 'go for the head' through the fight itself, not just the objective text).")]
+    public float bodyDamageMultiplier = 1f;
 
     public enum BehaviorMode { Patrol, Hold }
     [Header("Behavior")]
