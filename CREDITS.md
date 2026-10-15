@@ -1,6 +1,6 @@
 # Vantage — Third-Party Asset Credits
 
-All assets below are CC0 (public domain) - no attribution is legally required, but the creators are credited here anyway.
+Most assets below are CC0 (public domain) - no attribution is legally required, but the creators are credited here anyway. The Sentinel drone model is CC-BY and its attribution (below) is required, not optional.
 
 ## Music
 
@@ -25,4 +25,11 @@ Full per-sound mapping (which file plays for which game event) is in `CHANGELOG.
 
 ## 3D Models
 
-Pending - see CHANGELOG.md Phase 6 for the planned sources (Kenney Blaster Kit for the weapon, Kenney Space Kit for the Sentinel drone).
+| Use | Asset | Author | Source | License |
+|---|---|---|---|---|
+| Player rifle viewmodel + Sentinel-held weapon, Range targets, Range cover crates | [Blaster Kit](https://kenney.nl/assets/blaster-kit) | Kenney | kenney.nl | CC0 |
+| Sentinel drone visuals | [Stinger Drone](https://poly.pizza/m/6CUQX98vha4) | Aaron Clifford | Poly Pizza | [CC-BY 3.0](https://creativecommons.org/licenses/by/3.0/) |
+
+> Stinger Drone by Aaron Clifford [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/6CUQX98vha4)
+
+Files: `Assets/Art/Models/BlasterKit/` (Blaster Kit), `Assets/Art/Models/Drone/StingerDrone/` (Stinger Drone). See `CHANGELOG.md`, Phase 6e, for how each was reworked (recolored to match the existing gunmetal/red/orange palette, weakpoint repositioned onto the drone's sensor pod).
