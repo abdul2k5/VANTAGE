@@ -9454,7 +9454,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 796032638}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7da56fbb124339f4d9603b2dca307437, type: 3}
   m_Name: 
@@ -15528,7 +15528,7 @@ MonoBehaviour:
     entryPoint: {fileID: 1767623139}
     introPanel: {fileID: 624896661}
   - title: Everything at once
-    objective: Eliminate both Sentinels to secure the facility.
+    objective: Clear both Sentinels, then hold [4] at the charge site to plant - survive the countdown to win.
     entryPoint: {fileID: 1497267426}
     introPanel: {fileID: 0}
   player: {fileID: 1584037075}
