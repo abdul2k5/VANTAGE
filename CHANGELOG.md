@@ -2,6 +2,19 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 6c: ability icons, kill feed, wall callouts
+
+**What changed:**
+- **Ability icons** - every ability slot (Recon/Smoke/Flash/Dash + the Ultimate) now shows a hand-drawn pixel glyph (radar rings, cloud, lightning bolt, forward chevrons, sparkle) instead of just a key letter. The key-bind letter ("Q"/"SHIFT"/etc.) shrank from filling the whole 96x96 slot to a small top-left corner badge, making room for the icon to be the dominant visual.
+- **Kill feed** - a stacking, auto-expiring notification list (top-right, 3s visible + 0.5s fade, matches `AutoHidePanel`'s existing timing convention) showing "SENTINEL ELIMINATED" or "SENTINEL ELIMINATED - HEADSHOT" (accent orange) on every kill.
+- **Wall callouts** - one room-name sign per room on the far wall (first thing visible on entry), in that room's accent color - the orange/teal attack-side/defense-side split from 6b now shows up in text, not just material color.
+
+**Why:** All three are "a tutorial should tell you what's happening without you having to read a paragraph" - icons let you recognize an ability at a glance instead of decoding a key letter, the kill feed confirms a kill registered without checking the Sentinel's health bar, and callouts reinforce the room identity (and the attack/defense structure) the moment you walk in, the way real tactical-shooter callouts do.
+
+**How the icons were actually built:** the procedural pattern/gradient/noise tools can't produce arbitrary shapes (no "draw a cloud" primitive) - computed each icon as an explicit 24x24 pixel array instead, then had Unity read the array from disk and assemble it into a `Texture2D`/`Sprite` directly, rather than passing the array through the tool call parameter - a first attempt that way silently truncated mid-transfer (caught by checking the actual pixel count Unity received, not by trusting the call's reported success).
+
+**Bug caught by screenshot, not by inspection:** the wall callout signs initially rendered with mirrored (backwards) text - a known World Space Canvas gotcha where a 180-degree Y rotation (needed to face the sign toward the room entry) flips the text horizontally. Fixed by also negating the canvas's local X scale, which cancels the mirror while keeping the correct facing direction. Would not have been caught without actually looking at a Play-mode screenshot - every wiring-level check (sprite assigned, color correct, position correct) would have reported success.
+
 ## Phase 6b: procedural materials + door beacon fix
 
 **What changed:** Every room was flat-colored primitives - one solid color per object, no texture at all. Built 4 procedural materials (no external assets, generated via Unity's built-in texture tools): light concrete + subtle panel-line grid for walls (shared everywhere), a darker/cooler noise-textured floor material (kept deliberately distinct in value from the walls - readability only holds if materials stay separated, not just lighting), and two cover materials (dark industrial base + bold diagonal hazard-stripe accent) split by room identity - orange for the attack-side rooms (Range, Weak Point, Holding Angle), teal for the site/defense-side rooms (Recon through The Round).
