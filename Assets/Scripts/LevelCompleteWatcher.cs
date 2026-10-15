@@ -19,7 +19,11 @@ public class LevelCompleteWatcher : MonoBehaviour
         }
 
         triggered = true;
-        if (completePanel != null) completePanel.SetActive(true);
+        if (completePanel != null)
+        {
+            completePanel.transform.SetAsLastSibling();
+            completePanel.SetActive(true);
+        }
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }

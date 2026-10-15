@@ -14,6 +14,9 @@ public class MainMenuController : MonoBehaviour
     void Awake()
     {
         IsOpen = menuPanel != null && menuPanel.activeSelf;
+        // Render on top of whatever HUD elements exist, regardless of authoring order -
+        // new UI keeps getting added later in the hierarchy as the project grows.
+        if (IsOpen && menuPanel != null) menuPanel.transform.SetAsLastSibling();
         Cursor.visible = IsOpen;
         Cursor.lockState = IsOpen ? CursorLockMode.None : CursorLockMode.Locked;
         Time.timeScale = IsOpen ? 0f : 1f;

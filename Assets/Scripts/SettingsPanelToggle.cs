@@ -33,6 +33,7 @@ public class SettingsPanelToggle : MonoBehaviour, IPointerClickHandler
         if (panel == null) return;
 
         bool opening = !panel.activeSelf;
+        if (opening) panel.transform.SetAsLastSibling(); // render on top of any HUD added since this was authored
         panel.SetActive(opening);
 
         // While the settings panel is open the player needs the real OS pointer,
