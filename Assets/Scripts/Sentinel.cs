@@ -12,11 +12,28 @@ public class Sentinel : MonoBehaviour
     public float fireInterval = 0.8f;
     public float maxHealth = 50f;
 
+    public enum BehaviorMode { Patrol, Hold }
+    [Header("Behavior")]
+    [Tooltip("Patrol = walks a waypoint loop. Hold = stays put watching a doorway/angle - set Hold Point below.")]
+    public BehaviorMode behaviorMode = BehaviorMode.Patrol;
+    [Tooltip("Only used in Hold mode. The direction the Sentinel watches while idle. Leave empty to hold its starting facing.")]
+    public Transform holdPoint;
+
     [Header("Patrol")]
     public Transform[] patrolPoints;
     public float patrolSpeed = 2f;
     public float turnSpeed = 8f;
     public float waypointArriveDistance = 0.3f;
+
+    [Header("Reaction")]
+    [Tooltip("Delay before the Sentinel's first shot after spotting the player, so a good peek or a flash still has a window.")]
+    public float reactionDelayMin = 0.3f;
+    public float reactionDelayMax = 0.5f;
+
+    [Header("Audio")]
+    [Tooltip("Looping 3D hover hum, so the player can hear a Sentinel before seeing it. Leave unassigned until Phase 6.")]
+    public AudioClip hoverHum;
+    public float hoverHumVolume = 0.5f;
 
     enum State { Patrol, Alert }
     State state = State.Patrol;
@@ -31,6 +48,7 @@ public class Sentinel : MonoBehaviour
     float blindRemaining;
     NavMeshAgent agent;
     WeaponFeedback feedback;
+    AudioSource hoverAudioSource;
 
     public bool IsBlinded { get { return blindRemaining > 0f; } }
 
@@ -42,6 +60,19 @@ public class Sentinel : MonoBehaviour
         agent.speed = patrolSpeed;
         feedback = GetComponent<WeaponFeedback>();
         if (feedback == null) feedback = gameObject.AddComponent<WeaponFeedback>();
+
+        hoverAudioSource = gameObject.AddComponent<AudioSource>();
+        hoverAudioSource.loop = true;
+        hoverAudioSource.playOnAwake = false;
+        hoverAudioSource.spatialBlend = 1f; // 3D - hear it before you see it
+        hoverAudioSource.volume = hoverHumVolume;
+        hoverAudioSource.minDistance = 2f;
+        hoverAudioSource.maxDistance = 14f;
+        if (hoverHum != null)
+        {
+            hoverAudioSource.clip = hoverHum;
+            hoverAudioSource.Play();
+        }
     }
 
     public void Blind(float seconds)
@@ -74,6 +105,7 @@ public class Sentinel : MonoBehaviour
         if (player == null) return;
 
         bool seesPlayer = CanSeePlayer();
+        bool justSpotted = seesPlayer && state != State.Alert;
         state = seesPlayer ? State.Alert : State.Patrol;
 
         if (state == State.Alert)
@@ -81,18 +113,39 @@ public class Sentinel : MonoBehaviour
             agent.isStopped = true;
             FaceTowards(player.position);
 
-            fireTimer -= Time.deltaTime;
-            if (fireTimer <= 0f)
+            if (justSpotted)
             {
-                Fire();
-                fireTimer = fireInterval;
+                // A fair reaction window - a good peek or a well-timed flash beats this before the first shot lands.
+                fireTimer = Random.Range(reactionDelayMin, reactionDelayMax);
+            }
+            else
+            {
+                fireTimer -= Time.deltaTime;
+                if (fireTimer <= 0f)
+                {
+                    Fire();
+                    fireTimer = fireInterval;
+                }
             }
         }
         else
         {
             fireTimer = 0f;
-            RunPatrol();
+            if (behaviorMode == BehaviorMode.Hold)
+            {
+                RunHold();
+            }
+            else
+            {
+                RunPatrol();
+            }
         }
+    }
+
+    void RunHold()
+    {
+        agent.isStopped = true;
+        if (holdPoint != null) FaceTowards(holdPoint.position);
     }
 
     void RunPatrol()

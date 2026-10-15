@@ -1598,12 +1598,18 @@ MonoBehaviour:
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
+  behaviorMode: 0
+  holdPoint: {fileID: 0}
   patrolPoints:
   - {fileID: 955546588}
   - {fileID: 1448792177}
   patrolSpeed: 2
   turnSpeed: 8
   waypointArriveDistance: 0.3
+  reactionDelayMin: 0.3
+  reactionDelayMax: 0.5
+  hoverHum: {fileID: 0}
+  hoverHumVolume: 0.5
   muzzle: {fileID: 123409900}
 --- !u!136 &113820431
 CapsuleCollider:
@@ -6106,12 +6112,18 @@ MonoBehaviour:
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
+  behaviorMode: 0
+  holdPoint: {fileID: 0}
   patrolPoints:
   - {fileID: 1460666562}
   - {fileID: 1175724268}
   patrolSpeed: 2
   turnSpeed: 8
   waypointArriveDistance: 0.3
+  reactionDelayMin: 0.3
+  reactionDelayMax: 0.5
+  hoverHum: {fileID: 0}
+  hoverHumVolume: 0.5
   muzzle: {fileID: 1085276114}
 --- !u!136 &570498412
 CapsuleCollider:
@@ -9660,12 +9672,18 @@ MonoBehaviour:
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
+  behaviorMode: 0
+  holdPoint: {fileID: 0}
   patrolPoints:
   - {fileID: 150062608}
   - {fileID: 115549205}
   patrolSpeed: 2
   turnSpeed: 8
   waypointArriveDistance: 0.3
+  reactionDelayMin: 0.3
+  reactionDelayMax: 0.5
+  hoverHum: {fileID: 0}
+  hoverHumVolume: 0.5
   muzzle: {fileID: 42533342}
 --- !u!136 &908887825
 CapsuleCollider:
@@ -15282,12 +15300,18 @@ MonoBehaviour:
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
+  behaviorMode: 0
+  holdPoint: {fileID: 0}
   patrolPoints:
   - {fileID: 1529658181}
   - {fileID: 661321440}
   patrolSpeed: 2
   turnSpeed: 8
   waypointArriveDistance: 0.3
+  reactionDelayMin: 0.3
+  reactionDelayMax: 0.5
+  hoverHum: {fileID: 0}
+  hoverHumVolume: 0.5
   muzzle: {fileID: 1995141968}
 --- !u!136 &1546845666
 CapsuleCollider:
@@ -17559,12 +17583,18 @@ MonoBehaviour:
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
+  behaviorMode: 0
+  holdPoint: {fileID: 0}
   patrolPoints:
   - {fileID: 1713220455}
   - {fileID: 491933308}
   patrolSpeed: 2
   turnSpeed: 8
   waypointArriveDistance: 0.3
+  reactionDelayMin: 0.3
+  reactionDelayMax: 0.5
+  hoverHum: {fileID: 0}
+  hoverHumVolume: 0.5
   muzzle: {fileID: 721825863}
 --- !u!136 &1753102724
 CapsuleCollider:
@@ -20361,12 +20391,18 @@ MonoBehaviour:
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
+  behaviorMode: 0
+  holdPoint: {fileID: 0}
   patrolPoints:
   - {fileID: 1221122136}
   - {fileID: 1347848788}
   patrolSpeed: 2
   turnSpeed: 8
   waypointArriveDistance: 0.3
+  reactionDelayMin: 0.3
+  reactionDelayMax: 0.5
+  hoverHum: {fileID: 0}
+  hoverHumVolume: 0.5
   muzzle: {fileID: 1335411533}
 --- !u!136 &2092840387
 CapsuleCollider:
