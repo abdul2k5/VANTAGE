@@ -2,6 +2,18 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 6d: full audio pass
+
+**What changed:** Built `AudioManager` - a singleton hub for master/music/SFX volume (persisted via `PlayerPrefs`, same pattern as the crosshair settings) and one-shot SFX/music playback. Every gameplay event named in the brief got an `AudioClip` field, routed through the shared manager rather than each script owning its own volume logic: gunshot, reload, empty-ammo click, hit, headshot, all 4 ability activations (one shared field on the `Ability` base class rather than duplicated per subclass), the ultimate, damage taken, Sentinel death, Sentinel hover hum, Breach Charge plant, the detonation beep (already existed), detonation itself, round win, round lose, and UI clicks on every interactive control. Settings panel gained 3 volume sliders, built as full Unity `Slider` hierarchies and wired to `AudioManager` via *persistent* event listeners (not runtime `.AddListener()`, which doesn't survive a scene save - caught this the first time by checking the serialized listener data directly rather than trusting the registration call).
+
+Music: a looping track for the menu, a second for Range through Dash (all seven share one track), and a third swapped in specifically for The Round. `RoomManager` now owns the gameplay/round switch on every room transition.
+
+Sourced from 4 CC0 Kenney packs (Sci-fi Sounds, Impact Sounds, Interface Sounds, Music Jingles) plus 3 CC0 music tracks the user supplied directly - full credits and per-sound mapping in `CREDITS.md` and the commit log.
+
+**Why:** A tutorial that's silent on every action (gunfire, abilities, hits, wins) doesn't confirm to the player that anything happened - the kill feed (6c) solved this for kills specifically, audio solves it for everything else. Distinct per-ability sounds (rather than one generic "ability used" blip) let a player recognize *which* ability just fired by ear alone, which matters once Smoke/Flash/Dash/Recon are all unlocked and being used in quick succession.
+
+**What I couldn't verify from here:** whether any of this actually sounds right - correct volume balance, no clipping, no jarring mismatches between tracks. There's no way to "hear" through this toolchain the way a screenshot lets me "see" a UI bug. Confirmed everything that's checkable at the data level (every field holds the intended clip, the switching logic picks the right track at the right room, no console errors) and left actual listening to a real playtest.
+
 ## Phase 6c: ability icons, kill feed, wall callouts
 
 **What changed:**
