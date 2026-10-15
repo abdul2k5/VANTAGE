@@ -2,6 +2,14 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Cleanup: removed the old 2D prototype scene
+
+**What changed:** Deleted `Assets/Scenes/Corridor.unity` (+ `.meta`) - the original 2D prototype (`SpriteRenderer`/`BoxCollider2D`/`Rigidbody2D`), superseded by `Corridor3D.unity` and no longer in Build Settings or referenced by any script. `Corridor3D.unity` was not touched.
+
+**Why:** It was dead weight sitting in the repo - not built, not loaded, not referenced - and kept growing every time it got touched by an untargeted commit. `RoomGoalTrigger.cs` and `RoomIntroTrigger.cs` (both use `OnTriggerEnter2D`, unused in `Corridor3D.unity`) are the only remaining trace of it - left alone for now since removing scripts wasn't asked for, but worth revisiting if Phase 5's room rebuild doesn't end up needing them.
+
+---
+
 ## Redesign: Valorant-inspired tactical FPS, new core dynamic
 
 **What changed:** Re-scoped the whole prototype around one explicit core dynamic — **"Utility before you peek."** The player should never win by running in; every encounter is meant to be: use an ability to create a safe window (block a sightline, blind, reveal, or outrun), then commit to the gunfight. Previously the game had abilities and Sentinels but no single mechanic tying them together — this redesign makes that the organizing principle for every room, system, and HUD element going forward.
