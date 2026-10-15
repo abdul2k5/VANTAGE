@@ -2,6 +2,12 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Fix + feature: crosshair visibility and color options
+
+**What changed:** Diagnosed live in a running build via Unity MCP (play-mode + screenshots, first use of this workflow) rather than reading code alone. The crosshair wasn't actually broken - the Dot style's hitbox was 5x5px at 1920x1080, next to nothing compared to Cross/Brackets' ~16-20px reach, so it read as "missing" even though every wiring/field check came back clean. Bumped it to 8x8. Separately, the Settings menu's style-picker buttons had never had a preview graphic - just the CROSS/DOT/BRACKETS text labels over an empty box - so added real shape previews (clones of the actual crosshair graphics, click-through disabled so they don't intercept the button's own click). Also added a 5-color picker (orange/white/red/green/cyan) that applies across whichever style is active and persists the same way style does.
+
+**Why:** "I don't see crosshairs" turned out to be two different gaps - one genuine sizing bug, one missing feature that looked like a bug (an empty preview box reads as broken even when the underlying button works fine). Verifying with an actual screenshot instead of trusting the wiring was correct is what separated those two causes from each other - everything about the Dot's wiring checked out "correct" right up until seeing it at 5x5 pixels on screen.
+
 ## Phase 5: re-sequenced into 8 rooms
 
 **What changed:** Went from 6 rooms to 8, one lesson per room, danger always preceded by a safe practice moment:
