@@ -78,6 +78,15 @@ public void EnterRoom(int index, bool movePlayer = true)
 
         ShowOnlyCurrentPanel();
         UpdateTitle();
+        UpdateMusic();
+    }
+
+    /// <summary>Every room shares the same gameplay track except the last (The Round), which swaps to round-specific music. Skipped while the main menu is still up - that keeps menu music playing through the automatic EnterRoom(0) call in Start().</summary>
+    void UpdateMusic()
+    {
+        if (AudioManager.Instance == null || MainMenuController.IsOpen) return;
+        if (currentRoom == rooms.Length - 1) AudioManager.Instance.PlayRoundMusic();
+        else AudioManager.Instance.PlayGameplayMusic();
     }
 
     void ShowOnlyCurrentPanel()

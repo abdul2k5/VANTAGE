@@ -13,6 +13,8 @@ public class AudioManager : MonoBehaviour
     [Header("Music")]
     public AudioClip menuMusic;
     public AudioClip gameplayMusic;
+    /// <summary>Swapped in for the last room (The Round) - everything up to that point shares gameplayMusic.</summary>
+    public AudioClip roundMusic;
 
     [Header("UI")]
     public AudioClip uiClickSound;
@@ -66,6 +68,11 @@ public class AudioManager : MonoBehaviour
     public void PlayMenuMusic()
     {
         PlayMusic(menuMusic);
+    }
+
+    public void PlayRoundMusic()
+    {
+        PlayMusic(roundMusic);
     }
 
     public void PlayGameplayMusic()

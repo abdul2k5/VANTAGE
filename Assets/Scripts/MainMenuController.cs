@@ -37,6 +37,8 @@ public class MainMenuController : MonoBehaviour
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.PlayUIClick();
+            // RoomManager owns gameplay/round music from here - EnterRoom(0) already ran in its
+            // own Start() but skipped the switch while the menu was still open; trigger it now.
             AudioManager.Instance.PlayGameplayMusic();
         }
     }

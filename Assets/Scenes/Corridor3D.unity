@@ -192,12 +192,12 @@ MonoBehaviour:
   waveDelaysSeconds:
   - 0
   - 10
-  beepSound: {fileID: 0}
+  beepSound: {fileID: 8300000, guid: 43aacc608037d1f4cafecad72d3f436d, type: 3}
   beepIntervalStart: 1.5
   beepIntervalEnd: 0.2
-  detonationSound: {fileID: 0}
-  winSound: {fileID: 0}
-  loseSound: {fileID: 0}
+  detonationSound: {fileID: 8300000, guid: b8aaa222325594742ac3b112c019d437, type: 3}
+  winSound: {fileID: 8300000, guid: 57db786075561e14f80110b303512c65, type: 3}
+  loseSound: {fileID: 8300000, guid: 97c885ec531c94c45b864a4637b2e12f, type: 3}
   winPanel: {fileID: 1177063181}
   losePanel: {fileID: 2115267050}
 --- !u!4 &6470848
@@ -2004,9 +2004,9 @@ MonoBehaviour:
   waypointArriveDistance: 0.3
   reactionDelayMin: 0.3
   reactionDelayMax: 0.5
-  hoverHum: {fileID: 0}
+  hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
-  deathSound: {fileID: 0}
+  deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 123409900}
   pushArriveDistance: 1.5
 --- !u!136 &113820431
@@ -8320,9 +8320,9 @@ MonoBehaviour:
   waypointArriveDistance: 0.3
   reactionDelayMin: 0.3
   reactionDelayMax: 0.5
-  hoverHum: {fileID: 0}
+  hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
-  deathSound: {fileID: 0}
+  deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 1085276114}
   pushArriveDistance: 1.5
 --- !u!136 &570498412
@@ -8957,7 +8957,7 @@ MonoBehaviour:
   progressRoot: {fileID: 968231467}
   progressFill: {fileID: 1468958383}
   progressLabel: {fileID: 382567106}
-  plantCompleteSound: {fileID: 0}
+  plantCompleteSound: {fileID: 8300000, guid: eba392a5ed35abc498c8adb4f40a6885, type: 3}
 --- !u!65 &605565687
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12761,9 +12761,9 @@ MonoBehaviour:
   waypointArriveDistance: 0.3
   reactionDelayMin: 0.3
   reactionDelayMax: 0.5
-  hoverHum: {fileID: 0}
+  hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
-  deathSound: {fileID: 0}
+  deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 42533342}
   pushArriveDistance: 1.5
 --- !u!136 &908887825
@@ -20616,9 +20616,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c6f8816488e5414dbf9aecb23467a72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
-  menuMusic: {fileID: 0}
-  gameplayMusic: {fileID: 0}
-  uiClickSound: {fileID: 0}
+  menuMusic: {fileID: 8300000, guid: 264a2bd2ac2f4074c94fd663495d2707, type: 3}
+  gameplayMusic: {fileID: 8300000, guid: 4824a6ec0598df8439c0b632261ad40b, type: 3}
+  roundMusic: {fileID: 8300000, guid: 7a3b303af9db8de43aae2ae5c7ed4031, type: 3}
+  uiClickSound: {fileID: 8300000, guid: aafa43c9592f60646824b84be4dd3b9a, type: 3}
   masterVolume: 1
   musicVolume: 0.6
   sfxVolume: 1
@@ -20926,9 +20927,9 @@ MonoBehaviour:
   waypointArriveDistance: 0.3
   reactionDelayMin: 0.3
   reactionDelayMax: 0.5
-  hoverHum: {fileID: 0}
+  hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
-  deathSound: {fileID: 0}
+  deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 1995141968}
   pushArriveDistance: 1.5
 --- !u!136 &1546845666
@@ -21408,11 +21409,11 @@ MonoBehaviour:
   movingSpreadDegrees: 4.5
   fullSpeedForMaxSpread: 5
   headshotMultiplier: 2.5
-  headshotSound: {fileID: 0}
-  gunshotSound: {fileID: 0}
-  reloadSound: {fileID: 0}
-  emptyClickSound: {fileID: 0}
-  hitSound: {fileID: 0}
+  headshotSound: {fileID: 8300000, guid: a35544ca8ee90fe49947fffb600ad2fe, type: 3}
+  gunshotSound: {fileID: 8300000, guid: 315f7b2dedc81934180f160f6ad3c989, type: 3}
+  reloadSound: {fileID: 8300000, guid: 806a48e816e39d54b9fd2cd60a44a75b, type: 3}
+  emptyClickSound: {fileID: 8300000, guid: 7dd0e4d2538646842b2b76b193c66916, type: 3}
+  hitSound: {fileID: 8300000, guid: daa0b262cd9eb8d4f9f0eef474a071c9, type: 3}
   muzzle: {fileID: 205273782}
 --- !u!114 &1584037072
 MonoBehaviour:
@@ -21427,7 +21428,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHealth: 100
-  damageSound: {fileID: 0}
+  damageSound: {fileID: 8300000, guid: 51dc28933c3d7bf429833266faa7e86c, type: 3}
 --- !u!114 &1584037073
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21521,7 +21522,7 @@ MonoBehaviour:
   keyLabel: Q
   cooldown: 6
   icon: {fileID: 21300000, guid: f3e905cc784c2bd4f8302eff9c1f33fb, type: 3}
-  activateSound: {fileID: 0}
+  activateSound: {fileID: 8300000, guid: 5f8382ae8a2aacd4db52be8a39e42a14, type: 3}
   dashSpeed: 18
   dashSeconds: 0.18
   immuneWhileDashing: 1
@@ -21541,7 +21542,7 @@ MonoBehaviour:
   keyLabel: Q
   cooldown: 6
   icon: {fileID: 21300000, guid: a444145e4a2435c49a4e399b2691469e, type: 3}
-  activateSound: {fileID: 0}
+  activateSound: {fileID: 8300000, guid: bca207624e89ece4a925a4ad4618489f, type: 3}
   radius: 7
   blindDuration: 3.5
   flashColor: {r: 1, g: 0.97, b: 0.85, a: 0.9}
@@ -21561,7 +21562,7 @@ MonoBehaviour:
   keyLabel: Q
   cooldown: 6
   icon: {fileID: 21300000, guid: aa98f8cd7844ac540a3db1599cbd4c6c, type: 3}
-  activateSound: {fileID: 0}
+  activateSound: {fileID: 8300000, guid: cc0bf9909c700724e9f4c62f460d05af, type: 3}
   distanceAhead: 2.5
   wallWidth: 3.2
   wallHeight: 2.2
@@ -21605,7 +21606,7 @@ MonoBehaviour:
   chargePerKill: 25
   ultimateDuration: 6
   damageReductionMultiplier: 0.5
-  activateSound: {fileID: 0}
+  activateSound: {fileID: 8300000, guid: d1aa49f720f46ea42849cf0a79338787, type: 3}
 --- !u!114 &1584037082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21622,7 +21623,7 @@ MonoBehaviour:
   keyLabel: Q
   cooldown: 6
   icon: {fileID: 21300000, guid: 2160dbcff99da674d96411d3ac95c4be, type: 3}
-  activateSound: {fileID: 0}
+  activateSound: {fileID: 8300000, guid: ac33b1db936332345b96a84df004ca5e, type: 3}
   throwSpeed: 16
   revealRadius: 8
   revealDuration: 3
@@ -23688,9 +23689,9 @@ MonoBehaviour:
   waypointArriveDistance: 0.3
   reactionDelayMin: 0.3
   reactionDelayMax: 0.5
-  hoverHum: {fileID: 0}
+  hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
-  deathSound: {fileID: 0}
+  deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 721825863}
   pushArriveDistance: 1.5
 --- !u!136 &1753102724
@@ -27981,9 +27982,9 @@ MonoBehaviour:
   waypointArriveDistance: 0.3
   reactionDelayMin: 0.3
   reactionDelayMax: 0.5
-  hoverHum: {fileID: 0}
+  hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
-  deathSound: {fileID: 0}
+  deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 1335411533}
   pushArriveDistance: 1.5
 --- !u!136 &2092840387
@@ -29541,9 +29542,9 @@ MonoBehaviour:
   waypointArriveDistance: 0.3
   reactionDelayMin: 0.3
   reactionDelayMax: 0.5
-  hoverHum: {fileID: 0}
+  hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
-  deathSound: {fileID: 0}
+  deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 3000000044}
   pushArriveDistance: 1.5
 --- !u!23 &3000000047
@@ -31653,9 +31654,9 @@ MonoBehaviour:
   waypointArriveDistance: 0.3
   reactionDelayMin: 0.7
   reactionDelayMax: 0.9
-  hoverHum: {fileID: 0}
+  hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
-  deathSound: {fileID: 0}
+  deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 3100000077}
   pushArriveDistance: 1.5
 --- !u!222 &3100000092
@@ -33833,9 +33834,9 @@ MonoBehaviour:
   waypointArriveDistance: 0.3
   reactionDelayMin: 0.3
   reactionDelayMax: 0.5
-  hoverHum: {fileID: 0}
+  hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
-  deathSound: {fileID: 0}
+  deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 3200000096}
   pushArriveDistance: 1.5
 --- !u!195 &3200000090
