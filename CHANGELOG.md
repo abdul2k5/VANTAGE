@@ -2,6 +2,16 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 6b: procedural materials + door beacon fix
+
+**What changed:** Every room was flat-colored primitives - one solid color per object, no texture at all. Built 4 procedural materials (no external assets, generated via Unity's built-in texture tools): light concrete + subtle panel-line grid for walls (shared everywhere), a darker/cooler noise-textured floor material (kept deliberately distinct in value from the walls - readability only holds if materials stay separated, not just lighting), and two cover materials (dark industrial base + bold diagonal hazard-stripe accent) split by room identity - orange for the attack-side rooms (Range, Weak Point, Holding Angle), teal for the site/defense-side rooms (Recon through The Round).
+
+Also fixed a separate issue: every door had a vertical light-beam marker tall enough to poke above the wall line into the top-of-screen HUD text - recolored each to its room's accent and shrank it down to a short wayfinding marker instead of a stray bright column behind the objective text.
+
+**Why:** Matches the Valorant-inspired aesthetic brief - light, clean, legible spaces rather than dark/busy ones - and gives each half of the tutorial a distinct visual identity that reinforces the attack-side/defense-side structure already present in the room sequence, not just naming it in text.
+
+**Note on the hazard stripes:** went bolder/more solid-coverage than "sparingly on the edges only" - the procedural texture tool doesn't support masking a pattern to just a border region, so the stripe pattern covers the full cover face rather than a thin trim. Flagged for revisit if it reads as too busy once more of the presentation pass is in.
+
 ## Phase 6a: fix overexposure, wire up URP post-processing
 
 **What changed:** Every room's floor and sky were clipping to pure white under direct light - not a tuning problem, a structural one: there was no `Volume` component anywhere in the scene, and the Main Camera had no `UniversalAdditionalCameraData` component at all, so post-processing could not run regardless of what was configured in `DefaultVolumeProfile.asset` (which was itself empty - `components: []`). Added the camera component, a global `Volume` referencing the profile, and configured Tonemapping (Neutral), Color Adjustments (exposure pulled down, contrast/saturation up slightly), a light Bloom, and a subtle Vignette.
