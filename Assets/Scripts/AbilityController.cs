@@ -13,9 +13,7 @@ public class AbilityController : MonoBehaviour
     public bool smokeWallUnlocked;
     public bool flashUnlocked;
     public bool dashUnlocked;
-    // Not yet gated per-room - Recon Dart is new in Phase 3 and the room sequence that assigns
-    // it a proper unlock point is a Phase 5 job. Available from the start until then.
-    public bool reconDartUnlocked = true;
+    public bool reconDartUnlocked;
 
     void Awake()
     {
@@ -38,10 +36,11 @@ public class AbilityController : MonoBehaviour
 
     public void UnlockForRoom(int roomIndex)
     {
-        // Room 3 teaches Smoke Wall, room 4 Flash, room 5 Dash; room 6 has everything.
-        smokeWallUnlocked = roomIndex >= 2;
-        flashUnlocked = roomIndex >= 3;
-        dashUnlocked = roomIndex >= 4;
+        // 8-room order: Range, Weak Point, Holding Angle, Recon, Smoke, Flash, Dash, The Round.
+        reconDartUnlocked = roomIndex >= 3;
+        smokeWallUnlocked = roomIndex >= 4;
+        flashUnlocked = roomIndex >= 5;
+        dashUnlocked = roomIndex >= 6;
     }
 
     public List<Ability> GetUnlockedAbilities()

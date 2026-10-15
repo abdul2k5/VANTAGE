@@ -1730,6 +1730,7 @@ MonoBehaviour:
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
+  bodyDamageMultiplier: 1
   behaviorMode: 1
   holdPoint: {fileID: 0}
   patrolPoints: []
@@ -7052,6 +7053,7 @@ MonoBehaviour:
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
+  bodyDamageMultiplier: 1
   behaviorMode: 0
   holdPoint: {fileID: 0}
   patrolPoints:
@@ -10732,6 +10734,7 @@ MonoBehaviour:
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
+  bodyDamageMultiplier: 1
   behaviorMode: 0
   holdPoint: {fileID: 0}
   patrolPoints:
@@ -15478,23 +15481,31 @@ MonoBehaviour:
     objective: Standing still is accurate. Moving isn't. Get a feel for it, then reach the door.
     entryPoint: {fileID: 1848493664}
     introPanel: {fileID: 153265614}
+  - title: Weak Point
+    objective: Body shots barely scratch it. Go for the head.
+    entryPoint: {fileID: 3100000030}
+    introPanel: {fileID: 3100000098}
   - title: Holding Angle
     objective: It's holding this doorway, not patrolling - time your cross or take the shot.
     entryPoint: {fileID: 339743820}
     introPanel: {fileID: 1785429454}
-  - title: Close the line
+  - title: Recon
+    objective: Throw a Recon Dart before you round the corner - know it's there before it knows you are.
+    entryPoint: {fileID: 3200000029}
+    introPanel: {fileID: 3200000105}
+  - title: Smoke
     objective: Use Smoke Wall to block its view, then reach the door.
     entryPoint: {fileID: 1998657633}
     introPanel: {fileID: 151819807}
-  - title: Blind the watcher
+  - title: Flash
     objective: Use Flash to blind it, then reach the door.
     entryPoint: {fileID: 2124449286}
     introPanel: {fileID: 1387739133}
-  - title: Beat the line
+  - title: Dash
     objective: No cover - Dash across the open lane to the door.
     entryPoint: {fileID: 1767623139}
     introPanel: {fileID: 624896661}
-  - title: Everything at once
+  - title: The Round
     objective: Clear both Sentinels, then hold [4] at the charge site to plant - survive the countdown to win.
     entryPoint: {fileID: 1497267426}
     introPanel: {fileID: 0}
@@ -17055,6 +17066,7 @@ MonoBehaviour:
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
+  bodyDamageMultiplier: 1
   behaviorMode: 0
   holdPoint: {fileID: 0}
   patrolPoints:
@@ -19381,6 +19393,7 @@ MonoBehaviour:
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
+  bodyDamageMultiplier: 1
   behaviorMode: 0
   holdPoint: {fileID: 0}
   patrolPoints:
@@ -21281,6 +21294,8 @@ RectTransform:
   - {fileID: 456058140}
   - {fileID: 1177063182}
   - {fileID: 2115267051}
+  - {fileID: 3100000096}
+  - {fileID: 3200000103}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -22664,6 +22679,7 @@ MonoBehaviour:
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
+  bodyDamageMultiplier: 1
   behaviorMode: 0
   holdPoint: {fileID: 0}
   patrolPoints:
@@ -23258,97 +23274,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1660057539 &9223372036854775807
-SceneRoots:
-  m_ObjectHideFlags: 0
-  m_Roots:
-  - {fileID: 1628135658}
-  - {fileID: 850280721}
-  - {fileID: 1584037075}
-  - {fileID: 790053545}
-  - {fileID: 2012112480}
-  - {fileID: 1855736889}
-  - {fileID: 2075219890}
-  - {fileID: 955546588}
-  - {fileID: 1448792177}
-  - {fileID: 113820433}
-  - {fileID: 1909378973}
-  - {fileID: 558189067}
-  - {fileID: 900985530}
-  - {fileID: 69705299}
-  - {fileID: 285747840}
-  - {fileID: 339743820}
-  - {fileID: 1449978168}
-  - {fileID: 1188719634}
-  - {fileID: 969376082}
-  - {fileID: 1550045631}
-  - {fileID: 2013068110}
-  - {fileID: 1998657633}
-  - {fileID: 1431704311}
-  - {fileID: 204791842}
-  - {fileID: 1994313842}
-  - {fileID: 1467917696}
-  - {fileID: 188370983}
-  - {fileID: 2124449286}
-  - {fileID: 246806167}
-  - {fileID: 184208472}
-  - {fileID: 1029248712}
-  - {fileID: 1304933464}
-  - {fileID: 1707880684}
-  - {fileID: 1767623139}
-  - {fileID: 1593760690}
-  - {fileID: 73473874}
-  - {fileID: 669410590}
-  - {fileID: 219535665}
-  - {fileID: 972249830}
-  - {fileID: 1497267426}
-  - {fileID: 1848493664}
-  - {fileID: 696498637}
-  - {fileID: 95203385}
-  - {fileID: 1295995757}
-  - {fileID: 1718887337}
-  - {fileID: 538018392}
-  - {fileID: 1753102726}
-  - {fileID: 1713220455}
-  - {fileID: 491933308}
-  - {fileID: 1546845668}
-  - {fileID: 1529658181}
-  - {fileID: 661321440}
-  - {fileID: 2092840389}
-  - {fileID: 1221122136}
-  - {fileID: 1347848788}
-  - {fileID: 570498414}
-  - {fileID: 1460666562}
-  - {fileID: 1175724268}
-  - {fileID: 908887827}
-  - {fileID: 150062608}
-  - {fileID: 115549205}
-  - {fileID: 1506013604}
-  - {fileID: 1304325053}
-  - {fileID: 1202267821}
-  - {fileID: 1303529905}
-  - {fileID: 1259872433}
-  - {fileID: 1416355655}
-  - {fileID: 1974128802}
-  - {fileID: 1749657982}
-  - {fileID: 270676575}
-  - {fileID: 796032640}
-  - {fileID: 1112105025}
-  - {fileID: 1058129800}
-  - {fileID: 2083868216}
-  - {fileID: 1319377327}
-  - {fileID: 646673888}
-  - {fileID: 162093529}
-  - {fileID: 969976934}
-  - {fileID: 61333681}
-  - {fileID: 1780994284}
-  - {fileID: 945478012}
-  - {fileID: 1286419353}
-  - {fileID: 1140793527}
-  - {fileID: 800446028}
-  - {fileID: 1086915925}
-  - {fileID: 605565688}
-  - {fileID: 6470848}
 --- !u!23 &3000000001
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -23795,7 +23720,7 @@ Transform:
   m_GameObject: {fileID: 3000000037}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0, y: 0.0, z: 2.0}
+  m_LocalPosition: {x: 0, y: 0, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -24289,6 +24214,7 @@ MonoBehaviour:
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
+  bodyDamageMultiplier: 1
   behaviorMode: 1
   holdPoint: {fileID: 0}
   patrolPoints: []
@@ -24519,7 +24445,7 @@ Transform:
   m_GameObject: {fileID: 3100000003}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -40.0, y: 0.0, z: 0.0}
+  m_LocalPosition: {x: -40, y: 0, z: 0}
   m_LocalScale: {x: 1.2, y: 1, z: 1.8}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -24574,7 +24500,7 @@ Transform:
   m_GameObject: {fileID: 3100000007}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -34.0, y: 1.5, z: 0.0}
+  m_LocalPosition: {x: -34, y: 1.5, z: 0}
   m_LocalScale: {x: 0.4, y: 3, z: 18.4}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -24695,7 +24621,7 @@ Transform:
   m_GameObject: {fileID: 3100000013}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -46.0, y: 1.5, z: 0.0}
+  m_LocalPosition: {x: -46, y: 1.5, z: 0}
   m_LocalScale: {x: 0.4, y: 3, z: 18.4}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -24779,7 +24705,7 @@ Transform:
   m_GameObject: {fileID: 3100000019}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -40.0, y: 1.5, z: 9.0}
+  m_LocalPosition: {x: -40, y: 1.5, z: 9}
   m_LocalScale: {x: 12.4, y: 3, z: 0.4}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -24870,7 +24796,7 @@ Transform:
   m_GameObject: {fileID: 3100000025}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -40.0, y: 1.5, z: -9.0}
+  m_LocalPosition: {x: -40, y: 1.5, z: -9}
   m_LocalScale: {x: 12.4, y: 3, z: 0.4}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -24982,7 +24908,7 @@ Transform:
   m_GameObject: {fileID: 3100000028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -40.0, y: 2.5, z: 0.0}
+  m_LocalPosition: {x: -40, y: 2.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -25095,7 +25021,7 @@ Transform:
   m_GameObject: {fileID: 3100000029}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -40.0, y: 0.0, z: -7.5}
+  m_LocalPosition: {x: -40, y: 0, z: -7.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -25110,7 +25036,7 @@ Transform:
   m_GameObject: {fileID: 3100000032}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -40.0, y: 1.2, z: 8.2}
+  m_LocalPosition: {x: -40, y: 1.2, z: 8.2}
   m_LocalScale: {x: 2.4, y: 2.4, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -25307,7 +25233,7 @@ Transform:
   m_GameObject: {fileID: 3100000042}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -40.0, y: 2.7, z: 8.2}
+  m_LocalPosition: {x: -40, y: 2.7, z: 8.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -25960,7 +25886,7 @@ Transform:
   m_GameObject: {fileID: 3100000048}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -43.0, y: 0.0, z: 5.0}
+  m_LocalPosition: {x: -43, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -26645,7 +26571,7 @@ Transform:
   m_GameObject: {fileID: 3200000001}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -120.0, y: 0.0, z: 0.0}
+  m_LocalPosition: {x: -120, y: 0, z: 0}
   m_LocalScale: {x: 1.2, y: 1, z: 1.8}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -26757,7 +26683,7 @@ Transform:
   m_GameObject: {fileID: 3200000007}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -114.0, y: 1.5, z: 0.0}
+  m_LocalPosition: {x: -114, y: 1.5, z: 0}
   m_LocalScale: {x: 0.4, y: 3, z: 18.4}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -26829,7 +26755,7 @@ Transform:
   m_GameObject: {fileID: 3200000013}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -126.0, y: 1.5, z: 0.0}
+  m_LocalPosition: {x: -126, y: 1.5, z: 0}
   m_LocalScale: {x: 0.4, y: 3, z: 18.4}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -27019,7 +26945,7 @@ Transform:
   m_GameObject: {fileID: 3200000020}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -120.0, y: 1.5, z: 9.0}
+  m_LocalPosition: {x: -120, y: 1.5, z: 9}
   m_LocalScale: {x: 12.4, y: 3, z: 0.4}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -27082,7 +27008,7 @@ Transform:
   m_GameObject: {fileID: 3200000025}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -120.0, y: 1.5, z: -9.0}
+  m_LocalPosition: {x: -120, y: 1.5, z: -9}
   m_LocalScale: {x: 12.4, y: 3, z: 0.4}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -27247,7 +27173,7 @@ Transform:
   m_GameObject: {fileID: 3200000027}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -120.0, y: 2.5, z: 0.0}
+  m_LocalPosition: {x: -120, y: 2.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -27262,7 +27188,7 @@ Transform:
   m_GameObject: {fileID: 3200000030}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -120.0, y: 0.0, z: -7.5}
+  m_LocalPosition: {x: -120, y: 0, z: -7.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -27301,7 +27227,7 @@ Transform:
   m_GameObject: {fileID: 3200000033}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -120.0, y: 1.2, z: 8.2}
+  m_LocalPosition: {x: -120, y: 1.2, z: 8.2}
   m_LocalScale: {x: 2.4, y: 2.4, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -27498,7 +27424,7 @@ Transform:
   m_GameObject: {fileID: 3200000037}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -120.0, y: 2.7, z: 8.2}
+  m_LocalPosition: {x: -120, y: 2.7, z: 8.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -28578,6 +28504,7 @@ MonoBehaviour:
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
+  bodyDamageMultiplier: 1
   behaviorMode: 1
   holdPoint: {fileID: 0}
   patrolPoints: []
@@ -28889,3 +28816,114 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AutoHidePanel
   visibleSeconds: 6
   fadeSeconds: 1
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
+  m_ObjectHideFlags: 0
+  m_Roots:
+  - {fileID: 1628135658}
+  - {fileID: 850280721}
+  - {fileID: 1584037075}
+  - {fileID: 790053545}
+  - {fileID: 2012112480}
+  - {fileID: 1855736889}
+  - {fileID: 2075219890}
+  - {fileID: 113820433}
+  - {fileID: 1909378973}
+  - {fileID: 558189067}
+  - {fileID: 900985530}
+  - {fileID: 69705299}
+  - {fileID: 285747840}
+  - {fileID: 339743820}
+  - {fileID: 1449978168}
+  - {fileID: 1188719634}
+  - {fileID: 969376082}
+  - {fileID: 1550045631}
+  - {fileID: 2013068110}
+  - {fileID: 1998657633}
+  - {fileID: 1431704311}
+  - {fileID: 204791842}
+  - {fileID: 1994313842}
+  - {fileID: 1467917696}
+  - {fileID: 188370983}
+  - {fileID: 2124449286}
+  - {fileID: 246806167}
+  - {fileID: 184208472}
+  - {fileID: 1029248712}
+  - {fileID: 1304933464}
+  - {fileID: 1707880684}
+  - {fileID: 1767623139}
+  - {fileID: 1593760690}
+  - {fileID: 73473874}
+  - {fileID: 669410590}
+  - {fileID: 219535665}
+  - {fileID: 972249830}
+  - {fileID: 1497267426}
+  - {fileID: 1848493664}
+  - {fileID: 696498637}
+  - {fileID: 95203385}
+  - {fileID: 1295995757}
+  - {fileID: 1718887337}
+  - {fileID: 538018392}
+  - {fileID: 1753102726}
+  - {fileID: 1713220455}
+  - {fileID: 491933308}
+  - {fileID: 1546845668}
+  - {fileID: 1529658181}
+  - {fileID: 661321440}
+  - {fileID: 2092840389}
+  - {fileID: 1221122136}
+  - {fileID: 1347848788}
+  - {fileID: 570498414}
+  - {fileID: 1460666562}
+  - {fileID: 1175724268}
+  - {fileID: 908887827}
+  - {fileID: 150062608}
+  - {fileID: 115549205}
+  - {fileID: 1506013604}
+  - {fileID: 1304325053}
+  - {fileID: 1202267821}
+  - {fileID: 1303529905}
+  - {fileID: 1259872433}
+  - {fileID: 1416355655}
+  - {fileID: 1974128802}
+  - {fileID: 1749657982}
+  - {fileID: 270676575}
+  - {fileID: 796032640}
+  - {fileID: 1112105025}
+  - {fileID: 1058129800}
+  - {fileID: 2083868216}
+  - {fileID: 1319377327}
+  - {fileID: 646673888}
+  - {fileID: 162093529}
+  - {fileID: 969976934}
+  - {fileID: 61333681}
+  - {fileID: 1780994284}
+  - {fileID: 945478012}
+  - {fileID: 1286419353}
+  - {fileID: 1140793527}
+  - {fileID: 800446028}
+  - {fileID: 1086915925}
+  - {fileID: 605565688}
+  - {fileID: 6470848}
+  - {fileID: 3000000018}
+  - {fileID: 3100000005}
+  - {fileID: 3100000008}
+  - {fileID: 3100000012}
+  - {fileID: 3100000017}
+  - {fileID: 3100000021}
+  - {fileID: 3100000026}
+  - {fileID: 3100000030}
+  - {fileID: 3100000031}
+  - {fileID: 3100000040}
+  - {fileID: 3100000069}
+  - {fileID: 3200000003}
+  - {fileID: 3200000008}
+  - {fileID: 3200000011}
+  - {fileID: 3200000019}
+  - {fileID: 3200000023}
+  - {fileID: 3200000028}
+  - {fileID: 3200000029}
+  - {fileID: 3200000032}
+  - {fileID: 3200000040}
+  - {fileID: 3200000046}
+  - {fileID: 3200000091}
