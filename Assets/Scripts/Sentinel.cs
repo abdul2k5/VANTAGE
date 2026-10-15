@@ -47,9 +47,14 @@ public class Sentinel : MonoBehaviour
     float currentHealth;
     float blindRemaining;
     float revealRemaining;
+    bool isPushing;
+    Vector3 pushTarget;
     NavMeshAgent agent;
     WeaponFeedback feedback;
     AudioSource hoverAudioSource;
+
+    [Header("Push (set by RoundController after the Breach Charge plants)")]
+    public float pushArriveDistance = 1.5f;
 
     public bool IsBlinded { get { return blindRemaining > 0f; } }
     /// <summary>True while a Recon Dart (or the ultimate) is showing this Sentinel through walls.</summary>
@@ -86,6 +91,14 @@ public class Sentinel : MonoBehaviour
     public void Reveal(float seconds)
     {
         if (seconds > revealRemaining) revealRemaining = seconds;
+    }
+
+    /// <summary>Overrides Patrol/Hold and moves straight to point - used once the Breach Charge is planted. Resumes normal behavior from the new position on arrival, or immediately if it spots the player en route.</summary>
+    public void PushTowards(Vector3 point)
+    {
+        isPushing = true;
+        pushTarget = point;
+        agent.SetDestination(point);
     }
 
     void Start()
@@ -145,7 +158,11 @@ public class Sentinel : MonoBehaviour
         else
         {
             fireTimer = 0f;
-            if (behaviorMode == BehaviorMode.Hold)
+            if (isPushing)
+            {
+                RunPush();
+            }
+            else if (behaviorMode == BehaviorMode.Hold)
             {
                 RunHold();
             }
@@ -153,6 +170,21 @@ public class Sentinel : MonoBehaviour
             {
                 RunPatrol();
             }
+        }
+    }
+
+    void RunPush()
+    {
+        agent.isStopped = false;
+
+        if (agent.velocity.sqrMagnitude > 0.05f)
+        {
+            FaceTowards(transform.position + agent.velocity.normalized);
+        }
+
+        if (!agent.pathPending && Vector3.Distance(transform.position, pushTarget) <= pushArriveDistance)
+        {
+            isPushing = false; // arrived - falls back to Patrol/Hold from here, which reads as "now defending the site"
         }
     }
 

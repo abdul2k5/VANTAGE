@@ -46,6 +46,14 @@ public void TakeDamage(float amount)
 
     void Die()
     {
+        // Dying during an active Breach Charge round is a loss, not a free respawn.
+        if (RoundController.Instance != null && RoundController.Instance.IsRoundActive)
+        {
+            RoundController.Instance.OnPlayerDied();
+            currentHealth = maxHealth;
+            return;
+        }
+
         currentHealth = maxHealth;
 
         var cc = GetComponent<CharacterController>();
