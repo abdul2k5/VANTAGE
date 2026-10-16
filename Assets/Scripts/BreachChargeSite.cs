@@ -17,6 +17,7 @@ public class BreachChargeSite : MonoBehaviour
     public Image progressFill;
     public Text progressLabel;
     public AudioClip plantCompleteSound;
+    public BreachChargeDevice device;
 
     float plantProgress;
     bool planted;
@@ -89,6 +90,7 @@ public class BreachChargeSite : MonoBehaviour
         float frac = Mathf.Clamp01(plantProgress / plantSeconds);
         if (progressFill != null) progressFill.fillAmount = frac;
         if (progressLabel != null) progressLabel.text = "PLANTING BREACH CHARGE - " + Mathf.CeilToInt((1f - frac) * plantSeconds) + "s";
+        if (device != null && player != null) device.SetDeployProgress(player.position, frac);
 
         if (plantProgress >= plantSeconds)
         {
@@ -100,12 +102,14 @@ public class BreachChargeSite : MonoBehaviour
     {
         plantProgress = 0f;
         if (progressRoot != null) progressRoot.SetActive(false);
+        if (device != null) device.Hide();
     }
 
     void Plant()
     {
         planted = true;
         if (progressRoot != null) progressRoot.SetActive(false);
+        if (device != null) device.ConfirmPlanted();
         if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(plantCompleteSound);
 
         if (RoundController.Instance != null)

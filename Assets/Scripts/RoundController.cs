@@ -15,6 +15,17 @@ public class RoundController : MonoBehaviour
     [Header("Timer")]
     public float detonationSeconds = 20f;
     public Text timerLabel;
+    public GameObject chargeIcon;
+    public Color timerNormalColor = new Color(0.9f, 0.3f, 0.2f, 1f);
+    public Color plantedFlashColor = Color.white;
+    public BreachChargeDevice device;
+
+    [Header("Detonation feedback")]
+    public Image detonationFlash;
+    public Transform cameraShakeTransform;
+    public ParticleSystem detonationParticles;
+    public float shakeDuration = 0.4f;
+    public float shakeMagnitude = 0.18f;
 
     [Header("Defenders (push toward the site in waves once planted)")]
     public Sentinel[] siteDefenders;
@@ -79,6 +90,18 @@ public class RoundController : MonoBehaviour
 
     IEnumerator RunTimer()
     {
+        // "CHARGE PLANTED" reads as its own beat before the countdown starts, instead of the
+        // timer just silently appearing already ticking.
+        if (timerLabel != null)
+        {
+            timerLabel.gameObject.SetActive(true);
+            timerLabel.text = "CHARGE PLANTED";
+            timerLabel.color = plantedFlashColor;
+        }
+        if (chargeIcon != null) chargeIcon.SetActive(true);
+        yield return new WaitForSeconds(1f);
+        if (timerLabel != null) timerLabel.color = timerNormalColor;
+
         float remaining = detonationSeconds;
         float beepTimer = 0f;
 
@@ -100,6 +123,7 @@ public class RoundController : MonoBehaviour
                 timerLabel.gameObject.SetActive(true);
                 timerLabel.text = "BREACH CHARGE: " + Mathf.CeilToInt(Mathf.Max(remaining, 0f)) + "s";
             }
+            if (device != null) device.SetCountdownProgress(remaining, detonationSeconds);
 
             yield return null;
         }
@@ -107,9 +131,53 @@ public class RoundController : MonoBehaviour
         if (roundActive)
         {
             roundActive = false;
+            if (timerLabel != null) timerLabel.gameObject.SetActive(false);
+            if (chargeIcon != null) chargeIcon.SetActive(false);
+            if (device != null) device.Detonate();
             PlaySfx(detonationSound);
+            yield return StartCoroutine(PlayDetonationFx());
             ShowWin();
         }
+    }
+
+    IEnumerator PlayDetonationFx()
+    {
+        if (detonationParticles != null)
+        {
+            detonationParticles.Play();
+        }
+
+        Vector3 shakeOrigin = cameraShakeTransform != null ? cameraShakeTransform.localPosition : Vector3.zero;
+        float t = 0f;
+        float flashDuration = 0.3f;
+
+        while (t < shakeDuration)
+        {
+            t += Time.deltaTime;
+
+            if (detonationFlash != null)
+            {
+                Color c = detonationFlash.color;
+                c.a = Mathf.Lerp(0.9f, 0f, Mathf.Clamp01(t / flashDuration));
+                detonationFlash.color = c;
+            }
+
+            if (cameraShakeTransform != null)
+            {
+                float falloff = 1f - Mathf.Clamp01(t / shakeDuration);
+                cameraShakeTransform.localPosition = shakeOrigin + (Vector3)(UnityEngine.Random.insideUnitCircle * shakeMagnitude * falloff);
+            }
+
+            yield return null;
+        }
+
+        if (detonationFlash != null)
+        {
+            var c = detonationFlash.color;
+            c.a = 0f;
+            detonationFlash.color = c;
+        }
+        if (cameraShakeTransform != null) cameraShakeTransform.localPosition = shakeOrigin;
     }
 
     public void OnPlayerDied()
@@ -130,6 +198,7 @@ public class RoundController : MonoBehaviour
     void ShowWin()
     {
         if (timerLabel != null) timerLabel.gameObject.SetActive(false);
+        if (chargeIcon != null) chargeIcon.SetActive(false);
         if (winPanel != null) winPanel.transform.SetAsLastSibling();
         if (winPanel != null) winPanel.SetActive(true);
         PlaySfx(winSound);
@@ -140,6 +209,7 @@ public class RoundController : MonoBehaviour
     void ShowLose()
     {
         if (timerLabel != null) timerLabel.gameObject.SetActive(false);
+        if (chargeIcon != null) chargeIcon.SetActive(false);
         if (losePanel != null) losePanel.transform.SetAsLastSibling();
         if (losePanel != null) losePanel.SetActive(true);
         PlaySfx(loseSound);
