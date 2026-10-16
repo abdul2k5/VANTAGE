@@ -36,17 +36,26 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
     public Button quitToMenuButton;
 
     [Header("Crosshair Tab")]
-    public Image[] styleButtonBorders;
+    /// <summary>2px outline per style tile - enabled + accent-colored only on the selected tile. Never a solid fill, so the icon underneath always stays visible.</summary>
+    public Outline[] styleTileOutlines;
+    /// <summary>Icon bars inside each style tile (the small crosshair-shape preview) - recolored accent/light together with the outline.</summary>
+    public RectTransform[] styleTileIconRoots;
     public GameObject[] colorChipSelectedRings;
     public Slider sizeSlider;
+    public Text sizeValueText;
     public Slider gapSlider;
+    public Text gapValueText;
     public Button outlineButton;
+    public Image outlineButtonImage;
     public Text outlineButtonLabel;
 
     [Header("Audio Tab")]
     public Slider masterSlider;
+    public Text masterValueText;
     public Slider musicSlider;
+    public Text musicValueText;
     public Slider sfxSlider;
+    public Text sfxValueText;
 
     int currentTab;
 
@@ -205,11 +214,13 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
     void OnSizeChanged(float v)
     {
         if (CrosshairController.Instance != null) CrosshairController.Instance.SetSize(v);
+        if (sizeValueText != null) sizeValueText.text = FormatPercent(v);
     }
 
     void OnGapChanged(float v)
     {
         if (CrosshairController.Instance != null) CrosshairController.Instance.SetGap(v);
+        if (gapValueText != null) gapValueText.text = FormatPercent(v);
     }
 
     void OnOutlineToggleClicked()
@@ -222,22 +233,32 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
     void OnMasterChanged(float v)
     {
         if (AudioManager.Instance != null) AudioManager.Instance.SetMasterVolume(v);
+        if (masterValueText != null) masterValueText.text = FormatPercent(v);
     }
 
     void OnMusicChanged(float v)
     {
         if (AudioManager.Instance != null) AudioManager.Instance.SetMusicVolume(v);
+        if (musicValueText != null) musicValueText.text = FormatPercent(v);
     }
 
     void OnSfxChanged(float v)
     {
         if (AudioManager.Instance != null) AudioManager.Instance.SetSfxVolume(v);
+        if (sfxValueText != null) sfxValueText.text = FormatPercent(v);
+    }
+
+    static string FormatPercent(float v01)
+    {
+        return Mathf.RoundToInt(v01 * 100f) + "%";
     }
 
     void UpdateOutlineLabel()
     {
-        if (outlineButtonLabel == null || CrosshairController.Instance == null) return;
-        outlineButtonLabel.text = "OUTLINE: " + (CrosshairController.Instance.CurrentOutline ? "ON" : "OFF");
+        if (CrosshairController.Instance == null) return;
+        bool on = CrosshairController.Instance.CurrentOutline;
+        if (outlineButtonLabel != null) outlineButtonLabel.text = on ? "ON" : "OFF";
+        if (outlineButtonImage != null) outlineButtonImage.color = on ? tabActiveColor : tabInactiveColor;
     }
 
     void RefreshAllControlsFromState()
@@ -251,15 +272,20 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
         if (CrosshairController.Instance != null)
         {
             if (sizeSlider != null) sizeSlider.SetValueWithoutNotify(CrosshairController.Instance.CurrentSize);
+            if (sizeValueText != null) sizeValueText.text = FormatPercent(CrosshairController.Instance.CurrentSize);
             if (gapSlider != null) gapSlider.SetValueWithoutNotify(CrosshairController.Instance.CurrentGap);
+            if (gapValueText != null) gapValueText.text = FormatPercent(CrosshairController.Instance.CurrentGap);
             UpdateOutlineLabel();
         }
 
         if (AudioManager.Instance != null)
         {
             if (masterSlider != null) masterSlider.SetValueWithoutNotify(AudioManager.Instance.masterVolume);
+            if (masterValueText != null) masterValueText.text = FormatPercent(AudioManager.Instance.masterVolume);
             if (musicSlider != null) musicSlider.SetValueWithoutNotify(AudioManager.Instance.musicVolume);
+            if (musicValueText != null) musicValueText.text = FormatPercent(AudioManager.Instance.musicVolume);
             if (sfxSlider != null) sfxSlider.SetValueWithoutNotify(AudioManager.Instance.sfxVolume);
+            if (sfxValueText != null) sfxValueText.text = FormatPercent(AudioManager.Instance.sfxVolume);
         }
     }
 
@@ -268,11 +294,22 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
         if (CrosshairController.Instance == null) return;
 
         int style = CrosshairController.Instance.CurrentStyle;
-        if (styleButtonBorders != null)
+        if (styleTileOutlines != null)
         {
-            for (int i = 0; i < styleButtonBorders.Length; i++)
+            for (int i = 0; i < styleTileOutlines.Length; i++)
             {
-                if (styleButtonBorders[i] != null) styleButtonBorders[i].color = i == style ? tabActiveColor : tabInactiveColor;
+                bool selected = i == style;
+                if (styleTileOutlines[i] != null)
+                {
+                    styleTileOutlines[i].enabled = selected;
+                    styleTileOutlines[i].effectColor = tabActiveColor;
+                }
+                if (styleTileIconRoots != null && i < styleTileIconRoots.Length && styleTileIconRoots[i] != null)
+                {
+                    Color iconColor = selected ? tabActiveColor : tabInactiveTextColor;
+                    var images = styleTileIconRoots[i].GetComponentsInChildren<Image>(true);
+                    for (int j = 0; j < images.Length; j++) images[j].color = iconColor;
+                }
             }
         }
 
