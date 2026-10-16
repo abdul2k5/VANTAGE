@@ -23,6 +23,9 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
     public GameObject[] tabPanels;
     public Color tabActiveColor = new Color(0.886f, 0.647f, 0.235f, 1f);
     public Color tabInactiveColor = new Color(0.16f, 0.17f, 0.15f, 1f);
+    /// <summary>Dark text reads on the amber active tab; light grey reads on the dark inactive tabs. ShowTab swaps both the background and the label together so no tab can end up dark-on-dark.</summary>
+    public Color tabActiveTextColor = new Color(0.08f, 0.09f, 0.07f, 1f);
+    public Color tabInactiveTextColor = new Color(0.85f, 0.85f, 0.82f, 1f);
 
     [Header("General Tab")]
     public PlayerController player;
@@ -167,8 +170,12 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
             for (int i = 0; i < tabButtons.Length; i++)
             {
                 if (tabButtons[i] == null) continue;
+                bool isActive = i == index;
                 var img = tabButtons[i].GetComponent<Image>();
-                if (img != null) img.color = i == index ? tabActiveColor : tabInactiveColor;
+                if (img != null) img.color = isActive ? tabActiveColor : tabInactiveColor;
+
+                var label = tabButtons[i].GetComponentInChildren<Text>();
+                if (label != null) label.color = isActive ? tabActiveTextColor : tabInactiveTextColor;
             }
         }
     }
