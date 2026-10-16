@@ -55,6 +55,11 @@ public class RoundController : MonoBehaviour
         audioSource.playOnAwake = false;
     }
 
+    void Start()
+    {
+        if (AudioManager.Instance != null) audioSource.outputAudioMixerGroup = AudioManager.Instance.SfxGroup;
+    }
+
     public void BeginRound(Vector3 sitePosition)
     {
         if (roundActive) return;
@@ -191,8 +196,7 @@ public class RoundController : MonoBehaviour
     void PlaySfx(AudioClip clip)
     {
         if (clip == null || audioSource == null) return;
-        float scale = AudioManager.Instance != null ? AudioManager.Instance.ResolvedSfxVolume : 1f;
-        audioSource.PlayOneShot(clip, scale);
+        audioSource.PlayOneShot(clip);
     }
 
     void ShowWin()

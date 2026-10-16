@@ -55,6 +55,8 @@ public class Sentinel : MonoBehaviour
     NavMeshAgent agent;
     WeaponFeedback feedback;
     AudioSource hoverAudioSource;
+    /// <summary>Index into RoomManager.rooms this Sentinel belongs to - nearest entry point by distance, computed once in Start(). Gates the hover hum to the player's current room.</summary>
+    int ownerRoomIndex = -1;
 
     [Header("Push (set by RoundController after the Breach Charge plants)")]
     public float pushArriveDistance = 1.5f;
@@ -79,11 +81,10 @@ public class Sentinel : MonoBehaviour
         hoverAudioSource.volume = hoverHumVolume;
         hoverAudioSource.minDistance = 2f;
         hoverAudioSource.maxDistance = 14f;
-        if (hoverHum != null)
-        {
-            hoverAudioSource.clip = hoverHum;
-            hoverAudioSource.Play();
-        }
+        hoverAudioSource.rolloffMode = AudioRolloffMode.Logarithmic;
+        if (hoverHum != null) hoverAudioSource.clip = hoverHum;
+        // Not started here - Update() only plays it once the game is actually running and this
+        // Sentinel's room is the player's current room (see ownerRoomIndex in Start()).
     }
 
     public void Blind(float seconds)
@@ -116,6 +117,33 @@ public class Sentinel : MonoBehaviour
         {
             agent.SetDestination(patrolPoints[patrolIndex].position);
         }
+
+        if (AudioManager.Instance != null) hoverAudioSource.outputAudioMixerGroup = AudioManager.Instance.SfxGroup;
+
+        if (RoomManager.Instance != null && RoomManager.Instance.rooms != null)
+        {
+            float bestDist = float.MaxValue;
+            var rooms = RoomManager.Instance.rooms;
+            for (int i = 0; i < rooms.Length; i++)
+            {
+                if (rooms[i].entryPoint == null) continue;
+                float d = Vector3.Distance(transform.position, rooms[i].entryPoint.position);
+                if (d < bestDist) { bestDist = d; ownerRoomIndex = i; }
+            }
+        }
+    }
+
+    void UpdateHoverHum()
+    {
+        if (hoverAudioSource == null || hoverHum == null) return;
+
+        bool shouldPlay = !MainMenuController.IsOpen
+            && RoomManager.Instance != null
+            && RoomManager.Instance.CurrentRoom == ownerRoomIndex
+            && gameObject.activeSelf;
+
+        if (shouldPlay && !hoverAudioSource.isPlaying) hoverAudioSource.Play();
+        else if (!shouldPlay && hoverAudioSource.isPlaying) hoverAudioSource.Stop();
     }
 
     void Update()
@@ -131,6 +159,8 @@ public class Sentinel : MonoBehaviour
             revealRemaining -= Time.deltaTime;
             if (revealRemaining <= 0f) revealRemaining = 0f;
         }
+
+        UpdateHoverHum();
 
         if (player == null) return;
 
@@ -279,10 +309,9 @@ public class Sentinel : MonoBehaviour
         currentHealth -= amount;
         if (currentHealth <= 0f)
         {
-            if (deathSound != null)
+            if (deathSound != null && AudioManager.Instance != null)
             {
-                float scale = AudioManager.Instance != null ? AudioManager.Instance.ResolvedSfxVolume : 1f;
-                AudioSource.PlayClipAtPoint(deathSound, transform.position, scale);
+                AudioManager.Instance.PlaySfxAtPoint(deathSound, transform.position);
             }
             gameObject.SetActive(false);
         }

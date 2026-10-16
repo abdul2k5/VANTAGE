@@ -59,6 +59,11 @@ public class Weapon : MonoBehaviour
         cam = Camera.main;
     }
 
+    void Start()
+    {
+        if (AudioManager.Instance != null) audioSource.outputAudioMixerGroup = AudioManager.Instance.SfxGroup;
+    }
+
     void Update()
     {
         UpdateSpread();
@@ -116,8 +121,7 @@ public class Weapon : MonoBehaviour
     void PlaySfx(AudioClip clip)
     {
         if (clip == null || audioSource == null) return;
-        float scale = AudioManager.Instance != null ? AudioManager.Instance.ResolvedSfxVolume : 1f;
-        audioSource.PlayOneShot(clip, scale);
+        audioSource.PlayOneShot(clip);
     }
 
     public void Fire()

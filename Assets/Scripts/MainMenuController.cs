@@ -20,6 +20,7 @@ public class MainMenuController : MonoBehaviour
         Cursor.visible = IsOpen;
         Cursor.lockState = IsOpen ? CursorLockMode.None : CursorLockMode.Locked;
         Time.timeScale = IsOpen ? 0f : 1f;
+        AudioListener.pause = IsOpen;
     }
 
     public void OnPointerClickStart(PointerEventData eventData)
@@ -34,6 +35,7 @@ public class MainMenuController : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         Time.timeScale = 1f;
+        AudioListener.pause = false;
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.PlayUIClick();

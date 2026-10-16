@@ -31146,13 +31146,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c6f8816488e5414dbf9aecb23467a72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  mixer: {fileID: 24100000, guid: 38e952db9f759034e8dcf60ceb02ae78, type: 2}
+  musicGroup: {fileID: 7904908255738035046, guid: 38e952db9f759034e8dcf60ceb02ae78, type: 2}
+  sfxGroup: {fileID: -1522853055461324322, guid: 38e952db9f759034e8dcf60ceb02ae78, type: 2}
   menuMusic: {fileID: 8300000, guid: 264a2bd2ac2f4074c94fd663495d2707, type: 3}
   gameplayMusic: {fileID: 8300000, guid: 4824a6ec0598df8439c0b632261ad40b, type: 3}
   roundMusic: {fileID: 8300000, guid: 7a3b303af9db8de43aae2ae5c7ed4031, type: 3}
   uiClickSound: {fileID: 8300000, guid: aafa43c9592f60646824b84be4dd3b9a, type: 3}
-  masterVolume: 1
-  musicVolume: 0.6
-  sfxVolume: 1
+  masterVolume: 0.8
+  musicVolume: 0.8
+  sfxVolume: 0.8
 --- !u!4 &1523529799
 Transform:
   m_ObjectHideFlags: 0
