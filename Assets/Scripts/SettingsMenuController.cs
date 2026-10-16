@@ -79,7 +79,7 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
 
     void Update()
     {
-        if (MainMenuController.IsOpen) return;
+        if (MainMenuController.IsOpen || AbilityUnlockCardUI.IsShowingCard) return;
 
         var kb = Keyboard.current;
         if (kb != null && kb.escapeKey.wasPressedThisFrame) Toggle();

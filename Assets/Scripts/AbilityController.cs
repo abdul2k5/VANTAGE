@@ -25,6 +25,8 @@ public class AbilityController : MonoBehaviour
 
     void Update()
     {
+        if (MainMenuController.IsOpen || AbilityUnlockCardUI.IsShowingCard) return;
+
         var kb = Keyboard.current;
         if (kb == null) return;
 
