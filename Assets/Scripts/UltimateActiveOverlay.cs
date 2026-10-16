@@ -14,6 +14,8 @@ public class UltimateActiveOverlay : MonoBehaviour
     public Image flashImage;
     public Image tintImage;
     public Text activeLabel;
+    /// <summary>Backing panel (parent of activeLabel) - toggle this, not activeLabel.gameObject, so the panel never shows empty.</summary>
+    public GameObject activeLabelPanel;
 
     public Color flashColor = new Color(0.4f, 0.85f, 1f, 0.55f);
     public Color tintColor = new Color(0.25f, 0.6f, 0.75f, 0.1f);
@@ -35,7 +37,7 @@ public class UltimateActiveOverlay : MonoBehaviour
     IEnumerator RunOverlay(float duration)
     {
         if (tintImage != null) tintImage.color = tintColor;
-        if (activeLabel != null) activeLabel.gameObject.SetActive(true);
+        if (activeLabelPanel != null) activeLabelPanel.SetActive(true);
 
         // Sharp flash so the moment of activation reads unmistakably, even with no Sentinels on screen.
         if (flashImage != null)
@@ -61,7 +63,7 @@ public class UltimateActiveOverlay : MonoBehaviour
         }
 
         if (tintImage != null) tintImage.color = new Color(tintColor.r, tintColor.g, tintColor.b, 0f);
-        if (activeLabel != null) activeLabel.gameObject.SetActive(false);
+        if (activeLabelPanel != null) activeLabelPanel.SetActive(false);
         routine = null;
     }
 

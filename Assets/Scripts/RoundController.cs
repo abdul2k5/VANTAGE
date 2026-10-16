@@ -15,6 +15,8 @@ public class RoundController : MonoBehaviour
     [Header("Timer")]
     public float detonationSeconds = 20f;
     public Text timerLabel;
+    /// <summary>Backing panel (parent of timerLabel) - toggle this, not timerLabel.gameObject, so the panel never shows empty.</summary>
+    public GameObject timerPanel;
     public GameObject chargeIcon;
     public Color timerNormalColor = new Color(0.9f, 0.3f, 0.2f, 1f);
     public Color plantedFlashColor = Color.white;
@@ -97,9 +99,9 @@ public class RoundController : MonoBehaviour
     {
         // "CHARGE PLANTED" reads as its own beat before the countdown starts, instead of the
         // timer just silently appearing already ticking.
+        if (timerPanel != null) timerPanel.SetActive(true);
         if (timerLabel != null)
         {
-            timerLabel.gameObject.SetActive(true);
             timerLabel.text = "CHARGE PLANTED";
             timerLabel.color = plantedFlashColor;
         }
@@ -123,9 +125,9 @@ public class RoundController : MonoBehaviour
                 beepTimer = beepInterval;
             }
 
+            if (timerPanel != null) timerPanel.SetActive(true);
             if (timerLabel != null)
             {
-                timerLabel.gameObject.SetActive(true);
                 timerLabel.text = "BREACH CHARGE: " + Mathf.CeilToInt(Mathf.Max(remaining, 0f)) + "s";
             }
             if (device != null) device.SetCountdownProgress(remaining, detonationSeconds);
@@ -136,7 +138,7 @@ public class RoundController : MonoBehaviour
         if (roundActive)
         {
             roundActive = false;
-            if (timerLabel != null) timerLabel.gameObject.SetActive(false);
+            if (timerPanel != null) timerPanel.SetActive(false);
             if (chargeIcon != null) chargeIcon.SetActive(false);
             if (device != null) device.Detonate();
             PlaySfx(detonationSound);
@@ -201,7 +203,7 @@ public class RoundController : MonoBehaviour
 
     void ShowWin()
     {
-        if (timerLabel != null) timerLabel.gameObject.SetActive(false);
+        if (timerPanel != null) timerPanel.SetActive(false);
         if (chargeIcon != null) chargeIcon.SetActive(false);
         if (winPanel != null) winPanel.transform.SetAsLastSibling();
         if (winPanel != null) winPanel.SetActive(true);
@@ -212,7 +214,7 @@ public class RoundController : MonoBehaviour
 
     void ShowLose()
     {
-        if (timerLabel != null) timerLabel.gameObject.SetActive(false);
+        if (timerPanel != null) timerPanel.SetActive(false);
         if (chargeIcon != null) chargeIcon.SetActive(false);
         if (losePanel != null) losePanel.transform.SetAsLastSibling();
         if (losePanel != null) losePanel.SetActive(true);
