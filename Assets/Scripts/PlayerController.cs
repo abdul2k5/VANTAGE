@@ -21,6 +21,14 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         cc = GetComponent<CharacterController>();
+        mouseSensitivity = PlayerPrefs.GetFloat("VantageMouseSensitivity", mouseSensitivity);
+    }
+
+    /// <summary>Live-applied from the settings menu's sensitivity slider.</summary>
+    public void SetSensitivity(float value)
+    {
+        mouseSensitivity = Mathf.Clamp(value, 0.1f, 10f);
+        PlayerPrefs.SetFloat("VantageMouseSensitivity", mouseSensitivity);
     }
 
     void Update()
