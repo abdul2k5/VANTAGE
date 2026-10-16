@@ -20,6 +20,8 @@ public class UltimateController : MonoBehaviour
     public float ultimateDuration = 6f;
     public float damageReductionMultiplier = 0.5f;
     public AudioClip activateSound;
+    [Tooltip("Played once when charge first reaches 100% - no clip assigned yet, same as the Sentinel hover-hum pattern.")]
+    public AudioClip readySound;
 
     float currentCharge;
     bool active;
@@ -27,6 +29,9 @@ public class UltimateController : MonoBehaviour
     public float CurrentCharge01 { get { return maxCharge <= 0f ? 0f : Mathf.Clamp01(currentCharge / maxCharge); } }
     public bool IsReady { get { return currentCharge >= maxCharge; } }
     public bool IsActive { get { return active; } }
+
+    /// <summary>How many kills (or kill-equivalents) it takes to fill the ultimate - drives the HUD ring's segment count so the two can never drift out of sync.</summary>
+    public int SegmentCount { get { return chargePerKill > 0f ? Mathf.Max(1, Mathf.RoundToInt(maxCharge / chargePerKill)) : 1; } }
 
     PlayerHealth health;
 
