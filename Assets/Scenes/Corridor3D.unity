@@ -184,7 +184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2e830de3aece8c46b7502110f4d1a80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoundController
-  detonationSeconds: 30
+  detonationSeconds: 20
   timerLabel: {fileID: 456058142}
   siteDefenders:
   - {fileID: 570498407}

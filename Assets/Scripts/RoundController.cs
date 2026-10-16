@@ -13,7 +13,7 @@ public class RoundController : MonoBehaviour
     public static RoundController Instance;
 
     [Header("Timer")]
-    public float detonationSeconds = 30f;
+    public float detonationSeconds = 20f;
     public Text timerLabel;
 
     [Header("Defenders (push toward the site in waves once planted)")]
