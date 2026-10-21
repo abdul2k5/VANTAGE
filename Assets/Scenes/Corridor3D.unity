@@ -4175,7 +4175,7 @@ MonoBehaviour:
     m_Bits: 256
   range: 22
   halfAngleDegrees: 50
-  damagePerHit: 20
+  damagePerHit: 15
   fireInterval: 0.8
   maxHealth: 50
   bodyDamageMultiplier: 0.5
@@ -4185,8 +4185,8 @@ MonoBehaviour:
   patrolSpeed: 2
   turnSpeed: 8
   waypointArriveDistance: 0.3
-  reactionDelayMin: 0.3
-  reactionDelayMax: 0.5
+  reactionDelayMin: 0.8
+  reactionDelayMax: 0.8
   forcedAlertSeconds: 2.5
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
@@ -14713,7 +14713,7 @@ MonoBehaviour:
     m_Bits: 256
   range: 22
   halfAngleDegrees: 50
-  damagePerHit: 20
+  damagePerHit: 25
   fireInterval: 0.8
   maxHealth: 50
   bodyDamageMultiplier: 0.5
@@ -14725,8 +14725,8 @@ MonoBehaviour:
   patrolSpeed: 2
   turnSpeed: 8
   waypointArriveDistance: 0.3
-  reactionDelayMin: 0.3
-  reactionDelayMax: 0.5
+  reactionDelayMin: 0.35
+  reactionDelayMax: 0.35
   forcedAlertSeconds: 2.5
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
@@ -21595,7 +21595,7 @@ MonoBehaviour:
     m_Bits: 256
   range: 22
   halfAngleDegrees: 50
-  damagePerHit: 20
+  damagePerHit: 25
   fireInterval: 0.8
   maxHealth: 50
   bodyDamageMultiplier: 0.5
@@ -21607,8 +21607,8 @@ MonoBehaviour:
   patrolSpeed: 2
   turnSpeed: 8
   waypointArriveDistance: 0.3
-  reactionDelayMin: 0.3
-  reactionDelayMax: 0.5
+  reactionDelayMin: 0.35
+  reactionDelayMax: 0.35
   forcedAlertSeconds: 2.5
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
@@ -34876,7 +34876,7 @@ MonoBehaviour:
   patrolSpeed: 2
   turnSpeed: 8
   waypointArriveDistance: 0.3
-  reactionDelayMin: 0.3
+  reactionDelayMin: 0.5
   reactionDelayMax: 0.5
   forcedAlertSeconds: 2.5
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
@@ -38611,7 +38611,7 @@ MonoBehaviour:
   patrolSpeed: 2
   turnSpeed: 8
   waypointArriveDistance: 0.3
-  reactionDelayMin: 0.3
+  reactionDelayMin: 0.5
   reactionDelayMax: 0.5
   forcedAlertSeconds: 2.5
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
@@ -45409,7 +45409,7 @@ MonoBehaviour:
   patrolSpeed: 2
   turnSpeed: 8
   waypointArriveDistance: 0.3
-  reactionDelayMin: 0.3
+  reactionDelayMin: 0.5
   reactionDelayMax: 0.5
   forcedAlertSeconds: 2.5
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
@@ -48012,8 +48012,8 @@ MonoBehaviour:
   patrolSpeed: 2
   turnSpeed: 8
   waypointArriveDistance: 0.3
-  reactionDelayMin: 0.7
-  reactionDelayMax: 0.9
+  reactionDelayMin: 0.8
+  reactionDelayMax: 0.8
   forcedAlertSeconds: 2.5
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
@@ -49520,7 +49520,7 @@ MonoBehaviour:
   patrolSpeed: 2
   turnSpeed: 8
   waypointArriveDistance: 0.3
-  reactionDelayMin: 0.3
+  reactionDelayMin: 0.5
   reactionDelayMax: 0.5
   forcedAlertSeconds: 2.5
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
