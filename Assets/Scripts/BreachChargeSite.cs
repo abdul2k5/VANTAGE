@@ -117,4 +117,15 @@ public class BreachChargeSite : MonoBehaviour
             RoundController.Instance.BeginRound(transform.position);
         }
     }
+
+
+/// <summary>Used by CheckpointManager on a checkpoint retry - cancels any in-progress plant and clears the planted flag so the site can be planted again.</summary>
+    public void ResetState()
+    {
+        planted = false;
+        plantProgress = 0f;
+        playerInside = false;
+        if (progressRoot != null) progressRoot.SetActive(false);
+        if (device != null) device.Hide();
+    }
 }

@@ -26,6 +26,15 @@ public class PlayerHealth : MonoBehaviour
         respawnPosition = point;
     }
 
+/// <summary>Used by CheckpointManager on a checkpoint retry - full HP, no lingering invulnerability/damage-reduction from whatever was active at the moment of death.</summary>
+    public void FullRestore()
+    {
+        currentHealth = maxHealth;
+        Invulnerable = false;
+        DamageMultiplier = 1f;
+    }
+
+
 public void TakeDamage(float amount)
     {
         TakeDamage(amount, transform.position);
@@ -46,21 +55,16 @@ public void TakeDamage(float amount)
         }
     }
 
-    void Die()
+void Die()
     {
-        // Dying during an active Breach Charge round is a loss, not a free respawn.
+        // Every death now ends the attempt - lecturer feedback was that dying anywhere but
+        // The Round was a free respawn with no stakes. RoundController still needs to know so
+        // it can stop its waves/timer, but it no longer owns the Game Over screen itself.
         if (RoundController.Instance != null && RoundController.Instance.IsRoundActive)
         {
             RoundController.Instance.OnPlayerDied();
-            currentHealth = maxHealth;
-            return;
         }
 
-        currentHealth = maxHealth;
-
-        var cc = GetComponent<CharacterController>();
-        if (cc != null) cc.enabled = false;
-        transform.position = respawnPosition;
-        if (cc != null) cc.enabled = true;
+        if (GameOverController.Instance != null) GameOverController.Instance.ShowGameOver();
     }
 }

@@ -34,6 +34,11 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
     public Button resumeButton;
     public Button restartRoomButton;
     public Button quitToMenuButton;
+    [Tooltip("PlayerPrefs 'CheckpointsEnabled', default ON. OFF = hardcore: any death restarts from Room 1, no checkpoint banner.")]
+    public Button checkpointsToggleButton;
+    public Image checkpointsToggleButtonImage;
+    public Text checkpointsToggleButtonLabel;
+
 
     [Header("Crosshair Tab")]
     /// <summary>2px outline per style tile - enabled + accent-colored only on the selected tile. Never a solid fill, so the icon underneath always stays visible.</summary>
@@ -69,6 +74,8 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
         if (resumeButton != null) resumeButton.onClick.AddListener(Close);
         if (restartRoomButton != null) restartRoomButton.onClick.AddListener(RestartRoom);
         if (quitToMenuButton != null) quitToMenuButton.onClick.AddListener(QuitToMenu);
+        if (checkpointsToggleButton != null) checkpointsToggleButton.onClick.AddListener(OnCheckpointsToggleClicked);
+
 
         if (tabButtons != null)
         {
@@ -261,8 +268,25 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
         if (outlineButtonImage != null) outlineButtonImage.color = on ? tabActiveColor : tabInactiveColor;
     }
 
+void OnCheckpointsToggleClicked()
+    {
+        bool on = PlayerPrefs.GetInt("CheckpointsEnabled", 1) == 1;
+        PlayerPrefs.SetInt("CheckpointsEnabled", on ? 0 : 1);
+        UpdateCheckpointsToggleLabel();
+    }
+
+    void UpdateCheckpointsToggleLabel()
+    {
+        bool on = PlayerPrefs.GetInt("CheckpointsEnabled", 1) == 1;
+        if (checkpointsToggleButtonLabel != null) checkpointsToggleButtonLabel.text = on ? "ON" : "OFF";
+        if (checkpointsToggleButtonImage != null) checkpointsToggleButtonImage.color = on ? tabActiveColor : tabInactiveColor;
+    }
+
+
     void RefreshAllControlsFromState()
     {
+        UpdateCheckpointsToggleLabel();
+
         if (player != null && sensitivitySlider != null)
         {
             sensitivitySlider.SetValueWithoutNotify(player.mouseSensitivity);

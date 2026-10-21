@@ -10,9 +10,24 @@ public class MainMenuController : MonoBehaviour
     public GameObject menuPanel;
 
     public static bool IsOpen { get; private set; }
+    /// <summary>Set by GameOverController's "RESTART FROM BEGINNING"/"RESTART" buttons before reloading the scene, so Awake() drops straight into Room 1 gameplay instead of showing the title screen again.</summary>
+    public static bool SkipMainMenuOnNextLoad;
 
-    void Awake()
+
+void Awake()
     {
+        if (SkipMainMenuOnNextLoad)
+        {
+            SkipMainMenuOnNextLoad = false;
+            IsOpen = false;
+            if (menuPanel != null) menuPanel.SetActive(false);
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            Time.timeScale = 1f;
+            AudioListener.pause = false;
+            return;
+        }
+
         IsOpen = menuPanel != null && menuPanel.activeSelf;
         // Render on top of whatever HUD elements exist, regardless of authoring order -
         // new UI keeps getting added later in the hierarchy as the project grows.

@@ -79,6 +79,8 @@ public void EnterRoom(int index, bool movePlayer = true)
         ShowOnlyCurrentPanel();
         UpdateTitle();
         UpdateMusic();
+        if (CheckpointManager.Instance != null) CheckpointManager.Instance.NotifyRoomEntered(currentRoom);
+
     }
 
     /// <summary>Every room shares the same gameplay track except the last (The Round), which swaps to round-specific music. Skipped while the main menu is still up - that keeps menu music playing through the automatic EnterRoom(0) call in Start().</summary>

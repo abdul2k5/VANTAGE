@@ -64,11 +64,20 @@ public class Sentinel : MonoBehaviour
     public bool IsBlinded { get { return blindRemaining > 0f; } }
     /// <summary>True while a Recon Dart (or the ultimate) is showing this Sentinel through walls.</summary>
     public bool IsRevealed { get { return revealRemaining > 0f; } }
+    /// <summary>Index into RoomManager.rooms this Sentinel belongs to - used by CheckpointManager to only reset Rooms 5-8 defenders on a checkpoint retry.</summary>
+    public int OwnerRoomIndex { get { return ownerRoomIndex; } }
+
+    Vector3 spawnPosition;
+    Quaternion spawnRotation;
+
 
     void Awake()
     {
         currentHealth = maxHealth;
         agent = GetComponent<NavMeshAgent>();
+        spawnPosition = transform.position;
+        spawnRotation = transform.rotation;
+
         agent.updateRotation = false; // facing is driven manually so Alert can snap to the player
         agent.speed = patrolSpeed;
         feedback = GetComponent<WeaponFeedback>();
@@ -314,6 +323,29 @@ public class Sentinel : MonoBehaviour
                 AudioManager.Instance.PlaySfxAtPoint(deathSound, transform.position);
             }
             gameObject.SetActive(false);
+        }
+    }
+
+
+/// <summary>Reverts to full health, original spawn position/facing, and Patrol/Hold idle state - used by CheckpointManager when resetting Rooms 5-8 on a checkpoint retry, regardless of whether this Sentinel was killed, pushed, blinded, or revealed since.</summary>
+    public void ResetState()
+    {
+        currentHealth = maxHealth;
+        blindRemaining = 0f;
+        revealRemaining = 0f;
+        isPushing = false;
+        fireTimer = 0f;
+        state = State.Patrol;
+        patrolIndex = 0;
+        patrolDir = 1;
+
+        gameObject.SetActive(true);
+        agent.Warp(spawnPosition);
+        transform.rotation = spawnRotation;
+
+        if (patrolPoints != null && patrolPoints.Length > 0)
+        {
+            agent.SetDestination(patrolPoints[patrolIndex].position);
         }
     }
 }

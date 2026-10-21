@@ -29,6 +29,9 @@ public class UltimateController : MonoBehaviour
     public float CurrentCharge01 { get { return maxCharge <= 0f ? 0f : Mathf.Clamp01(currentCharge / maxCharge); } }
     public bool IsReady { get { return currentCharge >= maxCharge; } }
     public bool IsActive { get { return active; } }
+    /// <summary>Raw charge amount (0..maxCharge) - used by CheckpointManager to snapshot/restore the exact value the player had on entering Room 5.</summary>
+    public float CurrentChargeAmount { get { return currentCharge; } }
+
 
     /// <summary>How many kills (or kill-equivalents) it takes to fill the ultimate - drives the HUD ring's segment count so the two can never drift out of sync.</summary>
     public int SegmentCount { get { return chargePerKill > 0f ? Mathf.Max(1, Mathf.RoundToInt(maxCharge / chargePerKill)) : 1; } }
@@ -57,6 +60,14 @@ public class UltimateController : MonoBehaviour
         if (active) return;
         currentCharge = Mathf.Clamp(currentCharge + amount, 0f, maxCharge);
     }
+
+/// <summary>Restores a previously snapshotted charge amount - used by CheckpointManager on a checkpoint retry. No-op while the ultimate is active.</summary>
+    public void SetCharge(float amount)
+    {
+        if (active) return;
+        currentCharge = Mathf.Clamp(amount, 0f, maxCharge);
+    }
+
 
     public bool TryActivate()
     {

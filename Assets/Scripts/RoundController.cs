@@ -39,11 +39,9 @@ public class RoundController : MonoBehaviour
     public float beepIntervalEnd = 0.2f;
     public AudioClip detonationSound;
     public AudioClip winSound;
-    public AudioClip loseSound;
 
     [Header("Win/Lose")]
     public GameObject winPanel;
-    public GameObject losePanel;
 
     bool roundActive;
     AudioSource audioSource;
@@ -187,12 +185,14 @@ public class RoundController : MonoBehaviour
         if (cameraShakeTransform != null) cameraShakeTransform.localPosition = shakeOrigin;
     }
 
+/// <summary>Stops the round itself; GameOverController (driven from PlayerHealth.Die) now owns showing the actual Game Over screen for every death, not just this one.</summary>
     public void OnPlayerDied()
     {
         if (!roundActive) return;
         roundActive = false;
         StopAllCoroutines();
-        ShowLose();
+        if (timerPanel != null) timerPanel.SetActive(false);
+        if (chargeIcon != null) chargeIcon.SetActive(false);
     }
 
     void PlaySfx(AudioClip clip)
@@ -212,19 +212,30 @@ public class RoundController : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
     }
 
-    void ShowLose()
-    {
-        if (timerPanel != null) timerPanel.SetActive(false);
-        if (chargeIcon != null) chargeIcon.SetActive(false);
-        if (losePanel != null) losePanel.transform.SetAsLastSibling();
-        if (losePanel != null) losePanel.SetActive(true);
-        PlaySfx(loseSound);
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
-    }
+
 
     void OnDestroy()
     {
         if (Instance == this) Instance = null;
+    }
+
+
+/// <summary>Used by CheckpointManager on a checkpoint retry - returns the round to its pre-plant idle state, matching a fresh scene load.</summary>
+    public void ResetState()
+    {
+        roundActive = false;
+        StopAllCoroutines();
+        if (timerPanel != null) timerPanel.SetActive(false);
+        if (chargeIcon != null) chargeIcon.SetActive(false);
+        if (winPanel != null) winPanel.SetActive(false);
+        if (device != null) device.ResetState();
+
+        if (detonationFlash != null)
+        {
+            var c = detonationFlash.color;
+            c.a = 0f;
+            detonationFlash.color = c;
+        }
+        if (cameraShakeTransform != null) cameraShakeTransform.localPosition = Vector3.zero;
     }
 }

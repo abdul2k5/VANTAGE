@@ -130,4 +130,13 @@ public class BreachChargeDevice : MonoBehaviour
         mat.EnableKeyword("_EMISSION");
         mat.SetColor("_EmissionColor", color * intensity);
     }
+
+
+/// <summary>Used by CheckpointManager on a checkpoint retry - same end state as a fresh scene load (hidden, unplanted, pulse phase zeroed).</summary>
+    public void ResetState()
+    {
+        Hide();
+        planted = false;
+        countdownPulsePhase = 0f;
+    }
 }
