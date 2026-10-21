@@ -32,6 +32,11 @@ public class Sentinel : MonoBehaviour
     public float reactionDelayMin = 0.3f;
     public float reactionDelayMax = 0.5f;
 
+    [Header("Damage reaction / alert sharing")]
+    [Tooltip("How long a Sentinel stays forcibly Alert - turning toward and firing at the player's last known position even with no line of sight - after taking damage or being alerted by another Sentinel in the same room.")]
+    public float forcedAlertSeconds = 2.5f;
+
+
     [Header("Audio")]
     [Tooltip("Looping 3D hover hum, so the player can hear a Sentinel before seeing it. Leave unassigned until Phase 6.")]
     public AudioClip hoverHum;
@@ -50,6 +55,9 @@ public class Sentinel : MonoBehaviour
     float currentHealth;
     float blindRemaining;
     float revealRemaining;
+    float forcedAlertRemaining;
+    Vector3 forcedAlertTarget;
+
     bool isPushing;
     Vector3 pushTarget;
     NavMeshAgent agent;
@@ -106,6 +114,16 @@ public class Sentinel : MonoBehaviour
         if (seconds > revealRemaining) revealRemaining = seconds;
     }
 
+/// <summary>Snaps into Alert and starts turning/firing toward towardPosition for forcedAlertSeconds, even with no current line of sight. Used both for reacting to being shot and (Alert sharing) for being called in by a roommate that just spotted the player.</summary>
+    public void ForceAlert(Vector3 towardPosition)
+    {
+        bool wasAlert = state == State.Alert;
+        forcedAlertRemaining = Mathf.Max(forcedAlertRemaining, forcedAlertSeconds);
+        forcedAlertTarget = towardPosition;
+        if (!wasAlert) fireTimer = Random.Range(reactionDelayMin, reactionDelayMax);
+    }
+
+
     /// <summary>Overrides Patrol/Hold and moves straight to point - used once the Breach Charge is planted. Resumes normal behavior from the new position on arrival, or immediately if it spots the player en route.</summary>
     public void PushTowards(Vector3 point)
     {
@@ -155,7 +173,7 @@ public class Sentinel : MonoBehaviour
         else if (!shouldPlay && hoverAudioSource.isPlaying) hoverAudioSource.Stop();
     }
 
-    void Update()
+void Update()
     {
         if (blindRemaining > 0f)
         {
@@ -169,22 +187,32 @@ public class Sentinel : MonoBehaviour
             if (revealRemaining <= 0f) revealRemaining = 0f;
         }
 
+        if (forcedAlertRemaining > 0f)
+        {
+            forcedAlertRemaining -= Time.deltaTime;
+            if (forcedAlertRemaining <= 0f) forcedAlertRemaining = 0f;
+        }
+
         UpdateHoverHum();
 
         if (player == null) return;
 
         bool seesPlayer = CanSeePlayer();
-        bool justSpotted = seesPlayer && state != State.Alert;
-        state = seesPlayer ? State.Alert : State.Patrol;
+        bool forcedAlert = forcedAlertRemaining > 0f;
+        bool shouldBeAlert = seesPlayer || forcedAlert;
+        bool justSpotted = shouldBeAlert && state != State.Alert;
+        state = shouldBeAlert ? State.Alert : State.Patrol;
 
         if (state == State.Alert)
         {
             agent.isStopped = true;
-            FaceTowards(player.position);
+            // Line of sight wins when available (the real player position); a forced alert with
+            // no current sight falls back to wherever the trigger (damage/roommate call) pointed.
+            FaceTowards(seesPlayer ? player.position : forcedAlertTarget);
 
             if (justSpotted)
             {
-                // A fair reaction window - a good peek or a well-timed flash beats this before the first shot lands.
+                // A fair reaction window - a good peek or a well-timed flash still beats this before the first shot lands.
                 fireTimer = Random.Range(reactionDelayMin, reactionDelayMax);
             }
             else
@@ -313,7 +341,7 @@ public class Sentinel : MonoBehaviour
         if (health != null) health.TakeDamage(damagePerHit, transform.position);
     }
 
-    public void TakeDamage(float amount)
+public void TakeDamage(float amount)
     {
         currentHealth -= amount;
         if (currentHealth <= 0f)
@@ -323,7 +351,12 @@ public class Sentinel : MonoBehaviour
                 AudioManager.Instance.PlaySfxAtPoint(deathSound, transform.position);
             }
             gameObject.SetActive(false);
+            return;
         }
+
+        // Getting shot from outside the detection cone/range (through smoke, from behind, a
+        // peek-and-reposition) is no longer a free action - react even without line of sight.
+        if (player != null) ForceAlert(player.position);
     }
 
 
@@ -335,6 +368,8 @@ public class Sentinel : MonoBehaviour
         revealRemaining = 0f;
         isPushing = false;
         fireTimer = 0f;
+        forcedAlertRemaining = 0f;
+
         state = State.Patrol;
         patrolIndex = 0;
         patrolDir = 1;
