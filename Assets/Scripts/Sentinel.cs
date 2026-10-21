@@ -123,6 +123,21 @@ public class Sentinel : MonoBehaviour
         if (!wasAlert) fireTimer = Random.Range(reactionDelayMin, reactionDelayMax);
     }
 
+/// <summary>Calls every other active Sentinel sharing this one's room in to Alert, turning toward the player's last known position even if they have no sight of their own - a spot by one Sentinel means the whole room reacts, not just the one that saw it.</summary>
+    void AlertRoommates(Vector3 lastKnownPosition)
+    {
+        if (ownerRoomIndex < 0) return;
+
+        var all = Object.FindObjectsByType<Sentinel>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        for (int i = 0; i < all.Length; i++)
+        {
+            var s = all[i];
+            if (s == this || s.ownerRoomIndex != ownerRoomIndex) continue;
+            s.ForceAlert(lastKnownPosition);
+        }
+    }
+
+
 
     /// <summary>Overrides Patrol/Hold and moves straight to point - used once the Breach Charge is planted. Resumes normal behavior from the new position on arrival, or immediately if it spots the player en route.</summary>
     public void PushTowards(Vector3 point)
@@ -214,6 +229,7 @@ void Update()
             {
                 // A fair reaction window - a good peek or a well-timed flash still beats this before the first shot lands.
                 fireTimer = Random.Range(reactionDelayMin, reactionDelayMax);
+                if (seesPlayer) AlertRoommates(player.position);
             }
             else
             {
