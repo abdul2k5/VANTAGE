@@ -36,6 +36,15 @@ public class Sentinel : MonoBehaviour
     [Tooltip("How long a Sentinel stays forcibly Alert - turning toward and firing at the player's last known position even with no line of sight - after taking damage or being alerted by another Sentinel in the same room.")]
     public float forcedAlertSeconds = 2.5f;
 
+    [Header("Aim")]
+    [Tooltip("Within this distance, shots are near-perfect (miss chance stays at missChanceNear). Beyond it, miss chance ramps up to missChanceAtMaxRange as distance approaches 'range'.")]
+    public float perfectAimDistance = 8f;
+    [Tooltip("Miss chance (0-1) at/under perfectAimDistance.")]
+    public float missChanceNear = 0.03f;
+    [Tooltip("Miss chance (0-1) once the player is at this Sentinel's max detection range - interpolated from missChanceNear between perfectAimDistance and range.")]
+    public float missChanceAtMaxRange = 0.4f;
+
+
 
     [Header("Audio")]
     [Tooltip("Looping 3D hover hum, so the player can hear a Sentinel before seeing it. Leave unassigned until Phase 6.")]
@@ -347,14 +356,27 @@ void Update()
         return true;
     }
 
-    void Fire()
+void Fire()
     {
         Vector3 origin = muzzle != null ? muzzle.position : transform.position + Vector3.up * 1f;
         Vector3 end = player.position + Vector3.up * 0.9f;
         if (feedback != null) feedback.PlayShot(origin, end);
 
+        if (Random.value < MissChanceAtCurrentDistance()) return;
+
         var health = player.GetComponent<PlayerHealth>();
         if (health != null) health.TakeDamage(damagePerHit, transform.position);
+    }
+
+    /// <summary>Near-perfect inside perfectAimDistance, ramping up to missChanceAtMaxRange by the time the player is at the edge of detection range - a long-range shot should feel beatable, a close one shouldn't.</summary>
+    float MissChanceAtCurrentDistance()
+    {
+        float distance = Vector3.Distance(transform.position, player.position);
+        if (distance <= perfectAimDistance) return missChanceNear;
+        if (range <= perfectAimDistance) return missChanceAtMaxRange;
+
+        float t = Mathf.Clamp01((distance - perfectAimDistance) / (range - perfectAimDistance));
+        return Mathf.Lerp(missChanceNear, missChanceAtMaxRange, t);
     }
 
 public void TakeDamage(float amount)
