@@ -4173,8 +4173,8 @@ MonoBehaviour:
   blockingMask:
     serializedVersion: 2
     m_Bits: 256
-  range: 7
-  halfAngleDegrees: 30
+  range: 22
+  halfAngleDegrees: 50
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
@@ -4953,10 +4953,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 229211395}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 480, y: -10}
-  m_SizeDelta: {x: 920, y: 25}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &147166729
 MonoBehaviour:
@@ -7320,7 +7320,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 480, y: -0}
-  m_SizeDelta: {x: 960, y: 45}
+  m_SizeDelta: {x: 960, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &229211396
 MonoBehaviour:
@@ -14710,8 +14710,8 @@ MonoBehaviour:
   blockingMask:
     serializedVersion: 2
     m_Bits: 256
-  range: 7
-  halfAngleDegrees: 30
+  range: 22
+  halfAngleDegrees: 50
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
@@ -16133,10 +16133,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 849293798}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 93, y: -37}
-  m_SizeDelta: {x: 73, y: 27}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &640557910
 MonoBehaviour:
@@ -17823,10 +17823,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1715469544}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 480, y: -8}
-  m_SizeDelta: {x: 928, y: 20}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &722714020
 MonoBehaviour:
@@ -19741,7 +19741,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -30, y: 30}
-  m_SizeDelta: {x: 113, y: 47}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &849293799
 MonoBehaviour:
@@ -21591,8 +21591,8 @@ MonoBehaviour:
   blockingMask:
     serializedVersion: 2
     m_Bits: 256
-  range: 7
-  halfAngleDegrees: 30
+  range: 22
+  halfAngleDegrees: 50
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
@@ -24365,7 +24365,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -20}
-  m_SizeDelta: {x: 960, y: 91}
+  m_SizeDelta: {x: 960, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1046320914
 MonoBehaviour:
@@ -34859,8 +34859,8 @@ MonoBehaviour:
   blockingMask:
     serializedVersion: 2
     m_Bits: 256
-  range: 7
-  halfAngleDegrees: 30
+  range: 22
+  halfAngleDegrees: 50
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
@@ -37790,7 +37790,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 480, y: -55}
-  m_SizeDelta: {x: 960, y: 36}
+  m_SizeDelta: {x: 960, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1715469545
 MonoBehaviour:
@@ -38593,8 +38593,8 @@ MonoBehaviour:
   blockingMask:
     serializedVersion: 2
     m_Bits: 256
-  range: 7
-  halfAngleDegrees: 30
+  range: 22
+  halfAngleDegrees: 50
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
@@ -45390,8 +45390,8 @@ MonoBehaviour:
   blockingMask:
     serializedVersion: 2
     m_Bits: 256
-  range: 7
-  halfAngleDegrees: 30
+  range: 22
+  halfAngleDegrees: 50
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
@@ -47994,8 +47994,8 @@ MonoBehaviour:
   blockingMask:
     serializedVersion: 2
     m_Bits: 256
-  range: 7
-  halfAngleDegrees: 30
+  range: 22
+  halfAngleDegrees: 50
   damagePerHit: 10
   fireInterval: 0.8
   maxHealth: 50
@@ -49501,8 +49501,8 @@ MonoBehaviour:
   blockingMask:
     serializedVersion: 2
     m_Bits: 256
-  range: 7
-  halfAngleDegrees: 30
+  range: 22
+  halfAngleDegrees: 50
   damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
