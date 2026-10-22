@@ -4279,6 +4279,9 @@ MonoBehaviour:
   reactionDelayMin: 0.8
   reactionDelayMax: 0.8
   forcedAlertSeconds: 2.5
+  perfectAimDistance: 8
+  missChanceNear: 0.03
+  missChanceAtMaxRange: 0.4
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -4912,6 +4915,9 @@ MonoBehaviour:
   reactionDelayMin: 0.5
   reactionDelayMax: 0.5
   forcedAlertSeconds: 2.5
+  perfectAimDistance: 8
+  missChanceNear: 0.03
+  missChanceAtMaxRange: 0.4
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -5199,10 +5205,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 229211395}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 480, y: -10}
-  m_SizeDelta: {x: 920, y: 25}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &147166729
 MonoBehaviour:
@@ -7566,7 +7572,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 480, y: -0}
-  m_SizeDelta: {x: 960, y: 45}
+  m_SizeDelta: {x: 960, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &229211396
 MonoBehaviour:
@@ -15569,6 +15575,9 @@ MonoBehaviour:
   reactionDelayMin: 0.35
   reactionDelayMax: 0.35
   forcedAlertSeconds: 2.5
+  perfectAimDistance: 8
+  missChanceNear: 0.03
+  missChanceAtMaxRange: 0.4
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -17102,10 +17111,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 849293798}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 93, y: -37}
-  m_SizeDelta: {x: 73, y: 27}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &640557910
 MonoBehaviour:
@@ -18792,10 +18801,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1715469544}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 480, y: -8}
-  m_SizeDelta: {x: 928, y: 20}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &722714020
 MonoBehaviour:
@@ -20832,7 +20841,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -30, y: 30}
-  m_SizeDelta: {x: 113, y: 47}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &849293799
 MonoBehaviour:
@@ -22788,6 +22797,9 @@ MonoBehaviour:
   reactionDelayMin: 0.35
   reactionDelayMax: 0.35
   forcedAlertSeconds: 2.5
+  perfectAimDistance: 8
+  missChanceNear: 0.03
+  missChanceAtMaxRange: 0.4
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -25639,7 +25651,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -20}
-  m_SizeDelta: {x: 960, y: 91}
+  m_SizeDelta: {x: 960, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1046320914
 MonoBehaviour:
@@ -28212,6 +28224,9 @@ MonoBehaviour:
   reactionDelayMin: 0.5
   reactionDelayMax: 0.5
   forcedAlertSeconds: 2.5
+  perfectAimDistance: 8
+  missChanceNear: 0.03
+  missChanceAtMaxRange: 0.4
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -28491,6 +28506,9 @@ MonoBehaviour:
   reactionDelayMin: 0.5
   reactionDelayMax: 0.5
   forcedAlertSeconds: 2.5
+  perfectAimDistance: 8
+  missChanceNear: 0.03
+  missChanceAtMaxRange: 0.4
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -36943,6 +36961,9 @@ MonoBehaviour:
   reactionDelayMin: 0.5
   reactionDelayMax: 0.5
   forcedAlertSeconds: 2.5
+  perfectAimDistance: 8
+  missChanceNear: 0.03
+  missChanceAtMaxRange: 0.4
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -39652,7 +39673,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: WASD to move, Mouse to look, LMB to shoot. That target can't fight back - notice your crosshair widen when you move, and tighten when you stop. Die and the drill restarts. Reach Room 5 to unlock a checkpoint.
+  m_Text: 'WASD to move, Mouse to look, LMB to shoot. That target can''t fight back - notice your crosshair widen when you move, and tighten when you stop. Die and the drill restarts. Reach Room 5 to unlock a checkpoint. Watch your grouping: stand still and your shots land together.'
 --- !u!222 &1685285684
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -40109,7 +40130,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 480, y: -55}
-  m_SizeDelta: {x: 960, y: 36}
+  m_SizeDelta: {x: 960, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1715469545
 MonoBehaviour:
@@ -41052,6 +41073,9 @@ MonoBehaviour:
   reactionDelayMin: 0.5
   reactionDelayMax: 0.5
   forcedAlertSeconds: 2.5
+  perfectAimDistance: 8
+  missChanceNear: 0.03
+  missChanceAtMaxRange: 0.4
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -47022,6 +47046,60 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2018348657
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2018348659}
+  - component: {fileID: 2018348658}
+  m_Layer: 0
+  m_Name: BulletImpactPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2018348658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2018348657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 576796bebdf473a4e826b891edd399ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BulletImpactPool
+  maxDecals: 60
+  decalFadeAfterSeconds: 15
+  decalFadeDuration: 1
+  decalMinSize: 0.08
+  decalMaxSize: 0.16
+  decalSurfaceOffset: 0.015
+  impactSound: {fileID: 8300000, guid: 9f656f97633f2d84fb3f73bb0ddd08a6, type: 3}
+  impactVolume: 0.5
+  sparkColor: {r: 1, g: 0.8, b: 0.3, a: 1}
+  dustColor: {r: 0.4, g: 0.37, b: 0.33, a: 1}
+--- !u!4 &2018348659
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2018348657}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2020585289
 GameObject:
   m_ObjectHideFlags: 0
@@ -48489,6 +48567,9 @@ MonoBehaviour:
   reactionDelayMin: 0.5
   reactionDelayMax: 0.5
   forcedAlertSeconds: 2.5
+  perfectAimDistance: 8
+  missChanceNear: 0.03
+  missChanceAtMaxRange: 0.4
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -51092,6 +51173,9 @@ MonoBehaviour:
   reactionDelayMin: 0.8
   reactionDelayMax: 0.8
   forcedAlertSeconds: 2.5
+  perfectAimDistance: 8
+  missChanceNear: 0.03
+  missChanceAtMaxRange: 0.4
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -52600,6 +52684,9 @@ MonoBehaviour:
   reactionDelayMin: 0.5
   reactionDelayMax: 0.5
   forcedAlertSeconds: 2.5
+  perfectAimDistance: 8
+  missChanceNear: 0.03
+  missChanceAtMaxRange: 0.4
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -53035,3 +53122,4 @@ SceneRoots:
   - {fileID: 828508719}
   - {fileID: 1157511794}
   - {fileID: 1202957840}
+  - {fileID: 2018348659}

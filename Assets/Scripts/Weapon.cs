@@ -156,6 +156,13 @@ public class Weapon : MonoBehaviour
 
                 if (HitFeedbackUI.Instance != null) HitFeedbackUI.Instance.ShowHitMarker(headshot);
                 PlaySfx(headshot ? headshotSound : hitSound);
+
+                if (BulletImpactPool.Instance != null) BulletImpactPool.Instance.SpawnSentinelSpark(hit.point, hit.normal);
+            }
+            else if (BulletImpactPool.Instance != null)
+            {
+                bool isRangeTarget = hit.collider.transform.root.name.Contains("RangeTarget") || hit.collider.name.Contains("RangeTarget");
+                BulletImpactPool.Instance.SpawnDecal(hit.point, hit.normal, hit.collider.transform, isRangeTarget);
             }
         }
 

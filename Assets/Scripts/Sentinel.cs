@@ -362,10 +362,27 @@ void Fire()
         Vector3 end = player.position + Vector3.up * 0.9f;
         if (feedback != null) feedback.PlayShot(origin, end);
 
-        if (Random.value < MissChanceAtCurrentDistance()) return;
+        if (Random.value < MissChanceAtCurrentDistance())
+        {
+            SpawnMissImpact(origin, end);
+            return;
+        }
 
         var health = player.GetComponent<PlayerHealth>();
         if (health != null) health.TakeDamage(damagePerHit, transform.position);
+    }
+
+    /// <summary>A missed shot still has to land somewhere - raycasts past the player along the same line the tracer took and leaves a bullet hole on whatever wall/cover is behind them.</summary>
+    void SpawnMissImpact(Vector3 origin, Vector3 end)
+    {
+        if (BulletImpactPool.Instance == null) return;
+
+        Vector3 dir = (end - origin).normalized;
+        RaycastHit hit;
+        if (Physics.Raycast(origin, dir, out hit, range + 15f, blockingMask))
+        {
+            BulletImpactPool.Instance.SpawnDecal(hit.point, hit.normal, hit.collider.transform, false);
+        }
     }
 
     /// <summary>Near-perfect inside perfectAimDistance, ramping up to missChanceAtMaxRange by the time the player is at the edge of detection range - a long-range shot should feel beatable, a close one shouldn't.</summary>
