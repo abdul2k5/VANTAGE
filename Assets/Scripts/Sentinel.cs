@@ -74,6 +74,8 @@ public class Sentinel : MonoBehaviour
     AudioSource hoverAudioSource;
     /// <summary>Index into RoomManager.rooms this Sentinel belongs to - nearest entry point by distance, computed once in Start(). Gates the hover hum to the player's current room.</summary>
     int ownerRoomIndex = -1;
+    PlayerController playerController;
+
 
     [Header("Push (set by RoundController after the Breach Charge plants)")]
     public float pushArriveDistance = 1.5f;
@@ -163,6 +165,7 @@ public class Sentinel : MonoBehaviour
             var p = GameObject.FindGameObjectWithTag("Player");
             if (p != null) player = p.transform;
         }
+        if (player != null) playerController = player.GetComponent<PlayerController>();
 
         if (patrolPoints != null && patrolPoints.Length > 0)
         {
@@ -334,12 +337,13 @@ void Update()
         transform.rotation = Quaternion.Slerp(transform.rotation, target, turnSpeed * Time.deltaTime);
     }
 
-    public bool CanSeePlayer()
+public bool CanSeePlayer()
     {
         if (blindRemaining > 0f) return false;
 
+        float eyeOffset = playerController != null ? playerController.EyeHeightOffset : 1f;
         Vector3 eye = transform.position + Vector3.up * 1f;
-        Vector3 playerPoint = player.position + Vector3.up * 1f;
+        Vector3 playerPoint = player.position + Vector3.up * eyeOffset;
         Vector3 toPlayer = playerPoint - eye;
         float distance = toPlayer.magnitude;
         if (distance > range) return false;

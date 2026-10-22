@@ -612,7 +612,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: LMB to shoot, R to reload. It's holding this angle, watching - it won't come to you.
+  m_Text: LMB to shoot, R to reload. It's holding this angle, watching - it won't come to you. Hold [Ctrl] to crouch behind cover - it breaks the angle's line of sight.
 --- !u!222 &25733856
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -34405,6 +34405,118 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1417791444}
   m_CullTransparentMesh: 1
+--- !u!1 &1418561699
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1418561703}
+  - component: {fileID: 1418561702}
+  - component: {fileID: 1418561701}
+  - component: {fileID: 1418561700}
+  m_Layer: 8
+  m_Name: Room2_CrouchCover
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 8
+  m_IsActive: 1
+--- !u!23 &1418561700
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1418561699}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: dc3f9a778c444014a99623e86b68eba2, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &1418561701
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1418561699}
+  m_Material: {fileID: 894414469}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!33 &1418561702
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1418561699}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1418561703
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1418561699}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 38, y: 0.6, z: -5}
+  m_LocalScale: {x: 1.6, y: 1.2, z: 1.6}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1418989516
 GameObject:
   m_ObjectHideFlags: 0
@@ -37637,6 +37749,7 @@ MonoBehaviour:
   standingSpreadDegrees: 0
   movingSpreadDegrees: 4.5
   fullSpeedForMaxSpread: 5
+  crouchSpreadMultiplier: 0.5
   headshotMultiplier: 2.5
   headshotSound: {fileID: 8300000, guid: a35544ca8ee90fe49947fffb600ad2fe, type: 3}
   gunshotSound: {fileID: 8300000, guid: 315f7b2dedc81934180f160f6ad3c989, type: 3}
@@ -37674,6 +37787,19 @@ MonoBehaviour:
   acceleration: 40
   mouseSensitivity: 2
   gravity: -20
+  cameraPivot: {fileID: 811350176}
+  crouchHeight: 1
+  standEyeHeight: 1.6
+  crouchEyeHeight: 0.9
+  crouchSpeedMultiplier: 0.5
+  crouchTransitionSeconds: 0.15
+  standEyeOffsetForSight: 1
+  crouchEyeOffsetForSight: 0.4
+  jumpHeight: 0.8
+  landingPenaltySeconds: 0.2
+  landingSpeedMultiplier: 0.5
+  jumpSound: {fileID: 8300000, guid: d2d62939196db9f44abbd71d1ab941f1, type: 3}
+  landSound: {fileID: 8300000, guid: 433caeddfb1d27b4582cf3537d89f2ce, type: 3}
 --- !u!143 &1584037074
 CharacterController:
   m_ObjectHideFlags: 0
@@ -39673,7 +39799,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'WASD to move, Mouse to look, LMB to shoot. That target can''t fight back - notice your crosshair widen when you move, and tighten when you stop. Die and the drill restarts. Reach Room 5 to unlock a checkpoint. Watch your grouping: stand still and your shots land together.'
+  m_Text: 'WASD to move, Mouse to look, LMB to shoot. That target can''t fight back - notice your crosshair widen when you move, and tighten when you stop. Die and the drill restarts. Reach Room 5 to unlock a checkpoint. Watch your grouping: stand still and your shots land together. [Space] to jump (low hop, movement only), [Ctrl] to crouch.'
 --- !u!222 &1685285684
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -53123,3 +53249,4 @@ SceneRoots:
   - {fileID: 1157511794}
   - {fileID: 1202957840}
   - {fileID: 2018348659}
+  - {fileID: 1418561703}

@@ -16,6 +16,9 @@ public class Weapon : MonoBehaviour
     public float standingSpreadDegrees = 0f;
     public float movingSpreadDegrees = 4.5f;
     public float fullSpeedForMaxSpread = 5f;
+    [Tooltip("Multiplier applied to the moving/standing spread lerp while crouched (below 1 = more accurate). Crouched + stationary is the single most accurate state in the game.")]
+    public float crouchSpreadMultiplier = 0.5f;
+
 
     [Header("Headshots")]
     public float headshotMultiplier = 2.5f;
@@ -39,6 +42,8 @@ public class Weapon : MonoBehaviour
     AudioSource audioSource;
     CharacterController cc;
     Camera cam;
+    PlayerController playerController;
+
 
     public int CurrentAmmo { get { return currentAmmo; } }
     public int MaxAmmo { get { return maxAmmo; } }
@@ -57,6 +62,8 @@ public class Weapon : MonoBehaviour
         audioSource.playOnAwake = false;
         cc = GetComponent<CharacterController>();
         cam = Camera.main;
+        playerController = GetComponent<PlayerController>();
+
     }
 
     void Start()
@@ -108,14 +115,28 @@ public class Weapon : MonoBehaviour
         }
     }
 
-    void UpdateSpread()
+void UpdateSpread()
     {
-        float speed = cc != null ? new Vector2(cc.velocity.x, cc.velocity.z).magnitude : 0f;
-        float speedFrac = fullSpeedForMaxSpread > 0f ? Mathf.Clamp01(speed / fullSpeedForMaxSpread) : 0f;
-        currentSpreadDegrees = Mathf.Lerp(standingSpreadDegrees, movingSpreadDegrees, speedFrac);
-        CurrentSpreadFraction01 = speedFrac;
+        bool airborne = cc != null && !cc.isGrounded;
+        bool crouching = playerController != null && playerController.IsCrouching;
 
-        if (CrosshairController.Instance != null) CrosshairController.Instance.SetSpreadFraction(speedFrac);
+        float frac01;
+        if (airborne)
+        {
+            // Jump-peeking should never be the accurate option - maximum spread, full stop.
+            frac01 = 1f;
+        }
+        else
+        {
+            float speed = cc != null ? new Vector2(cc.velocity.x, cc.velocity.z).magnitude : 0f;
+            frac01 = fullSpeedForMaxSpread > 0f ? Mathf.Clamp01(speed / fullSpeedForMaxSpread) : 0f;
+            if (crouching) frac01 *= crouchSpreadMultiplier;
+        }
+
+        currentSpreadDegrees = Mathf.Lerp(standingSpreadDegrees, movingSpreadDegrees, frac01);
+        CurrentSpreadFraction01 = frac01;
+
+        if (CrosshairController.Instance != null) CrosshairController.Instance.SetSpreadFraction(frac01);
     }
 
     void PlaySfx(AudioClip clip)

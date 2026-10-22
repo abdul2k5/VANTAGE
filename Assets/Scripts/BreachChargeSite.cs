@@ -29,6 +29,9 @@ public class BreachChargeSite : MonoBehaviour
     float lastKnownHealth;
 
     public bool IsPlanted { get { return planted; } }
+    /// <summary>True while actively planting (held, stationary, grounded, inside the zone) - read by PlayerController to block the jump input outright, not just cancel after the fact.</summary>
+    public static bool AnyPlantInProgress;
+
 
     void Start()
     {
@@ -77,13 +80,15 @@ public class BreachChargeSite : MonoBehaviour
             ? new Vector2(playerCC.velocity.x, playerCC.velocity.z).magnitude
             : 0f;
         bool moving = horizontalSpeed > moveCancelThreshold;
+        bool airborne = playerCC != null && !playerCC.isGrounded;
 
-        if (!holding || moving || damagedThisFrame || MainMenuController.IsOpen || Cursor.lockState != CursorLockMode.Locked)
+        if (!holding || moving || airborne || damagedThisFrame || MainMenuController.IsOpen || Cursor.lockState != CursorLockMode.Locked)
         {
             CancelPlant();
             return;
         }
 
+        AnyPlantInProgress = true;
         if (progressRoot != null) progressRoot.SetActive(true);
         plantProgress += Time.deltaTime;
 
@@ -100,6 +105,7 @@ public class BreachChargeSite : MonoBehaviour
 
     void CancelPlant()
     {
+        AnyPlantInProgress = false;
         plantProgress = 0f;
         if (progressRoot != null) progressRoot.SetActive(false);
         if (device != null) device.Hide();
@@ -107,6 +113,7 @@ public class BreachChargeSite : MonoBehaviour
 
     void Plant()
     {
+        AnyPlantInProgress = false;
         planted = true;
         if (progressRoot != null) progressRoot.SetActive(false);
         if (device != null) device.ConfirmPlanted();
@@ -122,6 +129,7 @@ public class BreachChargeSite : MonoBehaviour
 /// <summary>Used by CheckpointManager on a checkpoint retry - cancels any in-progress plant and clears the planted flag so the site can be planted again.</summary>
     public void ResetState()
     {
+        AnyPlantInProgress = false;
         planted = false;
         plantProgress = 0f;
         playerInside = false;
