@@ -2,6 +2,19 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 15.1: door sign fixes (reported straight out of a playtest)
+
+**Why:** Three real bugs found by playing the Phase 15 doors, not by reading the code:
+1. Each sign read "ROOM 3: HOLDING ANGLE" while the player was standing in Room 2, reading as wrong instead of as "the next room is Room 3" - the top HUD's "ROOM 2/8" and the sign's "ROOM 3" sitting a few lines apart on screen just looked like a contradiction, regardless of which one was "technically" correct.
+2. Signs projected into the top HUD bars at normal approach distance. Moving every door 2m closer to the player in Phase 15 (for the airlock) meant the same sign height/size that used to be fine now loomed much larger on screen well before the player reached the door - verified with the same `WorldToScreenPoint`-against-the-HUD-bars technique Phase 11 used for the original wall-callout version of this exact bug class.
+3. Doors looked like a frame dropped in the middle of an empty floor, disconnected from any wall - because Phase 15 moved the functional door 2m off the real wall to make room for the airlock, but never filled the gap between the new frame and the room's actual side walls.
+
+**What changed:**
+- Sign text dropped the "ROOM N:" numbering entirely (source of the confusion) in favor of "NEXT: <name>" - unambiguous regardless of what the top HUD is currently showing.
+- Shrunk each sign ~2.5x (1.28m x 0.26m, down from 3.2m x 0.64m) and lowered it, confirmed via `WorldToScreenPoint` to clear the HUD bars from any approach distance beyond ~1.7m - at that point the player's attention is on the doorway in front of them, not the sign above it, same as real signage you're standing directly under.
+- Caught and fixed two follow-on bugs from the shrink itself while verifying: the new sign position sat inside the door lintel's own geometry and was being occluded by it (pulled the sign 0.25m forward, clear of the frame); and shrinking had overwritten the sign's original negative-X localScale, which was there to counter a text-mirroring issue - text was rendering backwards until that was restored.
+- Added wall-filler panels (reusing the room's own wall material) on both sides of every door frame, closing the gap back to the real side walls so the door reads as built into a wall instead of floating on the floor.
+
 ## Phase 15: real doors on every room exit, with earned unlocks
 
 **Why:** Every room exit used to be an invisible trigger on a flat gray cube, with a thin beacon line as the only "this is the way out" cue - functional, but it gave the player no goal beyond "find the gray wall." It also meant the Range and Weak Point rooms could be skipped without actually doing the lesson (hit the targets, land a headshot) they exist to teach.
