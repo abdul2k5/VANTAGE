@@ -2,6 +2,14 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 12: checkpoint retry — input freeze + unfaded teleport fix
+
+**Why:** Dying and retrying from the Room 5 checkpoint left the player completely unable to move, look, or shoot. Root cause: `GameOverController.ShowGameOver()` unlocks the cursor for the Game Over screen's buttons (`Cursor.lockState = None`), but `RetryFromCheckpoint()` never locked it back — every input-reading script (`PlayerController`, `FollowCamera`, `Weapon`, `UltimateController`) bails out of its own `Update()` whenever the cursor isn't locked, by design, so the player was frozen on purpose by code that just forgot to undo the unlock. Every other "resume gameplay" path (Settings menu, Main menu) already re-locks the cursor on close; checkpoint retry was the one path that didn't.
+
+**What changed:**
+- `GameOverController.RetryFromCheckpoint()` now re-locks/hides the cursor before handing off to `CheckpointManager`.
+- `CheckpointManager.RetryFromCheckpoint()` now fades to black before teleporting the player back to Room 5 and fades back in after, instead of snapping the camera instantly mid-frame — matching the fade every normal room transition (`RoomManager.GoToNextRoom`) already uses, so a checkpoint retry doesn't visibly jump cameras for a frame.
+
 ## Phase 11: bullet impacts, crouch/jump, HUD fixes (3 items)
 
 **What changed:**

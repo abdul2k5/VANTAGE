@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Lecturer feedback: dying anywhere used to be either a free respawn (rooms 1-7) or a full
@@ -69,17 +70,53 @@ public class CheckpointManager : MonoBehaviour
     {
         if (!HasReachedCheckpoint || RoomManager.Instance == null) return;
 
+        StopAllCoroutines();
+        StartCoroutine(RetryFromCheckpointRoutine());
+    }
+
+    /// <summary>
+    /// Every other room change goes through RoomManager's fade-to-black (TransitionTo) so the
+    /// camera teleport is never visible mid-frame. RetryFromCheckpoint used to call EnterRoom
+    /// directly with no fade, which could show a jarring instant snap (wrong eye height/angle for
+    /// a frame) while the camera and viewmodel were mid-teleport. Matching the same fade here
+    /// fixes that and keeps checkpoint retry visually consistent with normal progression.
+    /// </summary>
+    IEnumerator RetryFromCheckpointRoutine()
+    {
+        var rm = RoomManager.Instance;
+
+        yield return Fade(rm.fadeOverlay, 0f, 1f, rm.fadeSeconds);
+
         ResetRooms5To8();
+        rm.EnterRoom(CheckpointRoomIndex);
 
-        RoomManager.Instance.EnterRoom(CheckpointRoomIndex);
-
-        var player = RoomManager.Instance.player;
+        var player = rm.player;
         var health = player != null ? player.GetComponent<PlayerHealth>() : null;
         var weapon = player != null ? player.GetComponent<Weapon>() : null;
 
         if (health != null) health.FullRestore();
         if (weapon != null) weapon.Reload();
         if (UltimateController.Instance != null) UltimateController.Instance.SetCharge(savedUltCharge);
+
+        yield return new WaitForSeconds(rm.holdSeconds);
+        yield return Fade(rm.fadeOverlay, 1f, 0f, rm.fadeSeconds);
+    }
+
+    IEnumerator Fade(Image overlay, float from, float to, float seconds)
+    {
+        if (overlay == null) yield break;
+
+        float t = 0f;
+        Color c = overlay.color;
+        while (t < seconds)
+        {
+            t += Time.deltaTime;
+            c.a = Mathf.Lerp(from, to, Mathf.Clamp01(t / seconds));
+            overlay.color = c;
+            yield return null;
+        }
+        c.a = to;
+        overlay.color = c;
     }
 
     void ResetRooms5To8()
