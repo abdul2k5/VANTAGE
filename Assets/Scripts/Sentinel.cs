@@ -232,7 +232,12 @@ void Update()
         bool justSpotted = shouldBeAlert && state != State.Alert;
         state = shouldBeAlert ? State.Alert : State.Patrol;
 
-        if (state == State.Alert)
+        // A disarmed Patrol dummy (canShoot false) has nothing to lock on for - it should just
+        // keep walking its route as a moving target, not freeze to stare at the player like an
+        // armed Sentinel or a deliberately-stationary Hold dummy would.
+        bool locksOnWhenAlert = canShoot || behaviorMode == BehaviorMode.Hold;
+
+        if (state == State.Alert && locksOnWhenAlert)
         {
             agent.isStopped = true;
             // Line of sight wins when available (the real player position); a forced alert with

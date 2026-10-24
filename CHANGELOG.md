@@ -10,6 +10,7 @@ Running log of design decisions and the reasoning behind them, kept for the Game
 - **`Sentinel.canShoot`** (new field, default true): when false, the Sentinel still detects the player, turns to face them, and reacts to being shot (`ForceAlert`), it just never calls `Fire()`. A general-purpose toggle, not a Room 2 special case — reusable anywhere a "shoot-at-but-not-shot-by" target is useful.
 - **Fixed `Sentinel_WeakPoint_01`'s facing** (180° — now watches the entry door, like every other Hold Sentinel's `holdPoint` already does) and set `canShoot = false`.
 - **3 more drones added**, all `canShoot = false`: a second stationary one mirrored on the other side of the room (also watching the entry), and two Patrol drones sliding back and forth across the room at different depths and desynced start points, so the player has to track moving targets, not just stationary ones.
+- **Fixed the Patrol drones showing up frozen, not moving:** `Sentinel.Update()` previously stopped *all* movement and locked into facing the player the moment it was in line of sight, regardless of `canShoot` - in this small room with a 22u/±50° detection cone, that's almost always. Disarmed (`canShoot = false`) Patrol-mode drones now skip that lock-on entirely and just keep walking their route; disarmed Hold-mode drones (the 2 stationary ones) still turn to face the player as intended - only the "freeze and stare" behavior needed splitting off from "react to being seen" at all.
 
 ## Phase 12: checkpoint retry — input freeze + unfaded teleport fix
 
