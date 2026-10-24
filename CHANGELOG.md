@@ -2,6 +2,12 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 15.2: fade fires at the door, not at the far wall
+
+**Why:** Phase 15's airlock trigger stayed at the old position near the far wall, 2m past the new door - so walking through the open panels did nothing until the player also crossed the empty stretch behind them and reached the wall. Playtest feedback: the fade should happen right as you walk through the door, not after an extra few steps of nothing.
+
+**What changed:** Moved all 7 `AirlockTrigger_<room>` objects from the old wall position (z=8.2) to the door's own position (z=6.2), so the fade-and-teleport fires the moment the player passes through the opened panels.
+
 ## Phase 15.1: door sign fixes (reported straight out of a playtest)
 
 **Why:** Three real bugs found by playing the Phase 15 doors, not by reading the code:
