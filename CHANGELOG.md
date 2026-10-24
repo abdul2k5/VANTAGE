@@ -2,6 +2,15 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 13: Weak Point room — disarmed multi-drone aim practice
+
+**Why:** Room 2 ("Weak Point") is meant to teach the headshot mechanic, but it only ever had one Sentinel that could shoot back — not much room to actually practice landing headshots before the stakes go up in Room 3 onward. Also, that one Sentinel was facing the wrong way: its Hold mode had no `holdPoint` assigned, so it just kept its original spawn facing, which pointed deeper into the room instead of back toward the door the player walks in through — it could never actually see the player coming.
+
+**What changed:**
+- **`Sentinel.canShoot`** (new field, default true): when false, the Sentinel still detects the player, turns to face them, and reacts to being shot (`ForceAlert`), it just never calls `Fire()`. A general-purpose toggle, not a Room 2 special case — reusable anywhere a "shoot-at-but-not-shot-by" target is useful.
+- **Fixed `Sentinel_WeakPoint_01`'s facing** (180° — now watches the entry door, like every other Hold Sentinel's `holdPoint` already does) and set `canShoot = false`.
+- **3 more drones added**, all `canShoot = false`: a second stationary one mirrored on the other side of the room (also watching the entry), and two Patrol drones sliding back and forth across the room at different depths and desynced start points, so the player has to track moving targets, not just stationary ones.
+
 ## Phase 12: checkpoint retry — input freeze + unfaded teleport fix
 
 **Why:** Dying and retrying from the Room 5 checkpoint left the player completely unable to move, look, or shoot. Root cause: `GameOverController.ShowGameOver()` unlocks the cursor for the Game Over screen's buttons (`Cursor.lockState = None`), but `RetryFromCheckpoint()` never locked it back — every input-reading script (`PlayerController`, `FollowCamera`, `Weapon`, `UltimateController`) bails out of its own `Update()` whenever the cursor isn't locked, by design, so the player was frozen on purpose by code that just forgot to undo the unlock. Every other "resume gameplay" path (Settings menu, Main menu) already re-locks the cursor on close; checkpoint retry was the one path that didn't.

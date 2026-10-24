@@ -13,6 +13,8 @@ public class Sentinel : MonoBehaviour
     public float maxHealth = 50f;
     [Tooltip("Scales incoming body-shot damage only - headshots stay full price. 1 = normal, 0.5 = armored body (teaches 'go for the head' through the fight itself, not just the objective text).")]
     public float bodyDamageMultiplier = 1f;
+    [Tooltip("If false, this Sentinel still detects/tracks/faces the player and reacts to being shot, but never fires back - for passive training-range drones that are meant to be shot at without shooting back.")]
+    public bool canShoot = true;
 
     public enum BehaviorMode { Patrol, Hold }
     [Header("Behavior")]
@@ -248,7 +250,7 @@ void Update()
                 fireTimer -= Time.deltaTime;
                 if (fireTimer <= 0f)
                 {
-                    Fire();
+                    if (canShoot) Fire();
                     fireTimer = fireInterval;
                 }
             }
