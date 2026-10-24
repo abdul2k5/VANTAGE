@@ -2,6 +2,21 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 15: real doors on every room exit, with earned unlocks
+
+**Why:** Every room exit used to be an invisible trigger on a flat gray cube, with a thin beacon line as the only "this is the way out" cue - functional, but it gave the player no goal beyond "find the gray wall." It also meant the Range and Weak Point rooms could be skipped without actually doing the lesson (hit the targets, land a headshot) they exist to teach.
+
+**What changed:**
+- **`DoorController`** (new): a real sliding door - frame, two panels, a light strip above (red when locked, amber once open). `Unlock()` slides the panels apart over 0.6s with a Kenney door-hiss SFX; panel colliders sit on the existing `Blocking` layer, so a locked door blocks both player movement and Sentinel line-of-sight the same way a wall does, and disable once open. Doors in this game only ever go locked -> open once per playthrough - a full restart already reloads the scene back to authored defaults - so there's no re-lock path.
+- **Every door moved 2m into the room from the old trigger position**, which now sits stripped down to just its trigger collider (`AirlockTrigger_<room>`, same `DoorTrigger` component, untouched) at the far wall. The gap between the new door and that wall is the airlock: walking through the opened panels and into that short stretch is what now fires the fade-and-teleport, not standing at the wall.
+- **Room 1 (Range) and Room 2 (Weak Point) doors start locked.** New `RangeTarget` (on each practice target's hit collider) + `RangeRoomGate` unlocks Range's door once all 3 have been hit. New `Sentinel.OnKilled(bool headshot)` event + `WeakPointRoomGate` unlocks Weak Point's door on any kill - headshot or body shot - but body-shot kills swap the objective text to "Door unlocked. Try the eye next time." instead of staying silent about missing the point of the room. Every other door starts open - those rooms teach getting past a live threat, not killing it, so there's nothing to gate.
+- **Door signs** repurpose the existing wall-callout Canvases (previously just room-name branding) - moved above each new frame and retexted to name the *next* room ("ROOM 6: FLASH"), except the door into The Round, which reads "SITE A". Recoloured to the same amber used everywhere else in the HUD/checkpoint system, since a couple of the old callouts had their own per-room accent colors that no longer fit a shared signage system.
+- **Floor guide strips** (dim amber dashes) run from each room's entry toward its exit door.
+- Removed the old beacon line objects entirely.
+- Updated the Range and Weak Point objective text to say the door is locked until the lesson's done.
+
+**Verified:** panel/frame layer confirmed on `Blocking` (matches `Sentinel.blockingMask`); locked door gap height (2.4m) is less than the player's max vertical reach while jumping (1.8m stand height + 0.8m jump apex = 2.6m), so a locked door can't be jumped over - the capsule would hit the panel first. Both gates tested live in Play mode: hitting all 3 Range targets unlocks `DoorFrame_Room1` and updates the HUD objective text; a simulated headshot kill on the Weak Point Sentinel unlocks its door and sets the headshot objective text - the body-shot branch is the same code path with the other string, not independently simulated.
+
 ## Phase 14: diegetic checkpoint pad + terminal (replaces the flag)
 
 **Why:** The checkpoint used to be a floating flag marker planted mid-room — readable, but it didn't belong to the world, and it sat away from the actual respawn point. The lecturer-feedback checkpoint system (Phase 9) needed feedback that reads as part of the level, sits exactly where the player will actually reappear, and still makes the "this is now safe" moment land with the same banner/chime it already had.

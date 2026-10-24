@@ -168,7 +168,7 @@ void UpdateSpread()
                 float dealt = headshot ? damage * headshotMultiplier : damage * sentinel.bodyDamageMultiplier;
 
                 bool aliveBefore = sentinel.gameObject.activeSelf;
-                sentinel.TakeDamage(dealt);
+                sentinel.TakeDamage(dealt, headshot);
                 if (aliveBefore && !sentinel.gameObject.activeSelf)
                 {
                     if (UltimateController.Instance != null) UltimateController.Instance.AddCharge(UltimateController.Instance.chargePerKill);
@@ -184,6 +184,9 @@ void UpdateSpread()
             {
                 bool isRangeTarget = hit.collider.transform.root.name.Contains("RangeTarget") || hit.collider.name.Contains("RangeTarget");
                 BulletImpactPool.Instance.SpawnDecal(hit.point, hit.normal, hit.collider.transform, isRangeTarget);
+
+                var rangeTarget = hit.collider.GetComponentInParent<RangeTarget>();
+                if (rangeTarget != null) rangeTarget.RegisterHit();
             }
         }
 

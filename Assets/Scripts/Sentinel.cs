@@ -407,7 +407,10 @@ void Fire()
         return Mathf.Lerp(missChanceNear, missChanceAtMaxRange, t);
     }
 
-public void TakeDamage(float amount)
+/// <summary>Fired when this Sentinel dies, with whether the killing shot was a headshot - used by room-gate scripts (e.g. WeakPointRoomGate) that need to react to a kill.</summary>
+    public event System.Action<bool> OnKilled;
+
+    public void TakeDamage(float amount, bool isHeadshot = false)
     {
         currentHealth -= amount;
         if (currentHealth <= 0f)
@@ -417,6 +420,7 @@ public void TakeDamage(float amount)
                 AudioManager.Instance.PlaySfxAtPoint(deathSound, transform.position);
             }
             gameObject.SetActive(false);
+            if (OnKilled != null) OnKilled(isHeadshot);
             return;
         }
 

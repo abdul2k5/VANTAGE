@@ -100,6 +100,12 @@ public void EnterRoom(int index, bool movePlayer = true)
         }
     }
 
+    /// <summary>Re-applies the current room's title/objective text - used by room-gate scripts (e.g. RangeRoomGate) that mutate a RoomDefinition's objective string after a door unlocks, so the HUD updates without a full room re-entry.</summary>
+    public void RefreshObjectiveText()
+    {
+        UpdateTitle();
+    }
+
     void UpdateTitle()
     {
         var room = rooms[currentRoom];
