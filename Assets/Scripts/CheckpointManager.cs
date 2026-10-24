@@ -20,8 +20,8 @@ public class CheckpointManager : MonoBehaviour
     public float bannerSeconds = 2.5f;
     public AudioClip checkpointSound;
 
-    [Header("Checkpoint marker (flag) placed in Room 5")]
-    public GameObject checkpointMarker;
+    [Header("Checkpoint pad + terminal at the Room 5 entry point")]
+    public CheckpointStation station;
 
     bool reached;
     float savedUltCharge;
@@ -32,7 +32,6 @@ public class CheckpointManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
-        if (checkpointMarker != null) checkpointMarker.SetActive(false);
     }
 
     /// <summary>Called by RoomManager every time a room is entered - only acts on Room 5, and only once.</summary>
@@ -43,7 +42,9 @@ public class CheckpointManager : MonoBehaviour
         reached = true;
         savedUltCharge = UltimateController.Instance != null ? UltimateController.Instance.CurrentChargeAmount : 0f;
 
-        if (checkpointMarker != null) checkpointMarker.SetActive(true);
+        // Station stays in its dim/standby state for the whole run if this never fires - either
+        // because checkpoints are off (gated above) or the player just hasn't reached Room 5 yet.
+        if (station != null) station.Activate();
         if (bannerPanel != null)
         {
             StopAllCoroutines();

@@ -2,6 +2,18 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 14: diegetic checkpoint pad + terminal (replaces the flag)
+
+**Why:** The checkpoint used to be a floating flag marker planted mid-room — readable, but it didn't belong to the world, and it sat away from the actual respawn point. The lecturer-feedback checkpoint system (Phase 9) needed feedback that reads as part of the level, sits exactly where the player will actually reappear, and still makes the "this is now safe" moment land with the same banner/chime it already had.
+
+**What changed:**
+- **`CheckpointStation`** (new script) owns both pieces and starts them dim/standby; `CheckpointManager.NotifyRoomEntered` calls `station.Activate()` at the same moment it already triggers the banner and chime, so all three stay in sync. If checkpoints are off in Settings, `Activate()` is simply never called and both stay dim for the whole run - no extra gating needed.
+- **Floor pad** at the exact Room 5 entry point: a 1.5m disc with a 12-segment emissive ring that sweeps on clockwise over 0.5s and settles on solid amber, instead of popping instantly.
+- **Wall terminal** near the entry (south wall): a screen reading STANDBY in red, a red status light, both flipping to CHECKPOINT LOGGED ✓ / amber on activation.
+- Kept emission intensities low (toned down twice after an initial pass still read too hot) so neither piece blooms out the way the old beacon line did.
+- Deleted the old flag marker GameObject entirely (it had already lost its visual at some point - just an empty inactive transform).
+- Retrying from the checkpoint re-enters Room 5 without calling `Activate()` again (it's a no-op once `activated` is true), so both pieces are already showing the logged state on respawn - no special-casing needed.
+
 ## Phase 13: Weak Point room — disarmed multi-drone aim practice
 
 **Why:** Room 2 ("Weak Point") is meant to teach the headshot mechanic, but it only ever had one Sentinel that could shoot back — not much room to actually practice landing headshots before the stakes go up in Room 3 onward. Also, that one Sentinel was facing the wrong way: its Hold mode had no `holdPoint` assigned, so it just kept its original spawn facing, which pointed deeper into the room instead of back toward the door the player walks in through — it could never actually see the player coming.
