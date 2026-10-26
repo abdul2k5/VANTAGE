@@ -25,6 +25,9 @@ public class DoorController : MonoBehaviour
     [ColorUsage(true, true)] public Color lockedEmission = new Color(0.5f, 0.03f, 0.02f);
     [ColorUsage(true, true)] public Color openEmission = new Color(0.35f, 0.18f, 0.04f);
     public AudioClip openSound;
+    /// <summary>Floor chevron rows gated to this door - dark while locked, sweep-lit on Unlock(), lit instantly for doors that start open.</summary>
+    public FloorChevronGuide[] chevronGuides;
+
 
     bool isOpen;
     public bool IsOpen { get { return isOpen; } }
@@ -50,11 +53,12 @@ public class DoorController : MonoBehaviour
         StartCoroutine(OpenRoutine());
     }
 
-    IEnumerator OpenRoutine()
+IEnumerator OpenRoutine()
     {
         isOpen = true;
         SetBlockingColliders(false);
         ApplyLight(openColor, openEmission);
+        TriggerChevronSweep();
         if (openSound != null && AudioManager.Instance != null) AudioManager.Instance.PlaySfxAtPoint(openSound, transform.position);
 
         Vector3 leftTarget = leftClosedLocalPos + Vector3.left * slideDistance;
@@ -74,11 +78,12 @@ public class DoorController : MonoBehaviour
     }
 
     /// <summary>Sets the door's state with no animation - used once at Start() for doors that are open from the very beginning (every room except Range/Weak Point), so they don't play a pointless slide on room load.</summary>
-    void ApplyInstant(bool open)
+void ApplyInstant(bool open)
     {
         isOpen = open;
         SetBlockingColliders(!open);
         ApplyLight(open ? openColor : lockedColor, open ? openEmission : lockedEmission);
+        if (open) SetChevronsLitInstant();
         if (open)
         {
             if (leftPanel != null) leftPanel.localPosition = leftClosedLocalPos + Vector3.left * slideDistance;
@@ -101,4 +106,24 @@ public class DoorController : MonoBehaviour
         lightStrip.material.SetColor("_BaseColor", baseColor);
         lightStrip.material.SetColor("_EmissionColor", emission);
     }
+
+
+    void SetChevronsLitInstant()
+    {
+        if (chevronGuides == null) return;
+        for (int i = 0; i < chevronGuides.Length; i++)
+        {
+            if (chevronGuides[i] != null) chevronGuides[i].SetLitInstant();
+        }
+    }
+
+    void TriggerChevronSweep()
+    {
+        if (chevronGuides == null) return;
+        for (int i = 0; i < chevronGuides.Length; i++)
+        {
+            if (chevronGuides[i] != null) chevronGuides[i].TriggerUnlockSweep();
+        }
+    }
+
 }

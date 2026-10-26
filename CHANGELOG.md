@@ -2,6 +2,18 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 15.3: floor guide strips replaced with unlock-linked chevrons
+
+**Why:** The dashed amber floor strips from Phase 15 read as road markings, not game signage — and in the Range they ran in a straight line through the centre target instead of stopping short of it. They also carried no information: lit the same whether the exit door was locked or not, so they never actually told the player anything they didn't already know from looking at the door itself.
+
+**What changed:**
+- Deleted all 7 `FloorGuide_<room>` dashed-strip objects (Range, Weak Point, Holding Angle, Recon, Smoke, Flash, Dash — The Round has no exit door, so never had one).
+- New `FloorChevronGuide` component + `ExitChevrons_<room>` object in each of those 7 rooms: a short row of 3 floor chevrons (two thin angled bars each) in front of the exit door, apex pointing at the door. Dark/unlit while the door is locked; `DoorController.Unlock()` now also triggers a first-to-last sweep across the row (~0.4s total, each chevron flashing to a brighter peak before settling to a soft amber glow) so the light visibly ripples toward the exit at the moment it opens. Doors that start unlocked (every room except Range and Weak Point) show their chevrons lit from room entry instead of mid-game — `DoorController.ApplyInstant()` now drives this the same way it already drove the light-strip colour.
+- `FloorChevronGuide` reuses the project's existing low-emission amber (`0.12, 0.06, 0.015`) already proven not to bloom from the old guide strips, with a slightly brighter transient peak (`0.26, 0.13, 0.03`) only during the sweep itself.
+- **Recon is the only room where the exit door isn't visible from the entry** — confirmed by comparing a positioned camera capture from each room's entry point against its door: every other room's door is in plain sight (Holding Angle's cover crate sits to one side, not in the sightline), but Recon's door is almost entirely blocked by the room's L-shaped cover wall, forcing a jog to the east around it. Added 3 extra always-lit chevrons (`EntryChevrons_Recon`, `FloorChevronGuide.alwaysLit = true`, not gated to the door) near the entry, bent along the actual walkable path around the cover instead of pointing straight at the (hidden) door.
+
+**Verified:** live Play-mode test of the Range door — `RangeRoomGate`'s own `door.Unlock()` call correctly triggers the chevron sweep (confirmed mid-sweep: chevron nearest the entry at peak brightness, the other two still dark, matching the first-to-last order); door light strip and chevrons both read correctly locked (red door, dark chevrons) and unlocked (amber door, lit chevrons) in direct-camera screenshots. The Editor's Game View wasn't ticking real frames this session (same staleness issue noted in earlier phases), so the full real-time 0.4s sweep couldn't be watched frame-by-frame — verified instead via mid-coroutine property inspection (exactly one chevron group at peak colour, consistent with the coroutine having run exactly one scheduling step) rather than assumed.
+
 ## Phase 15.2: fade fires at the door, not at the far wall
 
 **Why:** Phase 15's airlock trigger stayed at the old position near the far wall, 2m past the new door - so walking through the open panels did nothing until the player also crossed the empty stretch behind them and reached the wall. Playtest feedback: the fade should happen right as you walk through the door, not after an extra few steps of nothing.
