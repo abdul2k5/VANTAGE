@@ -161,6 +161,7 @@ void UpdateSpread()
     {
         currentAmmo--;
         PlaySfx(gunshotSound);
+        if (RoomManager.Instance != null) RoomManager.Instance.CancelEntryGrace();
         if (RunStats.Instance != null) RunStats.Instance.RecordShot();
         Vector3 origin = cam != null ? cam.transform.position : transform.position;
         Vector3 forward = cam != null ? cam.transform.forward : transform.forward;

@@ -24,9 +24,21 @@ public class RoomManager : MonoBehaviour
     public AbilityController abilities;
     public float fadeSeconds = 0.35f;
     public float holdSeconds = 0.45f;
+    [Tooltip("Drones can't see the player while a room transition is faded, nor for this long after it clears. Rooms 5-8's crossfire drone can see the entry spot, so without this the player was shot during the black fade before they could see anything.")]
+    public float entryGraceSeconds = 1f;
 
     int currentRoom = -1;
     bool transitioning;
+    float entryGraceUntil = -1f;
+
+    /// <summary>Read by Sentinel.CanSeePlayer - true while the player is arriving in a room.</summary>
+    public bool EntryGraceActive { get { return Time.time < entryGraceUntil; } }
+    /// <summary>Grace holds for as long as the screen is black - call before teleporting the player.</summary>
+    public void HoldEntryGrace() { entryGraceUntil = float.PositiveInfinity; }
+    /// <summary>Starts the post-fade countdown - call once the fade back in has finished.</summary>
+    public void ReleaseEntryGrace() { entryGraceUntil = Time.time + entryGraceSeconds; }
+    /// <summary>Firing ends the grace early, so it can't be used to shoot drones that can't see you back.</summary>
+    public void CancelEntryGrace() { entryGraceUntil = -1f; }
 
     public int CurrentRoom { get { return currentRoom; } }
 
@@ -125,10 +137,12 @@ public void EnterRoom(int index, bool movePlayer = true)
 
         yield return Fade(0f, 1f);
 
+        HoldEntryGrace();
         EnterRoom(index);
         yield return new WaitForSeconds(holdSeconds);
 
         yield return Fade(1f, 0f);
+        ReleaseEntryGrace();
 
         transitioning = false;
     }

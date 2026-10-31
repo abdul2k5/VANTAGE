@@ -128,11 +128,9 @@ public class AbilityUnlockCardUI : MonoBehaviour
         if (abilities.smokeWallUnlocked && !prevSmoke) { prevSmoke = true; Show(smokeCard); return; }
         if (abilities.flashUnlocked && !prevFlash) { prevFlash = true; Show(flashCard); return; }
         if (abilities.dashUnlocked && !prevDash) { prevDash = true; Show(dashCard); return; }
-
-        prevRecon = abilities.reconDartUnlocked;
-        prevSmoke = abilities.smokeWallUnlocked;
-        prevFlash = abilities.flashUnlocked;
-        prevDash = abilities.dashUnlocked;
+        // The flags only ever go true. They used to be re-synced to the live unlock state here, so a
+        // checkpoint retry (which re-locks Flash/Dash back in Room 5) reset them and those cards
+        // showed a second time on reaching their rooms again.
     }
 
     void PollUltimate()

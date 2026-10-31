@@ -29,6 +29,14 @@ public class FlashAbility : Ability
         return true;
     }
 
+    /// <summary>Checkpoint retry: removes a flash burst still fading out.</summary>
+    public void ClearActive()
+    {
+        StopAllCoroutines();
+        var burst = GameObject.Find("FlashBurst");
+        while (burst != null) { DestroyImmediate(burst); burst = GameObject.Find("FlashBurst"); }
+    }
+
     IEnumerator FlashBurst()
     {
         var burst = GameObject.CreatePrimitive(PrimitiveType.Sphere);

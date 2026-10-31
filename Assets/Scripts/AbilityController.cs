@@ -55,6 +55,19 @@ public class AbilityController : MonoBehaviour
         return list;
     }
 
+    /// <summary>Checkpoint retry: removes anything abilities left in the world (smoke walls, darts, flash bursts).</summary>
+    public void ClearDeployed()
+    {
+        if (smokeWall != null) smokeWall.ClearActive();
+        if (flash != null) flash.ClearActive();
+
+        var darts = Object.FindObjectsByType<ReconDartProjectile>(FindObjectsSortMode.None);
+        for (int i = 0; i < darts.Length; i++) Destroy(darts[i].gameObject);
+        // The dart's reveal pulse is a separate object it spawns - destroy those too.
+        var pulse = GameObject.Find("ReconPulse");
+        while (pulse != null) { DestroyImmediate(pulse); pulse = GameObject.Find("ReconPulse"); }
+    }
+
     /// <summary>Called on every room entry (including checkpoint retry): clears cooldowns and refills each ability's per-room charges.</summary>
     public void ResetAllCooldowns()
     {

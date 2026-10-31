@@ -89,6 +89,7 @@ public class CheckpointManager : MonoBehaviour
 
         yield return Fade(rm.fadeOverlay, 0f, 1f, rm.fadeSeconds);
 
+        rm.HoldEntryGrace();
         ResetRooms5To8();
         rm.EnterRoom(CheckpointRoomIndex);
 
@@ -102,6 +103,7 @@ public class CheckpointManager : MonoBehaviour
 
         yield return new WaitForSeconds(rm.holdSeconds);
         yield return Fade(rm.fadeOverlay, 1f, 0f, rm.fadeSeconds);
+        rm.ReleaseEntryGrace();
     }
 
     IEnumerator Fade(Image overlay, float from, float to, float seconds)
@@ -143,6 +145,11 @@ public class CheckpointManager : MonoBehaviour
         }
 
         if (RoundController.Instance != null) RoundController.Instance.ResetState();
+
+        // Utility thrown before dying (a smoke still standing, a dart still revealing) belongs to the
+        // failed attempt - the retry should start from a clean room like the first arrival did.
+        var rm = RoomManager.Instance;
+        if (rm != null && rm.abilities != null) rm.abilities.ClearDeployed();
     }
 
     void OnDestroy()

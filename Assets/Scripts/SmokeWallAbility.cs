@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -56,8 +57,24 @@ public class SmokeWallAbility : Ability
         wall.GetComponent<MeshRenderer>().enabled = false;
         var puffs = CreateSmokeVisual(wall.transform);
 
+        active.RemoveAll(g => g == null); // expired smokes
+        active.Add(wall);
+        active.Add(puffs);
         StartCoroutine(ExpireAfter(wall, puffs));
         return true;
+    }
+
+    readonly List<GameObject> active = new List<GameObject>();
+
+    /// <summary>Checkpoint retry: removes every smoke still standing instead of letting it run out its timer.</summary>
+    public void ClearActive()
+    {
+        StopAllCoroutines();
+        for (int i = 0; i < active.Count; i++)
+        {
+            if (active[i] != null) Destroy(active[i]);
+        }
+        active.Clear();
     }
 
     GameObject CreateSmokeVisual(Transform wall)

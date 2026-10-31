@@ -382,6 +382,7 @@ void Update()
 public bool CanSeePlayer()
     {
         if (blindRemaining > 0f) return false;
+        if (RoomManager.Instance != null && RoomManager.Instance.EntryGraceActive) return false;
 
         float eyeOffset = playerController != null ? playerController.EyeHeightOffset : 1f;
         Vector3 eye = transform.position + Vector3.up * 1f;

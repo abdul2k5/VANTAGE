@@ -2,6 +2,19 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 16.4: checkpoint retry starts clean - full HP, no old smoke, arrival grace
+
+**Why:** Playtest report: after RETRY FROM CHECKPOINT, the smoke thrown before dying was still standing, and the health bar read 60 instead of 100.
+- **Smoke:** nothing cleared deployed utility on a retry, so the old smoke just ran out its timer in the "fresh" room.
+- **Health:** the restore *did* set 100 - the player was then shot back down to 60 before they could see anything. Traced it: in Rooms 5-8 the crossfire drone moved in Phase 15.19 can see the exact entry spot, and the retry teleports the player there while the screen is still black (0.45s hold + 0.35s fade-in). Both Smoke-room drones have a 0.5s reaction and 20 damage, so two hits landed during the fade: 100 -> 60. Normal room transitions had the same blind window.
+
+**What changed:**
+- **Arrival grace:** drones can't see the player while a room transition is faded, nor for 1s after it clears (`RoomManager.entryGraceSeconds`) - used by both normal room transitions and checkpoint retry. Firing ends it early, so it can't be used to shoot drones that can't see you back. Like a round-start barrier: you get to read the room before it can read you.
+- **Retry clears deployed utility:** smoke walls (blocker + cloud), flash bursts, recon darts and their reveal pulses from the failed attempt are removed.
+- **Found while testing - unlock cards repeating:** the unlock-card tracker re-synced its "already shown" flags to the live unlock state every frame. A retry re-locks Flash and Dash (back in Room 5), which reset those flags, so the Flash and Dash cards would have shown a second time on the way back through. The flags now only ever go true.
+
+**Verified** in Play mode, stepping real frames through an actual retry (died in Room 6 with a smoke out): at the black screen the player is at the Room 5 entry with 100 HP and the smoke is gone; through the fade and the 1s grace HP stays 100 and the crossfire drone can't see them; once grace ends it spots the standing player and fires on its normal 0.5s reaction. Before the fix the same 0.8s window took 40 HP.
+
 ## Phase 16.3: end-of-run debrief
 
 **Why:** The run ended on a single line ("BREACH SUCCESSFUL" / "MISSION FAILED") with no feedback on *how* you played, so nothing told the player what to do better next time - and nothing invited a second run. Tactical shooters end every match on a scoreboard. Separately, the win screen had **no buttons at all**: the cursor unlocked with nowhere to click, so the only way out was quitting.
