@@ -2,6 +2,19 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 15.18: Smoke Wall faces the right way and looks like smoke
+
+**Why:** Playtest screenshot: pressing Q spawned a solid teal slab running *away* from the player down the lane. Two bugs:
+1. **Wrong orientation.** The code's own comment said the wall should span across your view, but it was rotated to look along the player's *right* vector - which turned its 3.2m width to point down the lane and left only its 0.4m thickness across your view. It barely blocked the lane it was meant to block.
+2. **Not smoke.** It was a plain cube with a URP Lit material that only half-set "transparent" (no surface keyword / blend / depth-write settings), so it rendered as an opaque teal block. Even fixed, a transparent box would read as a force field, not smoke - and a see-through smoke would let the player see drones that can't see them, a one-way advantage that undercuts "utility as a trade".
+
+**What changed:**
+- Orientation fixed: the wall now spans 3.2m across your facing direction, 0.4m deep, 2.2m tall.
+- The cube is now an **invisible blocker** (still on the Blocking layer, so drone sight and drone bullets both stop at it, exactly as before). What you see is a new particle cloud over it: 70 soft puffs from a procedurally generated wispy-edged texture (`tex_smoke_puff.png`, made in code - no external assets), using a proper transparent URP particle material (`Mat_Smoke`, referenced from the ability rather than `Shader.Find`'d so the shader is guaranteed in builds). Puffs bloom in over 0.35s, drift and turn slowly, and thin out over the last quarter of the 6s duration (same expiry cue as before). Dense enough in the middle that you can't see through it either.
+- Colour softened from saturated teal toward a grey-teal smoke tone.
+
+**Verified** in Play mode: wall extent 3.20m across view / 0.40m along it; box renderer off, 70 puffs live with `Mat_Smoke`; positioned captures from the player's side (behind-smoke crate and drone fully hidden), from a distance (reads as a soft cloud with no hard edges) and from the drones' side. Blocking: a drone with clear sight did 100 damage from 5 shots; with the smoke between, it could not see the player and did 0.
+
 ## Phase 15.17: sensitivity slider drives both look axes; lower minimum
 
 **Why:** Checking the sensitivity range turned up a real bug: the settings slider only ever changed horizontal look. Yaw is handled by `PlayerController` (which the slider updates), but pitch is handled by `FollowCamera` on the child camera, which had its own separate `mouseSensitivity` fixed at 2 and never read the setting. A player who set sensitivity to 1.0 got 1.0 left/right but 2.0 up/down - vertical movement twice as fast as horizontal, which makes precise aim (headshots especially) feel inconsistent. Separately, the slider's floor was 1.0 and the playtester was already sitting at it, so it was too high for low-sensitivity players.
