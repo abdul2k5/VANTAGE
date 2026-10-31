@@ -2,6 +2,16 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 15.19: crossfire drones back inside Rooms 5-7
+
+**Why:** Found while verifying Phase 15.18: in Smoke, Flash and Dash, the second ("crossfire") drone added in Phase 10 sat at z=7, near the exit door. Phase 15 later moved every exit door 2m into the room (to z=6.2) and Phase 15.1 filled the gap beside each door with short wall pieces - which put those three drones *behind* the wall, in the airlock space. Their line of sight hit `WallFillerLeft` before reaching any part of the room: zero coverage. So Rooms 5-7 had effectively been one-drone rooms since Phase 15, Phase 10's crossfire was gone, and the Phase 15.7 "or clear every drone" door fallback was impossible there (you can't shoot a drone through a wall).
+
+**What changed:** Moved `Sentinel_R3_02` (Smoke), `Sentinel_R4_02` (Flash) and `Sentinel_R5_02` (Dash) 2.2m forward to z=4.8, in front of the door's side walls, still facing their original diagonal hold points so the crossfire geometry Phase 10 designed is unchanged. Each spot checked first: on the NavMesh, no overlap with walls/cover, clear lines to the room centre and entry.
+
+**Verified** in Play mode over an 11x11 grid of floor positions per room: each moved drone now sees the player from 115/121 spots in Smoke and Flash (the misses are behind the cover crate) and 121/121 in Dash (no cover - that room is about Dash), and the player has a clear shot back at it from the same spots. Before: 0 spots.
+
+**Difficulty note:** this restores Phase 10's intended crossfire, so Rooms 5-7 are harder than they were in playtests since Phase 15 - those playtests were effectively against one drone per room.
+
 ## Phase 15.18: Smoke Wall faces the right way and looks like smoke
 
 **Why:** Playtest screenshot: pressing Q spawned a solid teal slab running *away* from the player down the lane. Two bugs:
