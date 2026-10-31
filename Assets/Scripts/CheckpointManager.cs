@@ -128,6 +128,13 @@ public class CheckpointManager : MonoBehaviour
             if (sentinels[i].OwnerRoomIndex >= CheckpointRoomIndex) sentinels[i].ResetState();
         }
 
+        // Inactive included - a collected orb has disabled itself.
+        var orbs = Object.FindObjectsByType<UltOrbPickup>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < orbs.Length; i++)
+        {
+            if (orbs[i].roomIndex >= CheckpointRoomIndex) orbs[i].ResetState();
+        }
+
         var gates = Object.FindObjectsByType<RoomExitGate>(FindObjectsSortMode.None);
         for (int i = 0; i < gates.Length; i++)
         {

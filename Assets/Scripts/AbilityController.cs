@@ -55,11 +55,15 @@ public class AbilityController : MonoBehaviour
         return list;
     }
 
+    /// <summary>Called on every room entry (including checkpoint retry): clears cooldowns and refills each ability's per-room charges.</summary>
     public void ResetAllCooldowns()
     {
-        if (smokeWall != null) smokeWall.ResetCooldown();
-        if (flash != null) flash.ResetCooldown();
-        if (dash != null) dash.ResetCooldown();
-        if (reconDart != null) reconDart.ResetCooldown();
+        Ability[] all = { smokeWall, flash, dash, reconDart };
+        for (int i = 0; i < all.Length; i++)
+        {
+            if (all[i] == null) continue;
+            all[i].ResetCooldown();
+            all[i].RefillCharges();
+        }
     }
 }

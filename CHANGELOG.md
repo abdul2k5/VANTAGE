@@ -2,6 +2,17 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 16: ability charges per room + Overwatch orbs
+
+**Why:** Two Valorant-inspired gaps found when reviewing the game as a whole. (1) Abilities were cooldown-only, so utility was effectively unlimited - you could smoke, wait 6s and smoke again, and *when* to spend it never mattered. In tactical shooters utility is a limited budget per round, and choosing when to use it is the skill. (2) The ultimate unlock card already told players Overwatch Protocol "charges from kills and Overwatch orbs", and `UltOrbPickup` existed, but no orb had ever been placed in the scene - the card promised something the game didn't have.
+
+**What changed:**
+- **Charges:** each ability now has a per-room charge count, refilled on every room entry (including checkpoint retry). The cooldown is now just a short lockout between uses so charges can't be double-tapped. Recon Dart 1 charge (1s), Smoke Wall 2 (1.5s), Flash 2 (1.5s), Dash 2 (0.6s - short enough to chain two dashes). Each HUD tile shows charge pips in its top-right (filled = left, hollow = spent); a tile with no charges left stays fully greyed out for the rest of the room instead of looking like a cooldown about to finish.
+- **Orbs:** two gold glowing orbs (+25 ult charge each - one segment of the four-segment bar, the same as a kill; 50 was tried first but meant the two orbs alone filled the ult without a single kill), one in the Flash room and one in the Dash room - the rooms right before The Round, so grabbing both (plus a couple of kills) means arriving at The Round with Overwatch ready. Walk through to collect. Checkpoint retry respawns collected orbs from Room 5 onward, so a retry matches the first arrival at the checkpoint (the ult charge itself was already snapshotted there).
+- The room exit gates from Phase 15.7 still open on the first use of the room's ability - charges don't change that.
+
+**Verified** in Play mode: Smoke on Room 5 entry shows 2/2 (pips ●●); use, immediate repeat blocked by the lockout, second use, third use refused at 0 charges, pips ○○ and tile fully greyed; entering Room 6 refills Smoke to 2 and Flash starts at 2/2; Dash chains two uses then refuses a third; Recon allows one use. Each orb adds exactly its charge amount (tested at 50 before the drop to 25), disappears, and a second trigger adds nothing; checkpoint reset restores both. The Smoke room's exit door opens on the first smoke with one charge left. A camera render of the Flash-room orb shows a readable gold sphere with a soft light pool, not a blown-out glare.
+
 ## Phase 15.21: blind drones fire at where you were, not where you are
 
 **Why:** After 15.20 let bullets pass through smoke both ways, an alerted drone that couldn't see the player still aimed every shot at the player's *live* position - so it tracked you perfectly through smoke (or around a corner) as if it could see you. The playtester suggested giving drones bad aim while you're in smoke. Considered and rejected a flat higher miss chance: it's random, so getting hit or not feels like luck and teaches nothing. Instead, drones now behave like a real shooter who's lost sight of you.

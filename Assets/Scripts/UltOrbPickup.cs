@@ -7,6 +7,8 @@ public class UltOrbPickup : MonoBehaviour
     public float bobSpeed = 2f;
     public float bobHeight = 0.15f;
     public float spinSpeed = 60f;
+    /// <summary>Logical RoomManager index this orb sits in - checkpoint retry respawns orbs from the checkpoint room onward.</summary>
+    public int roomIndex;
 
     Vector3 startPos;
     bool collected;
@@ -14,6 +16,14 @@ public class UltOrbPickup : MonoBehaviour
     void Start()
     {
         startPos = transform.position;
+    }
+
+    /// <summary>Checkpoint retry: put a collected orb back, so the retry matches the first arrival at the checkpoint.</summary>
+    public void ResetState()
+    {
+        collected = false;
+        transform.position = startPos;
+        gameObject.SetActive(true);
     }
 
     void Update()

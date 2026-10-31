@@ -12,6 +12,8 @@ public class AbilityHudUI : MonoBehaviour
         public Image icon;
         public Text keyLabel;
         public Text nameLabel;
+        /// <summary>Charge pips, top-right of the tile: filled for each charge left, hollow for each spent.</summary>
+        public Text chargesLabel;
     }
 
     public AbilityController controller;
@@ -39,9 +41,15 @@ public class AbilityHudUI : MonoBehaviour
             if (slots[i].border != null) slots[i].border.color = ability.IsReady ? readyColor : notReadyColor;
             if (slots[i].icon != null && ability.icon != null) slots[i].icon.sprite = ability.icon;
 
+            if (slots[i].chargesLabel != null)
+            {
+                slots[i].chargesLabel.text = new string('●', ability.Charges) + new string('○', ability.MaxCharges - ability.Charges);
+            }
+
             if (slots[i].cooldownOverlay != null)
             {
-                float frac = ability.Cooldown <= 0f ? 0f : ability.CooldownRemaining / ability.Cooldown;
+                // Out of charges reads as fully greyed out for the rest of the room, not as a cooldown about to finish.
+                float frac = ability.Charges <= 0 ? 1f : (ability.Cooldown <= 0f ? 0f : ability.CooldownRemaining / ability.Cooldown);
                 slots[i].cooldownOverlay.fillAmount = frac;
                 slots[i].cooldownOverlay.enabled = frac > 0f;
             }
