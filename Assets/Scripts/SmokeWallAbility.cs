@@ -3,9 +3,10 @@ using UnityEngine;
 
 /// <summary>
 /// Q - drops a wall of smoke a few metres ahead, across the lane you're facing. The wall itself is
-/// an invisible box on the Blocking layer - that's what stops Sentinel sight (CanSeePlayer) and
-/// Sentinel bullets (Fire's linecast). What you see is a cluster of soft drifting puffs over that
-/// box, thick enough that you can't see through it either: smoke is a trade, not a one-way window.
+/// an invisible box on the Smoke layer - Sentinel sight (CanSeePlayer) treats it as solid, but
+/// bullets in both directions pass through it. What you see is a cluster of soft drifting puffs
+/// over that box, thick enough that you can't see through it either: smoke is a trade, not a
+/// one-way window.
 /// </summary>
 public class SmokeWallAbility : Ability
 {
@@ -23,6 +24,9 @@ public class SmokeWallAbility : Ability
     public int puffCount = 45;
     public float puffSizeMin = 1.3f;
     public float puffSizeMax = 2.1f;
+    /// <summary>How deep (along your view) the puffs spawn. Deeper than the 0.4m blocker on purpose: a
+    /// paper-thin layer of puffs looks see-through up close, more layers stacked in depth reads as dense.</summary>
+    public float puffDepth = 1.0f;
     public float bloomInSeconds = 0.35f;
 
     void Awake()
@@ -46,7 +50,7 @@ public class SmokeWallAbility : Ability
         // away from the player - a long thin slab down the lane that barely blocked anything.
         wall.transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
         wall.transform.localScale = new Vector3(wallWidth, wallHeight, wallThickness);
-        wall.layer = LayerMask.NameToLayer("Blocking");
+        wall.layer = LayerMask.NameToLayer("Smoke");
 
         // The box is gameplay only - the smoke you see is the particle cluster below.
         wall.GetComponent<MeshRenderer>().enabled = false;
@@ -85,7 +89,7 @@ public class SmokeWallAbility : Ability
         // than poking out past the real blocker).
         var shape = ps.shape;
         shape.shapeType = ParticleSystemShapeType.Box;
-        shape.scale = new Vector3(wallWidth * 0.85f, wallHeight * 0.7f, wallThickness);
+        shape.scale = new Vector3(wallWidth * 0.85f, wallHeight * 0.7f, puffDepth);
 
         // Slow churn so it reads as smoke, not a static billboard stack.
         var velocity = ps.velocityOverLifetime;

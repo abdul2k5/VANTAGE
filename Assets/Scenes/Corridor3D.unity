@@ -54578,11 +54578,12 @@ MonoBehaviour:
   wallHeight: 2.2
   wallThickness: 0.4
   duration: 6
-  smokeColor: {r: 0.62, g: 0.8, b: 0.77, a: 0.9}
+  smokeColor: {r: 0.62, g: 0.8, b: 0.77, a: 1}
   smokeMaterial: {fileID: 2100000, guid: 667bf4099afa71d4f83c595dd3249f77, type: 2}
-  puffCount: 70
-  puffSizeMin: 1.5
-  puffSizeMax: 2.4
+  puffCount: 110
+  puffSizeMin: 1.8
+  puffSizeMax: 2.8
+  puffDepth: 1
   bloomInSeconds: 0.35
 --- !u!114 &1584037080
 MonoBehaviour:

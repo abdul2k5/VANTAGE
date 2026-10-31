@@ -2,6 +2,17 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 15.20: denser smoke you can shoot through
+
+**Why:** Playtest feedback, two parts. (1) Up close the smoke was still faintly see-through - door and crate outlines showed through it, because the puffs spawned in a layer only 0.4m deep, so a close view looked through very few overlapping puffs. (2) The player couldn't shoot through it: the screenshot showed a bullet hole sitting on the (invisible) smoke box. The smoke was on the Blocking layer, which stopped drone sight, drone bullets *and* player bullets alike.
+
+**What changed:**
+- **New `Smoke` layer** for the Smoke Wall's blocker. Drone sight (`CanSeePlayer`) treats it as solid; bullets in **both** directions pass through it. The player's weapon explicitly excludes it (its hit mask is "Everything", which would otherwise include any new layer).
+- **This reverses part of Phase 15.12**, which had smoke stopping drone bullets. On reflection that went against Phase 10's original intent - a drone shot from inside a smoke is meant to return fire ("getting shot from... through smoke is no longer a free action"). Now smoke is a real trade: they can't see you, you can shoot through it, but a drone you hit will spray back through it. Crates, walls and doors still stop all bullets.
+- **Denser look:** puffs now spawn through a 1.0m-deep volume (the blocker stays 0.4m), 70 -> 110 puffs, sizes 1.5-2.4 -> 1.8-2.8, per-puff opacity 0.9 -> 1.0.
+
+**Verified** in Play mode: a player shot through the smoke at a drone now hits the drone (the same shot with the old mask hit `SmokeWall`); the drone still can't see the player through it; an alerted drone's return fire through the smoke lands (100 damage from 5 shots). Close-up capture from just behind the smoke: nothing behind it visible except incoming tracers.
+
 ## Phase 15.19: crossfire drones back inside Rooms 5-7
 
 **Why:** Found while verifying Phase 15.18: in Smoke, Flash and Dash, the second ("crossfire") drone added in Phase 10 sat at z=7, near the exit door. Phase 15 later moved every exit door 2m into the room (to z=6.2) and Phase 15.1 filled the gap beside each door with short wall pieces - which put those three drones *behind* the wall, in the airlock space. Their line of sight hit `WallFillerLeft` before reaching any part of the room: zero coverage. So Rooms 5-7 had effectively been one-drone rooms since Phase 15, Phase 10's crossfire was gone, and the Phase 15.7 "or clear every drone" door fallback was impossible there (you can't shoot a drone through a wall).

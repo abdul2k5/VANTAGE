@@ -358,8 +358,9 @@ public bool CanSeePlayer()
         float angle = Vector3.Angle(transform.forward, toPlayer);
         if (angle > halfAngleDegrees) return false;
 
+        // Smoke blocks sight (but not bullets - see Fire()), so it's added to the mask only here.
         RaycastHit hit;
-        if (Physics.Raycast(eye, toPlayer.normalized, out hit, distance, blockingMask))
+        if (Physics.Raycast(eye, toPlayer.normalized, out hit, distance, blockingMask | LayerMask.GetMask("Smoke")))
         {
             return false;
         }
@@ -377,8 +378,9 @@ void Fire()
 
         // Alert (from a roommate's call or from being shot) keeps a Sentinel firing for a couple of
         // seconds with no line of sight. Those shots used to damage the player straight through
-        // cover; now anything on the Blocking layer in the way - crates, walls, a Smoke Wall -
-        // takes the bullet instead.
+        // cover; now anything on the Blocking layer in the way - crates, walls, doors - takes the
+        // bullet instead. Smoke (its own layer) does not: an alerted drone sprays back through
+        // smoke, so shooting at one from inside a smoke is a trade, not a free hit.
         RaycastHit blockHit;
         if (Physics.Linecast(origin, end, out blockHit, blockingMask))
         {

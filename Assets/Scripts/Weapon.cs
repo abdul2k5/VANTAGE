@@ -154,7 +154,9 @@ void UpdateSpread()
         Vector3 dir = ApplySpread(forward, currentSpreadDegrees);
 
         RaycastHit hit;
-        bool didHit = Physics.Raycast(origin, dir, out hit, range, hitMask);
+        // Bullets pass through Smoke Walls - smoke blocks sight, not shots. Excluded here rather than
+        // only in the Inspector because hitMask is "Everything", which would silently include it.
+        bool didHit = Physics.Raycast(origin, dir, out hit, range, hitMask & ~LayerMask.GetMask("Smoke"));
 
         Vector3 end = didHit ? hit.point : origin + dir * range;
 
