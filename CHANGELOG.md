@@ -2,6 +2,12 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 15.11: "OVERWATCH PROTOCOL READY" banner text centred
+
+**Why:** Playtest screenshot: the ultimate-ready banner's text sat in the bottom half of its dark box instead of the middle. The label was anchored to the box's centre but had its pivot at its own top edge, so its top edge (not its middle) landed on the box's midline - pushing the whole line of text down by half its height.
+
+**What changed:** Label pivot set to centre (0.5, 0.5). Verified via world-corner geometry: label and box now share the same centre exactly (both X and Y).
+
 ## Phase 15.10: dot crosshair is a round dot
 
 **Why:** Playtest feedback: the "dot" crosshair style was actually a small square (a sprite-less UI Image), which reads as blocky and doesn't match the round colour swatches right next to it in the same settings tab.
