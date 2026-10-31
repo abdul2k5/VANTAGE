@@ -2,6 +2,21 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 16.6: Recon Dart rebuilt as an aimed, bouncing scout arrow
+
+**Why:** Playtest feedback: the Recon Dart was "some weird thingy" - a glowing ball lobbed by physics that revealed every drone within 8m *through walls*, wherever it happened to land. There was no skill in it: no aiming beyond pointing, no way to place it deliberately, and since walls didn't matter neither did placement. The scout-arrow design from tactical shooters fixes all three: you aim with a preview, you can bank it off walls to reach round a corner without exposing yourself, and the scan only sees what the arrow can see - so *where* it lands is the decision. That is "scout before you commit" made into an actual skill. (Mechanics only: no names, models, sounds or art from any existing game - the arrow is built from primitives, sounds are CC0 Kenney.)
+
+**What changed:**
+- **Hold F to aim** - a live cyan line shows the full arc, every ricochet and a marker where it will stick. **Right-click while aiming cycles 0/1/2 bounces**; the count shows under the crosshair. **Release F to fire.** Opening a menu/card/settings cancels the aim without spending the charge.
+- **An actual arrow:** dark shaft, glowing pointed head, two fins, a short trail and a small light; it points along its flight path. Fast (22 m/s) with lighter gravity, so it flies in a readable arc.
+- **Bounces then sticks:** each ricochet reflects off the surface losing 20% speed (metal tick sound); the next contact buries the tip (impact sound). Hitting a drone sticks to the drone.
+- **Two scan pulses, 1.2s apart:** each reveals drones within 12m that have **line of sight** to the dart, for 2.5s. Walls block the scan (same layer drones use for their own sight). A visible expanding shell plus a hum marks each pulse.
+- The preview and the real arrow run the **same flight code** (fixed 0.02s sub-steps), so the arrow lands where the line says - and fast frames can't tunnel it through thin walls.
+- Recon room text and the unlock card now explain aim / right-click / release.
+- Ability charges (1 per room) and the Recon room's exit gate (opens on use) are unchanged.
+
+**Verified** in Play mode in the Recon room: preview vs real landing point for 0/1/2 bounces agree within the 0.12m tip bury (e.g. predicted (-120.00, 1.94, -8.80) / actual (-120.00, 1.95, -8.68) on a one-bounce shot). A dart stuck on the near side of the partition, 8m from the hidden drone, did **not** reveal it (wall in the way); one landed past the partition revealed it on the first pulse. From the room entry, 60 of 210 direct throws, 76/199 one-bounce and 76/199 two-bounce throws reveal the drone - plenty of valid shots, but not every throw. Renders of the arrow in flight and of the aim preview checked.
+
 ## Phase 16.5: armor
 
 **Why:** The playtester asked for a shield for the player. Of the three options discussed (per-room armor, a regenerating shield, a barrier ability), per-room armor was chosen: it is the closest match to how armor works in tactical shooters (a separate pool on top of health, not a free heal), and it fits the per-room budget Phase 16 already set up for ability charges. Since every death now ends the run (Phase 9), it also gives newer players a bit more room for one mistake per room - without the regenerating option's "hide and wait" loop, which would undercut the push to use utility.

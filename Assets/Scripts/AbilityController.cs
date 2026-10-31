@@ -33,7 +33,14 @@ public class AbilityController : MonoBehaviour
         if (smokeWallUnlocked && smokeWall != null && kb.qKey.wasPressedThisFrame) smokeWall.TryUse();
         if (flashUnlocked && flash != null && kb.eKey.wasPressedThisFrame) flash.TryUse();
         if (dashUnlocked && dash != null && kb.leftShiftKey.wasPressedThisFrame) dash.TryUse();
-        if (reconDartUnlocked && reconDart != null && kb.fKey.wasPressedThisFrame) reconDart.TryUse();
+        if (reconDartUnlocked && reconDart != null)
+        {
+            // Hold to aim (preview line), right-click to change bounces, release to fire.
+            if (kb.fKey.wasPressedThisFrame) reconDart.BeginAim();
+            var mouse = Mouse.current;
+            if (reconDart.IsAiming && mouse != null && mouse.rightButton.wasPressedThisFrame) reconDart.CycleBounces();
+            if (reconDart.IsAiming && kb.fKey.wasReleasedThisFrame) reconDart.ReleaseAim();
+        }
     }
 
     public void UnlockForRoom(int roomIndex)
@@ -58,6 +65,7 @@ public class AbilityController : MonoBehaviour
     /// <summary>Checkpoint retry: removes anything abilities left in the world (smoke walls, darts, flash bursts).</summary>
     public void ClearDeployed()
     {
+        if (reconDart != null) reconDart.CancelAim();
         if (smokeWall != null) smokeWall.ClearActive();
         if (flash != null) flash.ClearActive();
 
