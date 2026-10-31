@@ -2,6 +2,39 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.1: night-shift facility environment pass
+
+**Why:** Playtest feedback: "the features gameplay is good but... whats lacking is the vibes", and every room felt like "just one box". The rooms were flat-lit grey boxes. Nothing told you where you were or gave the space a mood, so each room read as a bare test chamber. The chosen direction was a **night-shift facility**: dark, cool ambient light, warm work lamps hanging from the rafters, and each room's colour picked out in glowing strips. That gives the drones a setting that makes sense (security drones in an empty facility after hours), and the pools of lamp light naturally draw the eye to the cover and the drones.
+
+**What changed:**
+- **New editor tool `Assets/Editor/EnvironmentDresser.cs`**, under the menu *Vantage > Environment > Rebuild All / Rebuild Dressing / Apply Night Lighting*. The dressing is generated, not hand-placed, so it can be rebuilt in one click after any layout change. The dressing is purely visual: every piece has its collider removed and is marked static, so gameplay, drone sight and the NavMesh are untouched.
+- **Each room now has:**
+  - I-beam rafters with wall pilasters, plus purlins;
+  - wall caps and baseboards;
+  - pipes and brackets on the east wall, vents on the west;
+  - yellow safety lines on the floor;
+  - **emissive accent strips in the room's colour** (amber, red, orange, blue, teal, white-gold, violet);
+  - **four hanging lamps with real spot lights**, one of them casting soft shadows.
+- **Night lighting:**
+  - procedural night skybox with no sun disc;
+  - cool three-colour ambient light;
+  - dark blue exponential fog;
+  - a dim blue moon as the directional light.
+- **Pipeline changes so the lamps work:** URP now runs Forward+ with per-pixel additional lights and additional-light shadows on. With the old limits, most of the 32 lamps would have been culled.
+- **Bug found and fixed:** the post-processing profile had held four *null* components since Phase 6a. They were added but never saved into the asset, so the game has never actually had post-processing. The profile is rebuilt properly with:
+  - ACES tonemapping;
+  - colour adjustments;
+  - a slight cool white balance;
+  - bloom, so the strips and bulbs glow;
+  - a soft vignette.
+
+**Verified:**
+- Rendered with post-processing from the Smoke, Holding Angle and The Round entry spots.
+- Accent strips and bulbs glow.
+- No blown-out floor hotspots.
+- The back walls where the drones sit are still lit, so the drones' red eyes read clearly from the entry.
+- Layout and gameplay are unchanged. Pass 2, which reshapes each room's layout, follows separately.
+
 ## Phase 16.8: walk through smoke
 
 **Why:** Playtest request - the player wants to walk through their own smoke. The Smoke Wall's invisible blocker had a solid collider, so the player bumped into it like a wall. In tactical shooters smoke is something you push *through*, not around: walking into or through it is how you cross a sightline with cover.
