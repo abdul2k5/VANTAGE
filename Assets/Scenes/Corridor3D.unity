@@ -793,7 +793,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: LMB to shoot, R to reload. Two drones are holding this end, one each side - they won't come to you. Hold [Ctrl] to crouch behind cover - it breaks their line of sight.
+  m_Text: Two drones are holding this end, one each side - they won't come to you. Hold [Ctrl] to crouch behind cover - it breaks their line of sight. Peek one side at a time. [Space] jumps (low hop, movement only).
 --- !u!222 &25733856
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4270,7 +4270,7 @@ MonoBehaviour:
     m_Bits: 256
   range: 22
   halfAngleDegrees: 50
-  damagePerHit: 10
+  damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
   bodyDamageMultiplier: 0.5
@@ -5304,7 +5304,7 @@ MonoBehaviour:
     m_Bits: 256
   range: 22
   halfAngleDegrees: 50
-  damagePerHit: 15
+  damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
   bodyDamageMultiplier: 0.5
@@ -6241,7 +6241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 853b34625decfad4db4843c7b19ef490, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  startLocked: 0
+  startLocked: 1
   leftPanel: {fileID: 774883611}
   rightPanel: {fileID: 594565961}
   slideDistance: 1.2
@@ -21967,7 +21967,7 @@ MonoBehaviour:
     m_Bits: 256
   range: 22
   halfAngleDegrees: 50
-  damagePerHit: 25
+  damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
   bodyDamageMultiplier: 0.5
@@ -32792,7 +32792,7 @@ MonoBehaviour:
     m_Bits: 256
   range: 22
   halfAngleDegrees: 50
-  damagePerHit: 25
+  damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
   bodyDamageMultiplier: 0.5
@@ -34888,7 +34888,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 853b34625decfad4db4843c7b19ef490, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  startLocked: 0
+  startLocked: 1
   leftPanel: {fileID: 1018975642}
   rightPanel: {fileID: 1197899543}
   slideDistance: 1.2
@@ -35535,6 +35535,58 @@ Transform:
   - {fileID: 1879494970}
   - {fileID: 1877715457}
   m_Father: {fileID: 1284871081}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1017300568
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1017300570}
+  - component: {fileID: 1017300569}
+  m_Layer: 0
+  m_Name: RoomExitGate_HoldingAngle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1017300569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1017300568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 328d4d8fc746672479f57cd9704101f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomExitGate
+  door: {fileID: 2037014060}
+  roomManager: {fileID: 1416355654}
+  roomIndex: 2
+  requiredAbility: {fileID: 0}
+  sentinels:
+  - {fileID: 1259265921}
+  - {fileID: 113820426}
+  unlockedObjective: Both angles cleared. Door unlocked - head to the exit.
+--- !u!4 &1017300570
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1017300568}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1018975638
 GameObject:
@@ -38994,7 +39046,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 853b34625decfad4db4843c7b19ef490, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  startLocked: 0
+  startLocked: 1
   leftPanel: {fileID: 821362500}
   rightPanel: {fileID: 498116568}
   slideDistance: 1.2
@@ -40929,6 +40981,57 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1170393192
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1170393194}
+  - component: {fileID: 1170393193}
+  m_Layer: 0
+  m_Name: RoomExitGate_Recon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1170393193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1170393192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 328d4d8fc746672479f57cd9704101f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomExitGate
+  door: {fileID: 978419438}
+  roomManager: {fileID: 1416355654}
+  roomIndex: 3
+  requiredAbility: {fileID: 1584037082}
+  sentinels:
+  - {fileID: 3200000089}
+  unlockedObjective: Scouted. Door unlocked - you know what's waiting.
+--- !u!4 &1170393194
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1170393192}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1174161468
 GameObject:
   m_ObjectHideFlags: 0
@@ -44282,7 +44385,7 @@ MonoBehaviour:
     m_Bits: 256
   range: 22
   halfAngleDegrees: 50
-  damagePerHit: 15
+  damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
   bodyDamageMultiplier: 0.5
@@ -44978,7 +45081,7 @@ MonoBehaviour:
     m_Bits: 256
   range: 22
   halfAngleDegrees: 50
-  damagePerHit: 10
+  damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
   bodyDamageMultiplier: 0.5
@@ -45188,6 +45291,58 @@ Material:
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
+--- !u!1 &1290938131
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1290938133}
+  - component: {fileID: 1290938132}
+  m_Layer: 0
+  m_Name: RoomExitGate_Flash
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1290938132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290938131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 328d4d8fc746672479f57cd9704101f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomExitGate
+  door: {fileID: 1105438560}
+  roomManager: {fileID: 1416355654}
+  roomIndex: 5
+  requiredAbility: {fileID: 1584037078}
+  sentinels:
+  - {fileID: 1546845661}
+  - {fileID: 1174161469}
+  unlockedObjective: Flashed. Door unlocked - go.
+--- !u!4 &1290938133
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290938131}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1292228315
 GameObject:
   m_ObjectHideFlags: 0
@@ -49338,23 +49493,23 @@ MonoBehaviour:
     entryPoint: {fileID: 3100000030}
     introPanel: {fileID: 3100000098}
   - title: Holding Angle
-    objective: Two drones are holding this doorway, not patrolling - peek one angle at a time, or time your cross.
+    objective: Two drones hold this doorway - peek one angle at a time. The door opens once both are down.
     entryPoint: {fileID: 339743820}
     introPanel: {fileID: 1785429454}
   - title: Recon
-    objective: Throw a Recon Dart before you round the corner - know it's there before it knows you are.
+    objective: Throw a Recon Dart before you round the corner. The door opens once you've scouted the room.
     entryPoint: {fileID: 3200000029}
     introPanel: {fileID: 3200000105}
   - title: Smoke
-    objective: Use Smoke Wall to block its view, then reach the door.
+    objective: Throw a Smoke Wall to block their view. The door opens once it's up - then go.
     entryPoint: {fileID: 1998657633}
     introPanel: {fileID: 151819807}
   - title: Flash
-    objective: Use Flash to blind it, then reach the door.
+    objective: Flash to blind them. The door opens once you've used it - then go.
     entryPoint: {fileID: 2124449286}
     introPanel: {fileID: 1387739133}
   - title: Dash
-    objective: No cover - Dash across the open lane to the door.
+    objective: No cover - Dash across the open lane. The door opens once you've dashed.
     entryPoint: {fileID: 1767623139}
     introPanel: {fileID: 624896661}
   - title: The Round
@@ -49760,6 +49915,58 @@ Transform:
   - {fileID: 1096661991}
   - {fileID: 1996180514}
   m_Father: {fileID: 1353171469}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1422890281
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1422890283}
+  - component: {fileID: 1422890282}
+  m_Layer: 0
+  m_Name: RoomExitGate_Smoke
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1422890282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1422890281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 328d4d8fc746672479f57cd9704101f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomExitGate
+  door: {fileID: 1590069996}
+  roomManager: {fileID: 1416355654}
+  roomIndex: 4
+  requiredAbility: {fileID: 1584037079}
+  sentinels:
+  - {fileID: 1753102719}
+  - {fileID: 133064070}
+  unlockedObjective: Sightline blocked. Door unlocked - go.
+--- !u!4 &1422890283
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1422890281}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1424510525
 GameObject:
@@ -54577,7 +54784,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 853b34625decfad4db4843c7b19ef490, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  startLocked: 0
+  startLocked: 1
   leftPanel: {fileID: 2060660397}
   rightPanel: {fileID: 517434225}
   slideDistance: 1.2
@@ -57452,7 +57659,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'WASD to move, Mouse to look, LMB to shoot. That target can''t fight back - notice your crosshair widen when you move, and tighten when you stop. Die and the drill restarts. Reach Room 5 to unlock a checkpoint. Watch your grouping: stand still and your shots land together. [Space] to jump (low hop, movement only), [Ctrl] to crouch.'
+  m_Text: WASD to move, Mouse to look, LMB to shoot, R to reload. These targets can't fight back - watch your crosshair widen when you move and tighten when you stop. Stand still and your shots land together. Die and the drill restarts - reach Room 5 to unlock a checkpoint.
 --- !u!222 &1685285684
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -65648,6 +65855,58 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1947076284}
   m_Mesh: {fileID: 1207705526073040379, guid: 78d77395bf884274488acb59e4f8c4ad, type: 3}
+--- !u!1 &1948366599
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1948366601}
+  - component: {fileID: 1948366600}
+  m_Layer: 0
+  m_Name: RoomExitGate_Dash
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1948366600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948366599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 328d4d8fc746672479f57cd9704101f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomExitGate
+  door: {fileID: 132048683}
+  roomManager: {fileID: 1416355654}
+  roomIndex: 6
+  requiredAbility: {fileID: 1584037077}
+  sentinels:
+  - {fileID: 2092840382}
+  - {fileID: 1157511791}
+  unlockedObjective: Door unlocked - dash for it.
+--- !u!4 &1948366601
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948366599}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1953920418
 GameObject:
   m_ObjectHideFlags: 0
@@ -68381,7 +68640,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 853b34625decfad4db4843c7b19ef490, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
-  startLocked: 0
+  startLocked: 1
   leftPanel: {fileID: 102480577}
   rightPanel: {fileID: 1498936386}
   slideDistance: 1.2
@@ -70334,7 +70593,7 @@ MonoBehaviour:
     m_Bits: 256
   range: 22
   halfAngleDegrees: 50
-  damagePerHit: 10
+  damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
   bodyDamageMultiplier: 0.5
@@ -73450,7 +73709,7 @@ MonoBehaviour:
     m_Bits: 256
   range: 22
   halfAngleDegrees: 50
-  damagePerHit: 10
+  damagePerHit: 20
   fireInterval: 0.8
   maxHealth: 50
   bodyDamageMultiplier: 0.5
@@ -75255,3 +75514,8 @@ SceneRoots:
   - {fileID: 1088799227}
   - {fileID: 42242432}
   - {fileID: 1249409516}
+  - {fileID: 1017300570}
+  - {fileID: 1170393194}
+  - {fileID: 1422890283}
+  - {fileID: 1290938133}
+  - {fileID: 1948366601}

@@ -2,6 +2,33 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 15.9: one consistent drone damage
+
+**Why:** Playtest feedback: drones hit for different amounts depending on the room (15 in Holding Angle, 20 in Recon-Dash, 25 in The Round), which made the player's health bar unreadable - the same hit could cost a different chunk of HP room to room, so the player couldn't build a reliable sense of "how many more hits can I take". Consistency is the more useful thing to learn here than a hidden damage ramp.
+
+**What changed:** Every drone now deals 20 damage per hit (5 hits from full 100 HP), everywhere. The difficulty curve from Phase 10 is kept, but now lives entirely in **reaction time** (0.8s Rooms 1-3, 0.5s Rooms 4-7, 0.35s The Round) plus room layout - the drones get faster to shoot as the game goes on, not harder-hitting, which the player can actually see and plan around.
+
+## Phase 15.8: room text rebalanced - controls taught where they're used
+
+**Why:** Room 1's intro tried to teach everything at once (move, look, shoot, spread, jump, crouch, checkpoints, restart rule) while leaving out reload, which you can actually need in the Range. Jump and crouch don't matter until there's something to hide from, and Room 3 repeated "LMB to shoot" for the third time instead of teaching what the room is about.
+
+**What changed:**
+- **Room 1 (Range):** jump/crouch moved out, reload (R) moved in. Now: move, look, shoot, reload, spread, restart/checkpoint rule.
+- **Room 3 (Holding Angle):** dropped the repeated LMB/R line; now teaches the room's actual skill ("peek one side at a time") alongside crouch and jump, the first room where hiding from a held angle matters.
+- **Rooms 3-7 objectives** now say exactly what opens the door (see Phase 15.7), so the gating is never a surprise. All texts checked to fit on screen: objectives on one line of the 928px objective bar, intros within their 640x70 panels.
+
+## Phase 15.7: Rooms 3-7 doors are earned, not open from the start
+
+**Why:** The Core Dynamic is "utility before you peek", but in Rooms 3-7 the exit doors were open from room entry and nothing checked that the room's lesson ever happened - a player could sprint past every drone straight to the door, and the Recon room told you to throw a dart without ever requiring it. The lesson was suggested by text, not enforced by the game.
+
+**What changed:**
+- New `RoomExitGate` on Rooms 3-7: the door starts locked and opens when the player **uses that room's ability while in that room** (Recon Dart, Smoke Wall, Flash, Dash), **or** clears every drone in the room. The kill fallback exists so winning the fight the hard way never softlocks the player; Holding Angle has no ability yet, so its door is kill-only (both held angles cleared).
+- `Ability.OnUsed` event (fires after a successful `TryUse`) - how the gate knows the utility was really used, not just unlocked. Using an ability in a different room doesn't count.
+- Checkpoint retry now re-locks the Rooms 5-7 doors (`DoorController.Relock()`, chevrons back to dark via `FloorChevronGuide.SetUnlitInstant()`) and restores their original objectives - otherwise a door opened before dying would stay open on the retry and the gate could be skipped.
+- On unlock, each room's objective swaps to a short confirmation ("Sightline blocked. Door unlocked - go.").
+
+**Verified** in Play mode via direct calls: Room 3 stays locked after 1 kill, opens after 2; Recon/Smoke/Flash open on their ability; Smoke used in Room 4 does not open Room 5; Dash room opens via the all-drones-dead fallback; a simulated checkpoint retry re-locks Rooms 5-7 (Recon, pre-checkpoint, stays open), restores objectives and drones, and the Room 5 gate re-opens on a fresh smoke afterwards. No console errors.
+
 ## Phase 15.6: second drone in Holding Angle
 
 **Why:** Playtest feedback: Room 3 felt too thin with a single drone - one held angle is a single timing check, then the room is over. A second held angle turns it into the actual skill the room is named for: isolating one angle at a time from cover instead of exposing yourself to everything at once. Kept it as a mirrored Hold pair rather than a diagonal crossfire so Room 5 onward still introduces true crossfire as the next step up.

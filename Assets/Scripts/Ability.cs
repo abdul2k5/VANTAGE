@@ -23,6 +23,9 @@ public abstract class Ability : MonoBehaviour
         }
     }
 
+    /// <summary>Fired after a successful use - room gates (RoomExitGate) listen for this to know the room's utility was actually used.</summary>
+    public event System.Action OnUsed;
+
     public bool TryUse()
     {
         if (!IsReady) return false;
@@ -30,6 +33,7 @@ public abstract class Ability : MonoBehaviour
 
         cooldownRemaining = cooldown;
         if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(activateSound);
+        if (OnUsed != null) OnUsed();
         return true;
     }
 

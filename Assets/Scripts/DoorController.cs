@@ -6,9 +6,9 @@ using UnityEngine;
 /// line. Two panels slide apart on Unlock(), a light strip above switches red (locked) to amber
 /// (open), and a short airlock trigger behind the door (a plain DoorTrigger, same component the
 /// old wall-mounted one used) fires the existing fade-and-teleport once the player actually walks
-/// through, instead of right at the wall. Doors in this game only ever go locked -> open once per
-/// playthrough - a full restart reloads the scene back to authored defaults - so there's no
-/// re-lock path.
+/// through, instead of right at the wall. A full restart reloads the scene back to authored
+/// defaults; the only in-place re-lock is Relock(), used by checkpoint retry to re-arm the gated
+/// doors in Rooms 5-7.
 /// </summary>
 public class DoorController : MonoBehaviour
 {
@@ -51,6 +51,24 @@ public class DoorController : MonoBehaviour
         if (isOpen) return;
         StopAllCoroutines();
         StartCoroutine(OpenRoutine());
+    }
+
+    /// <summary>Snaps the door back to closed and locked, no animation - for checkpoint retry, so a door opened before dying doesn't stay open on the retry.</summary>
+    public void Relock()
+    {
+        StopAllCoroutines();
+        isOpen = false;
+        SetBlockingColliders(true);
+        ApplyLight(lockedColor, lockedEmission);
+        if (leftPanel != null) leftPanel.localPosition = leftClosedLocalPos;
+        if (rightPanel != null) rightPanel.localPosition = rightClosedLocalPos;
+        if (chevronGuides != null)
+        {
+            for (int i = 0; i < chevronGuides.Length; i++)
+            {
+                if (chevronGuides[i] != null) chevronGuides[i].SetUnlitInstant();
+            }
+        }
     }
 
 IEnumerator OpenRoutine()

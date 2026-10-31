@@ -38,6 +38,14 @@ public class FloorChevronGuide : MonoBehaviour
         ApplyInstant(true);
     }
 
+    /// <summary>Back to dark - used when a door re-locks on checkpoint retry. Always-lit wayfinding rows stay lit.</summary>
+    public void SetUnlitInstant()
+    {
+        if (alwaysLit) return;
+        StopAllCoroutines();
+        ApplyInstant(false);
+    }
+
     /// <summary>No-op if already lit - safe to call more than once, mirrors DoorController.Unlock().</summary>
     public void TriggerUnlockSweep()
     {

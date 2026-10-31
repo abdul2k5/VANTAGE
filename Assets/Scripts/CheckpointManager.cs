@@ -128,6 +128,12 @@ public class CheckpointManager : MonoBehaviour
             if (sentinels[i].OwnerRoomIndex >= CheckpointRoomIndex) sentinels[i].ResetState();
         }
 
+        var gates = Object.FindObjectsByType<RoomExitGate>(FindObjectsSortMode.None);
+        for (int i = 0; i < gates.Length; i++)
+        {
+            if (gates[i].roomIndex >= CheckpointRoomIndex) gates[i].ResetState();
+        }
+
         if (RoundController.Instance != null) RoundController.Instance.ResetState();
     }
 
