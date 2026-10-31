@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(CanvasGroup))]
 public class AutoHidePanel : MonoBehaviour
 {
-    public float visibleSeconds = 6f;
+    public float visibleSeconds = 18f;
     public float fadeSeconds = 1f;
 
     CanvasGroup group;

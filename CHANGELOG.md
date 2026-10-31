@@ -2,6 +2,12 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 15.4: room instructions stay on screen longer
+
+**Why:** Playtest feedback: the yellow per-room instruction text vanished before it could be read. Each room's brief is a full paragraph (controls, mechanic explanation, checkpoint note) that the player is meant to read while also looking around the room, and 8s wasn't enough to do both.
+
+**What changed:** `AutoHidePanel.visibleSeconds` raised 8s → 18s on all 7 `<room>_InstructionsPanel` objects (Range, Weak Point, Holding Angle, Recon, Smoke, Flash, Dash), keeping the same 1s fade. All rooms changed together so the instruction timing stays consistent from room to room. The script's own default was also raised (6s → 18s) so any newly added panel matches.
+
 ## Phase 15.3: floor guide strips replaced with unlock-linked chevrons
 
 **Why:** The dashed amber floor strips from Phase 15 read as road markings, not game signage — and in the Range they ran in a straight line through the centre target instead of stopping short of it. They also carried no information: lit the same whether the exit door was locked or not, so they never actually told the player anything they didn't already know from looking at the door itself.

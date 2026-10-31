@@ -7009,7 +7009,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acfaca4eb813ea44abf6b68c25e98f72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AutoHidePanel
-  visibleSeconds: 8
+  visibleSeconds: 18
   fadeSeconds: 1
 --- !u!225 &151819810
 CanvasGroup:
@@ -7155,7 +7155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acfaca4eb813ea44abf6b68c25e98f72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AutoHidePanel
-  visibleSeconds: 8
+  visibleSeconds: 18
   fadeSeconds: 1
 --- !u!225 &153265617
 CanvasGroup:
@@ -23364,7 +23364,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acfaca4eb813ea44abf6b68c25e98f72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AutoHidePanel
-  visibleSeconds: 8
+  visibleSeconds: 18
   fadeSeconds: 1
 --- !u!225 &624896664
 CanvasGroup:
@@ -47566,7 +47566,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acfaca4eb813ea44abf6b68c25e98f72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AutoHidePanel
-  visibleSeconds: 8
+  visibleSeconds: 18
   fadeSeconds: 1
 --- !u!225 &1387739136
 CanvasGroup:
@@ -59778,7 +59778,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acfaca4eb813ea44abf6b68c25e98f72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AutoHidePanel
-  visibleSeconds: 8
+  visibleSeconds: 18
   fadeSeconds: 1
 --- !u!225 &1785429457
 CanvasGroup:
@@ -72620,7 +72620,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acfaca4eb813ea44abf6b68c25e98f72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AutoHidePanel
-  visibleSeconds: 8
+  visibleSeconds: 18
   fadeSeconds: 1
 --- !u!114 &3100000100
 MonoBehaviour:
@@ -74065,7 +74065,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acfaca4eb813ea44abf6b68c25e98f72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AutoHidePanel
-  visibleSeconds: 8
+  visibleSeconds: 18
   fadeSeconds: 1
 --- !u!114 &3200000107
 MonoBehaviour:
