@@ -19,7 +19,7 @@ public class ReconDartAbility : Ability
     public Color dartColor = new Color(0.25f, 0.75f, 0.95f, 1f);
 
     [Header("Aiming")]
-    [Tooltip("\"BOUNCES: 1  [RMB]  release [F]\" - shown while aiming.")]
+    [Tooltip("\"BOUNCES: 0  [RMB]  release [F]\" - shown while aiming.")]
     public Text aimHint;
     public float previewWidth = 0.03f;
     [Tooltip("The arc isn't drawn closer than this to the camera - see DrawPreview.")]
@@ -32,7 +32,7 @@ public class ReconDartAbility : Ability
     public AudioClip pulseSound;
 
     Camera cam;
-    int bounces = 1;
+    int bounces;
     bool aiming;
     LineRenderer preview;
     GameObject landMarker;
@@ -67,6 +67,8 @@ public class ReconDartAbility : Ability
     {
         if (!IsReady || cam == null) return;
         aiming = true;
+        // Every aim starts as a straight shot; bounces are an opt-in for reaching round corners.
+        bounces = 0;
         if (aimHint != null) aimHint.gameObject.SetActive(true);
     }
 

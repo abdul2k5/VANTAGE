@@ -87743,7 +87743,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'BOUNCES: 1   [RMB] change   release [F] to fire'
+  m_Text: 'BOUNCES: 0   [RMB] change   release [F] to fire'
 --- !u!222 &1359150503
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -2,6 +2,14 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.2: Recon Dart aim starts at 0 bounces
+
+**Why:** Playtest: "the dart starts with one bounce not 0 bounces". The default was hard-coded to 1, so a player who just pressed F and aimed at a spot got a ricochet they didn't ask for, and the dart landed somewhere other than where they pointed. A straight shot is the expected default; bouncing is the advanced option for reaching round a corner.
+
+**What changed:** Every aim now starts at 0 bounces, and right-click still cycles 0/1/2. The count resets on each aim instead of remembering the last throw, so pressing F always behaves the same way. The placeholder hint text was updated to match.
+
+**Verified:** I set bounces to 2, then started an aim. It reset to 0, and right-click moved it to 1.
+
 ## Phase 17.1: night-shift facility environment pass
 
 **Why:** Playtest feedback: "the features gameplay is good but... whats lacking is the vibes", and every room felt like "just one box". The rooms were flat-lit grey boxes. Nothing told you where you were or gave the space a mood, so each room read as a bare test chamber. The chosen direction was a **night-shift facility**: dark, cool ambient light, warm work lamps hanging from the rafters, and each room's colour picked out in glowing strips. That gives the drones a setting that makes sense (security drones in an empty facility after hours), and the pools of lamp light naturally draw the eye to the cover and the drones.
