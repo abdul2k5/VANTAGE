@@ -2,6 +2,18 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 16.1: recoil spray pattern
+
+**Why:** Holding the trigger was exactly as accurate as tapping - the only accuracy rule was movement spread (Phase 1). In tactical shooters the gun itself also punishes a long spray, and the fix is a skill you can learn: tap or burst, or pull down against a *fixed* pattern. That fits Vantage's core dynamic (the patient, controlled shot wins) and gives the Range room something to practise beyond "stand still".
+
+**What changed:**
+- Each shot in a continuous spray kicks the view by a fixed amount: up hard for the first few shots, then a smaller climb with a left/right snake (about 5 degrees up over a full 12-round magazine). The pattern is identical every time, so it can be learned.
+- The **first shot is always where the crosshair is**; the kick happens after it. A pause longer than 0.4s starts a fresh spray.
+- The kick moves the camera itself rather than secretly bending the bullet, so the crosshair visibly climbs and the player can pull the mouse down against it. After 0.3s without firing the view settles back at 10 degrees/s. The kick is kept separate from the player's own aim, so settling never undoes their mouse movement.
+- Room changes clear any leftover kick.
+
+**Verified** in Play mode: 12 shots fired in one spray climb 0.9, 1.8, 2.6, 3.2 ... 5.05 degrees with the sideways snake; after a pause the next shot starts the pattern from the beginning (0.9); recovery returns the view exactly to where the player was aiming.
+
 ## Phase 16: ability charges per room + Overwatch orbs
 
 **Why:** Two Valorant-inspired gaps found when reviewing the game as a whole. (1) Abilities were cooldown-only, so utility was effectively unlimited - you could smoke, wait 6s and smoke again, and *when* to spend it never mattered. In tactical shooters utility is a limited budget per round, and choosing when to use it is the skill. (2) The ultimate unlock card already told players Overwatch Protocol "charges from kills and Overwatch orbs", and `UltOrbPickup` existed, but no orb had ever been placed in the scene - the card promised something the game didn't have.

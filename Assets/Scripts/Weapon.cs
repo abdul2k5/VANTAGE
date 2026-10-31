@@ -20,6 +20,14 @@ public class Weapon : MonoBehaviour
     public float crouchSpreadMultiplier = 0.5f;
 
 
+    [Header("Recoil - a fixed, learnable spray pattern: the first shot is always true, a held spray climbs")]
+    [Tooltip("View kick (degrees up) applied AFTER shot N of a continuous spray - index 0 is the kick after the first shot. Past the end, the last value repeats.")]
+    public float[] recoilPitchPattern = { 0.9f, 0.9f, 0.8f, 0.6f, 0.4f, 0.25f, 0.2f, 0.2f, 0.2f, 0.2f, 0.2f };
+    [Tooltip("Sideways kick (degrees, + = right) after shot N - the spray drifts right, then snakes left/right once it tops out.")]
+    public float[] recoilYawPattern = { 0f, 0f, 0.1f, 0.3f, 0.5f, -0.7f, -0.7f, 0.7f, 0.7f, -0.7f, -0.7f };
+    [Tooltip("A shot fired more than this long after the previous one starts a fresh spray (pattern index back to 0). Must exceed fireRate or a held trigger would never count as a spray.")]
+    public float sprayResetSeconds = 0.4f;
+
     [Header("Headshots")]
     public float headshotMultiplier = 2.5f;
     public AudioClip headshotSound;
@@ -43,6 +51,9 @@ public class Weapon : MonoBehaviour
     CharacterController cc;
     Camera cam;
     PlayerController playerController;
+    FollowCamera followCamera;
+    int sprayIndex;
+    float lastShotTime = -999f;
 
 
     public int CurrentAmmo { get { return currentAmmo; } }
@@ -63,6 +74,7 @@ public class Weapon : MonoBehaviour
         cc = GetComponent<CharacterController>();
         cam = Camera.main;
         playerController = GetComponent<PlayerController>();
+        if (cam != null) followCamera = cam.GetComponentInParent<FollowCamera>();
 
     }
 
@@ -195,6 +207,31 @@ void UpdateSpread()
         // Raycast stays camera-centered for accuracy; the visible tracer starts at the gun's muzzle.
         Vector3 visualOrigin = muzzle != null ? muzzle.position : origin;
         if (feedback != null) feedback.PlayShot(visualOrigin, end);
+
+        ApplyRecoil();
+    }
+
+    /// <summary>
+    /// Kicks the view after the shot, so this shot went where the crosshair was and the next one goes where
+    /// it has climbed to. Because the kick moves the camera (not a hidden bullet offset), the player sees the
+    /// climb and can pull down against it - spraying is controllable with practice, tapping is reliable.
+    /// </summary>
+    void ApplyRecoil()
+    {
+        if (Time.time - lastShotTime > sprayResetSeconds) sprayIndex = 0;
+        lastShotTime = Time.time;
+
+        if (followCamera != null)
+        {
+            followCamera.AddRecoil(PatternValue(recoilPitchPattern, sprayIndex), PatternValue(recoilYawPattern, sprayIndex));
+        }
+        sprayIndex++;
+    }
+
+    static float PatternValue(float[] pattern, int index)
+    {
+        if (pattern == null || pattern.Length == 0) return 0f;
+        return pattern[Mathf.Min(index, pattern.Length - 1)];
     }
 
     Vector3 ApplySpread(Vector3 forward, float spreadDegrees)
