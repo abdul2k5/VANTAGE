@@ -2,6 +2,12 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 15.15: Game Over buttons stack without a gap
+
+**Why:** Playtest screenshot: on the Game Over screen before reaching the checkpoint, there was a big empty gap between RESTART and MAIN MENU. Each button had a fixed height authored for the 3-button checkpoint layout (RETRY FROM CHECKPOINT / RESTART FROM BEGINNING / MAIN MENU); the 2-button layout just hides the middle one, leaving its slot empty.
+
+**What changed:** `GameOverController` now stacks whichever buttons are visible top-down from the first slot (60px apart) each time the screen opens. Verified in Play mode: no checkpoint = RESTART at -110, MAIN MENU at -170; checkpoint reached = the three buttons at -110 / -170 / -230.
+
 ## Phase 15.14: unlock cards can't be skipped by accident; one ultimate notification, not two
 
 **Why:** Playtest bug: the Overwatch Protocol card "sometimes pops up and sometimes doesn't". The card closes on Space or left-click and accepted that input from its very first frame. The ultimate fills on a kill, so the card opens mid-firefight: the killing click could land on the same frame the card opened (Unity doesn't guarantee whether `Weapon` or `AbilityUnlockCardUI` updates first, so this varied run to run), or the player's next click a split second later closed it - either way it vanished before it could be read. Separately, on the first charge-up the card and the "READY - PRESS [X]" banner both appeared at once, saying the same thing twice.

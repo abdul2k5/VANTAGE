@@ -18,6 +18,8 @@ public class GameOverController : MonoBehaviour
     public Button restartBeginningButton;
     public Button restartButton;
     public Button mainMenuButton;
+    public float firstButtonY = -110f;
+    public float buttonSpacing = 60f;
     public AudioClip loseSound;
 
     public string defaultSubMessage = "The attempt ends here.";
@@ -35,6 +37,24 @@ public class GameOverController : MonoBehaviour
         if (mainMenuButton != null) mainMenuButton.onClick.AddListener(MainMenu);
     }
 
+    /// <summary>
+    /// Buttons used to sit at fixed heights authored for the 3-button (checkpoint) layout, so the
+    /// 2-button layout left an empty slot between RESTART and MAIN MENU. Stack whichever are shown
+    /// top-down from the first slot instead, in display order.
+    /// </summary>
+    void StackVisibleButtons()
+    {
+        Button[] order = { retryCheckpointButton, restartBeginningButton, restartButton, mainMenuButton };
+        float y = firstButtonY;
+        for (int i = 0; i < order.Length; i++)
+        {
+            if (order[i] == null || !order[i].gameObject.activeSelf) continue;
+            var rt = (RectTransform)order[i].transform;
+            rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, y);
+            y -= buttonSpacing;
+        }
+    }
+
     public void ShowGameOver(string subMessage = null)
     {
         if (panel == null) return;
@@ -44,6 +64,7 @@ public class GameOverController : MonoBehaviour
         if (retryCheckpointButton != null) retryCheckpointButton.gameObject.SetActive(hasCheckpoint);
         if (restartBeginningButton != null) restartBeginningButton.gameObject.SetActive(hasCheckpoint);
         if (restartButton != null) restartButton.gameObject.SetActive(!hasCheckpoint);
+        StackVisibleButtons();
 
         if (subText != null) subText.text = string.IsNullOrEmpty(subMessage) ? defaultSubMessage : subMessage;
 
