@@ -169,6 +169,11 @@ public class UltimateHudUI : MonoBehaviour
 
     void ShowReadyBanner()
     {
+        // First charge-up of the run: the ultimate's unlock card is about to show (or already is)
+        // with the full explanation, key included - the banner would just repeat it underneath.
+        var cards = AbilityUnlockCardUI.Instance;
+        if (cards != null && cards.ultimateCard != null && !cards.UltimateCardShown) return;
+
         if (readyBannerRoutine != null) StopCoroutine(readyBannerRoutine);
         readyBannerRoutine = StartCoroutine(RunReadyBanner());
     }

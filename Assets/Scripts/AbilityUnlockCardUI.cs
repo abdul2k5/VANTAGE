@@ -31,6 +31,13 @@ public class AbilityUnlockCardUI : MonoBehaviour
     public Text nameText;
     public Text descriptionText;
     public Text tipText;
+    /// <summary>"[SPACE] OR CLICK TO CONTINUE" - hidden during the dismiss grace period, fades in once input is accepted.</summary>
+    public Text dismissHint;
+    /// <summary>Real seconds (the card pauses the game) before Space/click can close the card. Without this, the
+    /// click that fired the ultimate-filling kill - or the next click of a rapid burst - could close the card
+    /// on the same frame it opened or a split second later, so it sometimes seemed never to appear at all.</summary>
+    public float dismissGraceSeconds = 0.6f;
+    public float hintFadeSeconds = 0.25f;
 
     public AbilityController abilities;
     public UltimateController ultimate;
@@ -45,16 +52,34 @@ public class AbilityUnlockCardUI : MonoBehaviour
     bool prevRecon, prevSmoke, prevFlash, prevDash;
     bool ultimateCardShown;
     bool showing;
+    float shownAtRealtime;
 
     /// <summary>Lets other gameplay-input gates (e.g. the settings panel's Escape toggle) know not to act while a card is up.</summary>
     public static bool IsShowingCard { get; private set; }
+
+    public static AbilityUnlockCardUI Instance { get; private set; }
+
+    /// <summary>True once the ultimate's card has been shown this run. UltimateHudUI checks this to skip its
+    /// "READY" banner on the first charge-up, when the card already says the same thing in full.</summary>
+    public bool UltimateCardShown { get { return ultimateCardShown; } }
+
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+        IsShowingCard = false;
+    }
 
     void Start()
     {
         if (card != null) card.SetActive(false);
 
         var dismissButton = card != null ? card.GetComponent<Button>() : null;
-        if (dismissButton != null) dismissButton.onClick.AddListener(Dismiss);
+        if (dismissButton != null) dismissButton.onClick.AddListener(TryDismiss);
     }
 
     void Update()
@@ -64,11 +89,29 @@ public class AbilityUnlockCardUI : MonoBehaviour
 
         if (showing)
         {
+            UpdateDismissHint();
+
             var kb = Keyboard.current;
             var mouse = Mouse.current;
             bool dismiss = (kb != null && kb.spaceKey.wasPressedThisFrame) || (mouse != null && mouse.leftButton.wasPressedThisFrame);
-            if (dismiss) Dismiss();
+            if (dismiss) TryDismiss();
         }
+    }
+
+    bool CanDismiss { get { return Time.unscaledTime - shownAtRealtime >= dismissGraceSeconds; } }
+
+    void TryDismiss()
+    {
+        if (showing && CanDismiss) Dismiss();
+    }
+
+    void UpdateDismissHint()
+    {
+        if (dismissHint == null) return;
+        float sinceReady = Time.unscaledTime - shownAtRealtime - dismissGraceSeconds;
+        Color c = dismissHint.color;
+        c.a = hintFadeSeconds > 0f ? Mathf.Clamp01(sinceReady / hintFadeSeconds) : (sinceReady >= 0f ? 1f : 0f);
+        dismissHint.color = c;
     }
 
     void PollUnlocks()
@@ -112,6 +155,8 @@ public class AbilityUnlockCardUI : MonoBehaviour
 
         showing = true;
         IsShowingCard = true;
+        shownAtRealtime = Time.unscaledTime;
+        UpdateDismissHint();
         if (iconImage != null) iconImage.sprite = data.icon;
         if (keyText != null) keyText.text = "[" + data.key + "]";
         if (nameText != null) nameText.text = data.abilityName;

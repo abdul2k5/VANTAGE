@@ -2,6 +2,16 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 15.14: unlock cards can't be skipped by accident; one ultimate notification, not two
+
+**Why:** Playtest bug: the Overwatch Protocol card "sometimes pops up and sometimes doesn't". The card closes on Space or left-click and accepted that input from its very first frame. The ultimate fills on a kill, so the card opens mid-firefight: the killing click could land on the same frame the card opened (Unity doesn't guarantee whether `Weapon` or `AbilityUnlockCardUI` updates first, so this varied run to run), or the player's next click a split second later closed it - either way it vanished before it could be read. Separately, on the first charge-up the card and the "READY - PRESS [X]" banner both appeared at once, saying the same thing twice.
+
+**What changed:**
+- **Dismiss grace period:** the card ignores Space/clicks for its first 0.6 real seconds (unscaled time, since the card pauses the game). The "[SPACE] OR CLICK TO CONTINUE" hint is hidden until then and fades in as input becomes accepted, so the player can see when it's safe to continue. The card's own button goes through the same check. Applies to all five cards (Recon, Smoke, Flash, Dash, Overwatch), not just the ultimate.
+- **One notification per charge-up:** the first time the ultimate fills, only the card shows (it has the full explanation and the key). Every later charge-up shows only the short banner.
+
+**Verified** in Play mode by stepping `Update()` manually (the Editor's frame loop was stalled again, see earlier phases): card opens on charge-up with banner suppressed - regardless of which script updates first; dismiss attempts at 0s and 0.3s ignored, hint invisible; at 0.7s hint fading in and a click closes the card and restores time scale; a second charge-up shows the banner ("...PRESS [X]") and no card.
+
 ## Phase 15.13: crouch actually matters at crates; ultimate banner says which key
 
 **Why (crouch):** Phase 11 raised the standing eye height used for drone sight to 1.5 (above the 1.2m crates) so a standing player shows over cover and only crouching hides you. But that change only edited the script's default - the scene's saved value stayed at the old 1.0, and a saved scene value overrides a script default. So in the actual game, standing behind any crate hid you completely and crouch did nothing at cover, contradicting Room 3's own instruction ("Hold [Ctrl] to crouch behind cover"). Found while verifying Phase 15.12.
