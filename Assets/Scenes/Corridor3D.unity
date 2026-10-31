@@ -793,7 +793,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: LMB to shoot, R to reload. It's holding this angle, watching - it won't come to you. Hold [Ctrl] to crouch behind cover - it breaks the angle's line of sight.
+  m_Text: LMB to shoot, R to reload. Two drones are holding this end, one each side - they won't come to you. Hold [Ctrl] to crouch behind cover - it breaks their line of sight.
 --- !u!222 &25733856
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -22537,7 +22537,7 @@ MonoBehaviour:
   door: {fileID: 1494281293}
   roomManager: {fileID: 1416355654}
   roomIndex: 1
-  headshotObjective: Clean headshot. Door unlocked.
+  headshotObjective: Clean headshots. Door unlocked.
   bodyShotObjective: Door unlocked. Try the eye next time.
 --- !u!4 &587251249
 Transform:
@@ -49334,11 +49334,11 @@ MonoBehaviour:
     entryPoint: {fileID: 1848493664}
     introPanel: {fileID: 153265614}
   - title: Weak Point
-    objective: Body shots barely scratch it. Go for the head - the door won't open until it's dead.
+    objective: Body shots barely scratch them. Go for the eye - the door won't open until all four are down.
     entryPoint: {fileID: 3100000030}
     introPanel: {fileID: 3100000098}
   - title: Holding Angle
-    objective: It's holding this doorway, not patrolling - time your cross or take the shot.
+    objective: Two drones are holding this doorway, not patrolling - peek one angle at a time, or time your cross.
     entryPoint: {fileID: 339743820}
     introPanel: {fileID: 1785429454}
   - title: Recon
@@ -73648,7 +73648,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Body shots barely scratch this one - its red eye is the real target. One clean headshot ends it.
+  m_Text: 'Body shots barely scratch these drones - the red eye is the real target. They can''t shoot back. Two hold still, two move: drop all four with headshots.'
 --- !u!222 &3100000101
 CanvasRenderer:
   m_ObjectHideFlags: 0
