@@ -134,6 +134,13 @@ public static class EnvironmentDresser
         var so = new SerializedObject(asset);
         so.FindProperty("m_AdditionalLightShadowsSupported").boolValue = true;
         so.FindProperty("m_AdditionalLightsRenderingMode").intValue = (int)LightRenderingMode.PerPixel;
+        // Shadow quality: with soft shadows unsupported and the defaults below, the lamp and moon shadows drew as
+        // saw-toothed bands across walls and floors. Rooms are 18m long, so 30m of shadow distance in 2 cascades
+        // is plenty, and a 4096 atlas fits the eight shadowed lamps at the high (1024) tier.
+        so.FindProperty("m_SoftShadowsSupported").boolValue = true;
+        so.FindProperty("m_ShadowDistance").floatValue = 30f;
+        so.FindProperty("m_ShadowCascadeCount").intValue = 2;
+        so.FindProperty("m_AdditionalLightsShadowmapResolution").intValue = 4096;
         so.ApplyModifiedProperties();
         EditorUtility.SetDirty(asset);
 
@@ -307,6 +314,15 @@ public static class EnvironmentDresser
         l.spotAngle = 140f;
         l.innerSpotAngle = 40f;
         l.shadows = castShadows ? LightShadows.Soft : LightShadows.None;
+        if (castShadows)
+        {
+            var data = lgo.GetComponent<UniversalAdditionalLightData>();
+            if (data == null) data = lgo.AddComponent<UniversalAdditionalLightData>();
+            // The property setter throws outside Play mode - set the serialized field instead.
+            var so = new SerializedObject(data);
+            so.FindProperty("m_AdditionalLightsShadowResolutionTier").intValue = UniversalAdditionalLightData.AdditionalLightsShadowResolutionTierHigh;
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
     }
 
     static void Vent(Transform parent, Vector3 pos, Material grille, Material frame)

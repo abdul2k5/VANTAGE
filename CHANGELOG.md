@@ -2,6 +2,39 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.4: room layouts reshaped around each room's lesson
+
+**Why:** Playtest feedback, second half: "each time i walk into a room its just one single room and like its straight up just shooting... the rooms just one box". Each room *told* you its lesson in text, but the space itself was an open rectangle, so every room played the same way. Now each room gets 1-2 solid pieces chosen so the space *teaches* the lesson, rather than just being decorated. "Nothing too much" was the brief, so 14 pieces in total across 8 rooms.
+
+**What changed (new editor tool `Assets/Editor/RoomLayoutBuilder.cs`, menu *Vantage > Environment > Rebuild Layout Pieces*):**
+- **Range:** a waist-high shooting counter with a walk-through gap. Standing aim clears it, and it frames the room as a range.
+- **Weak Point:** a knee-high firing line facing the drone lanes.
+- **Holding Angle:** two pillars. Behind the left one you can see only the right drone, and vice versa, so "peek one angle at a time" is now built into the room instead of only stated.
+- **Recon:** a tall crate stack in the far corner, one more place something could be hiding. It barely changes where the dart works: 657 vs 677 floor spots can still reveal the drone.
+- **Smoke:** a wall across the room with one 3m gap that both drones watch. The Smoke Wall is 3.2m wide: smoke the gap, then walk through it, which ties in with 16.8. The crossfire drone no longer sees the entry.
+- **Flash:** a wall just short of the drones with a corner on the west side. 44 spots behind it are hidden from every drone yet within the 7m flash radius of all of them, including both ends of the patrol: walk up safely, pop the flash, peek. The Flash ult orb moved past the corner, so it's now a risk-for-reward pickup instead of a free one.
+- **Dash:** two staggered cover blocks with an exposed lane between them. Both hiding spots are hidden from all drones and the lane is watched by three, so the dash is the way across. The orb sits beside the second block.
+- **The Round:** a 2.2m crate stack splits the approach into two lanes, one to each site cover, so there's more than one way in. A low flank crate gives an off-angle on the patrol.
+- All pieces are on the Blocking layer, so they stop drone sight and the dart scan. They carve the NavMesh, so drones path round them. They avoid the hanging lamps and wall vents from 17.1.
+- Room text updated to match: the Holding Angle, Smoke, Flash and Dash intro panels, plus the Smoke, Flash and Dash objectives. Dash's "No cover here" was no longer true.
+
+**Shadow fix found along the way:** the renders showed saw-toothed shadow bands across walls and floors. URP soft shadows were switched off, the shadowed lamps used the lowest shadow-map tier, and the moon spread one 2048 map over 50m. Now:
+- soft shadows are on;
+- shadow distance is 30m with 2 cascades (rooms are only 18m long);
+- the additional-light atlas is 4096;
+- the 8 shadowed lamps use the high (1024) tier.
+These are set in `EnvironmentDresser`, so a rebuild keeps them.
+
+**Verified:**
+- Every drone's sightlines were raycast from every free floor spot, using the drones' own check. Every drone can still be seen, and so killed, from 241-572 spots.
+- Each room's specific claim was tested and holds:
+  - Holding Angle: each pillar hides you from exactly one drone.
+  - Smoke: 168 safe spots south of the wall, and the gap is watched.
+  - Flash: the safe flash spots exist.
+  - Dash: both covers are hidden and the lane is exposed.
+  - The Round: the entry is hidden behind the crates.
+- In Play mode: all 6 patrol drones still walk their routes on the NavMesh, both Round drones can still path to the site, and all 8 rooms have a complete walkable path from entry to exit door.
+
 ## Phase 17.3: Recon pulse no longer whites out the screen
 
 **Why:** Playtest screenshot: after using the Recon Dart in the Dash room, the whole view went white-blue and stayed that way. Two bugs combined.
