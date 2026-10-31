@@ -2,6 +2,18 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 16.7: Recon Dart aim preview readable at a glance
+
+**Why:** Playtest screenshot: aiming at a nearby wall, the preview showed a blue drip hanging off the crosshair and the player "was a bit confused at first to where the dart would land". Looking straight down the arc, the part of the line nearest the eye drew as a thick blob over the crosshair, and the landing marker (a small flat disc) was lost inside it.
+
+**What changed:**
+- The arc isn't drawn within 1.5m of the camera, then fades in and widens over its first 20%, so the far end - where the dart actually goes - reads strongest and nothing covers the crosshair.
+- The landing spot is now a **hollow ring with a centre dot**, flat on the surface, gently pulsing - a target, clear from any angle.
+- A small dot marks **each bounce point**, so a bank shot's ricochet is visible too.
+- The BOUNCES hint moved further below the crosshair, out of the line's usual path.
+
+**Verified** by rendering the playtester's situation (aiming flat at a wall ~6m away, 0 bounces): a thin line drops to a clear ring-and-dot on the wall, nothing over the crosshair. A 1-bounce aim shows the bounce dot on the wall ahead and the line continuing off it.
+
 ## Phase 16.6: Recon Dart rebuilt as an aimed, bouncing scout arrow
 
 **Why:** Playtest feedback: the Recon Dart was "some weird thingy" - a glowing ball lobbed by physics that revealed every drone within 8m *through walls*, wherever it happened to land. There was no skill in it: no aiming beyond pointing, no way to place it deliberately, and since walls didn't matter neither did placement. The scout-arrow design from tactical shooters fixes all three: you aim with a preview, you can bank it off walls to reach round a corner without exposing yourself, and the scan only sees what the arrow can see - so *where* it lands is the decision. That is "scout before you commit" made into an actual skill. (Mechanics only: no names, models, sounds or art from any existing game - the arrow is built from primitives, sounds are CC0 Kenney.)

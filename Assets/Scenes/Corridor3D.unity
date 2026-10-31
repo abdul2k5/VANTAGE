@@ -49772,7 +49772,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -70}
+  m_AnchoredPosition: {x: 0, y: -150}
   m_SizeDelta: {x: 600, y: 28}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1359150501
@@ -57018,6 +57018,8 @@ MonoBehaviour:
   dartColor: {r: 0.25, g: 0.75, b: 0.95, a: 1}
   aimHint: {fileID: 1359150502}
   previewWidth: 0.03
+  previewNearSkip: 1.5
+  markerRadius: 0.3
   bounceSound: {fileID: 8300000, guid: fca8c4c09458ef94095816f454f82913, type: 3}
   stickSound: {fileID: 8300000, guid: 1d6caf83dea3bac40af7b9d3e47fe6de, type: 3}
   pulseSound: {fileID: 8300000, guid: cc0bf9909c700724e9f4c62f460d05af, type: 3}

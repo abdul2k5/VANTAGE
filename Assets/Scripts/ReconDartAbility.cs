@@ -22,6 +22,9 @@ public class ReconDartAbility : Ability
     [Tooltip("\"BOUNCES: 1  [RMB]  release [F]\" - shown while aiming.")]
     public Text aimHint;
     public float previewWidth = 0.03f;
+    [Tooltip("The arc isn't drawn closer than this to the camera - see DrawPreview.")]
+    public float previewNearSkip = 1.5f;
+    public float markerRadius = 0.3f;
 
     [Header("Audio")]
     public AudioClip bounceSound;
@@ -36,6 +39,9 @@ public class ReconDartAbility : Ability
     readonly List<Vector3> points = new List<Vector3>();
     readonly List<Vector3> bouncePoints = new List<Vector3>();
     Material glowMaterial;
+    Material markerMaterial;
+    readonly List<Vector3> visiblePoints = new List<Vector3>();
+    readonly List<GameObject> bounceDots = new List<GameObject>();
 
     public bool IsAiming { get { return aiming; } }
     public int Bounces { get { return bounces; } }
@@ -84,6 +90,7 @@ public class ReconDartAbility : Ability
         if (aimHint != null) aimHint.gameObject.SetActive(false);
         if (preview != null) preview.enabled = false;
         if (landMarker != null) landMarker.SetActive(false);
+        for (int i = 0; i < bounceDots.Count; i++) bounceDots[i].SetActive(false);
     }
 
     protected override void Update()
@@ -109,15 +116,36 @@ public class ReconDartAbility : Ability
         RaycastHit stick;
         bool sticks = ReconDartProjectile.Simulate(LaunchOrigin, LaunchVelocity, bounces, FlightMask, points, bouncePoints, out stick);
 
-        preview.enabled = true;
-        preview.positionCount = points.Count;
-        for (int i = 0; i < points.Count; i++) preview.SetPosition(i, points[i]);
+        // Skip the first stretch of the arc: seen from right behind it, the part nearest the eye draws as a
+        // thick blob over the crosshair (playtest: "confused where the dart would land"). The gradient then
+        // fades the line in from there, so the far end - where it actually goes - reads strongest.
+        Vector3 eye = cam.transform.position;
+        visiblePoints.Clear();
+        for (int i = 0; i < points.Count; i++)
+        {
+            if (visiblePoints.Count == 0 && (points[i] - eye).sqrMagnitude < previewNearSkip * previewNearSkip) continue;
+            visiblePoints.Add(points[i]);
+        }
+
+        preview.enabled = visiblePoints.Count > 1;
+        preview.positionCount = visiblePoints.Count;
+        for (int i = 0; i < visiblePoints.Count; i++) preview.SetPosition(i, visiblePoints[i]);
+
+        for (int i = 0; i < bounceDots.Count; i++)
+        {
+            bool show = i < bouncePoints.Count;
+            bounceDots[i].SetActive(show);
+            if (show) bounceDots[i].transform.position = bouncePoints[i];
+        }
 
         landMarker.SetActive(sticks);
         if (sticks)
         {
             landMarker.transform.position = stick.point + stick.normal * 0.02f;
             landMarker.transform.rotation = Quaternion.FromToRotation(Vector3.up, stick.normal);
+            // Gentle pulse so the landing spot catches the eye even when it is small and far away.
+            float pulse = 1f + 0.12f * Mathf.Sin(Time.unscaledTime * 8f);
+            landMarker.transform.localScale = Vector3.one * pulse;
         }
     }
 
@@ -131,12 +159,23 @@ public class ReconDartAbility : Ability
             glowMaterial.renderQueue = 3000;
             glowMaterial.color = new Color(dartColor.r, dartColor.g, dartColor.b, 0.75f);
         }
+        if (markerMaterial == null)
+        {
+            markerMaterial = new Material(glowMaterial);
+            markerMaterial.color = new Color(0.75f, 0.95f, 1f, 1f);
+        }
         if (preview == null)
         {
             var go = new GameObject("ReconAimPreview");
             preview = go.AddComponent<LineRenderer>();
             preview.useWorldSpace = true;
             preview.widthMultiplier = previewWidth;
+            preview.widthCurve = new AnimationCurve(new Keyframe(0f, 0.3f), new Keyframe(0.2f, 1f), new Keyframe(1f, 1f));
+            var g = new Gradient();
+            g.SetKeys(
+                new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, 1f) },
+                new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(1f, 0.2f), new GradientAlphaKey(1f, 1f) });
+            preview.colorGradient = g;
             preview.sharedMaterial = glowMaterial;
             preview.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             preview.receiveShadows = false;
@@ -144,13 +183,44 @@ public class ReconDartAbility : Ability
         }
         if (landMarker == null)
         {
-            landMarker = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            landMarker.name = "ReconAimMarker";
-            DestroyImmediate(landMarker.GetComponent<Collider>()); // or the preview raycasts would hit the marker
-            landMarker.transform.localScale = new Vector3(0.35f, 0.005f, 0.35f);
-            var r = landMarker.GetComponent<MeshRenderer>();
-            r.sharedMaterial = glowMaterial;
+            // Hollow ring + centre dot flat on the surface: a target, unmistakable from any angle the
+            // line itself might be seen at.
+            landMarker = new GameObject("ReconAimMarker");
+            var ring = new GameObject("Ring").AddComponent<LineRenderer>();
+            ring.transform.SetParent(landMarker.transform, false);
+            ring.useWorldSpace = false;
+            ring.loop = true;
+            ring.widthMultiplier = 0.035f;
+            ring.sharedMaterial = markerMaterial;
+            ring.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            const int segments = 32;
+            ring.positionCount = segments;
+            for (int i = 0; i < segments; i++)
+            {
+                float a = i * Mathf.PI * 2f / segments;
+                ring.SetPosition(i, new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)) * markerRadius);
+            }
+
+            var dot = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            dot.name = "Dot";
+            DestroyImmediate(dot.GetComponent<Collider>()); // or the preview raycasts would hit the marker
+            dot.transform.SetParent(landMarker.transform, false);
+            dot.transform.localScale = new Vector3(0.09f, 0.002f, 0.09f);
+            var r = dot.GetComponent<MeshRenderer>();
+            r.sharedMaterial = markerMaterial;
             r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        }
+        while (bounceDots.Count < maxBounces)
+        {
+            var b = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            b.name = "ReconAimBounce";
+            DestroyImmediate(b.GetComponent<Collider>());
+            b.transform.localScale = Vector3.one * 0.1f;
+            var r = b.GetComponent<MeshRenderer>();
+            r.sharedMaterial = markerMaterial;
+            r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            b.SetActive(false);
+            bounceDots.Add(b);
         }
     }
 
