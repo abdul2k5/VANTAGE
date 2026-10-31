@@ -52,6 +52,7 @@ public class AbilityUnlockCardUI : MonoBehaviour
     bool prevRecon, prevSmoke, prevFlash, prevDash;
     bool ultimateCardShown;
     bool showing;
+    bool showingUltimate;
     float shownAtRealtime;
 
     /// <summary>Lets other gameplay-input gates (e.g. the settings panel's Escape toggle) know not to act while a card is up.</summary>
@@ -62,6 +63,11 @@ public class AbilityUnlockCardUI : MonoBehaviour
     /// <summary>True once the ultimate's card has been shown this run. UltimateHudUI checks this to skip its
     /// "READY" banner on the first charge-up, when the card already says the same thing in full.</summary>
     public bool UltimateCardShown { get { return ultimateCardShown; } }
+
+    /// <summary>True while the ultimate's card is the one on screen. Needed alongside UltimateCardShown because
+    /// if this script updates before UltimateHudUI on the charge-up frame, the card is already open (and
+    /// UltimateCardShown already true) by the time the HUD checks.</summary>
+    public bool IsShowingUltimateCard { get { return showing && showingUltimate; } }
 
     void Awake()
     {
@@ -154,6 +160,7 @@ public class AbilityUnlockCardUI : MonoBehaviour
         if (card == null || data == null) return;
 
         showing = true;
+        showingUltimate = data == ultimateCard;
         IsShowingCard = true;
         shownAtRealtime = Time.unscaledTime;
         UpdateDismissHint();
@@ -177,6 +184,7 @@ public class AbilityUnlockCardUI : MonoBehaviour
     public void Dismiss()
     {
         showing = false;
+        showingUltimate = false;
         IsShowingCard = false;
         if (card != null) card.SetActive(false);
 
