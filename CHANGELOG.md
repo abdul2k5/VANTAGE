@@ -2,6 +2,16 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 15.13: crouch actually matters at crates; ultimate banner says which key
+
+**Why (crouch):** Phase 11 raised the standing eye height used for drone sight to 1.5 (above the 1.2m crates) so a standing player shows over cover and only crouching hides you. But that change only edited the script's default - the scene's saved value stayed at the old 1.0, and a saved scene value overrides a script default. So in the actual game, standing behind any crate hid you completely and crouch did nothing at cover, contradicting Room 3's own instruction ("Hold [Ctrl] to crouch behind cover"). Found while verifying Phase 15.12.
+
+**What changed (crouch):** Scene value set to 1.5, matching Phase 11's intent. Verified in Play mode at both Room 3 crates: standing - both drones see you and hit (100-120 damage from 6 shots); crouched - neither sees you, 0 damage.
+
+**Why (banner):** Playtest question: the "OVERWATCH PROTOCOL READY" banner announced the ultimate was ready but never said how to use it - the key was only shown as a small "[X]" on the ability ring.
+
+**What changed (banner):** Now reads "OVERWATCH PROTOCOL READY - PRESS [X]", built from `UltimateController.activateKeyDisplay` so it can't drift if the key changes. Fits the existing banner box (308px text in a 360px box). Verified the live banner text in Play mode.
+
 ## Phase 15.12: drone shots no longer pass through cover
 
 **Why:** Playtest bug: in Holding Angle the player kept taking damage while hiding behind a crate. Root cause: `Sentinel.Fire()` never checked line of fire - it applied damage straight to the player whenever its fire timer ran out while Alert. And Alert outlives sight on purpose: it holds for 2.5s after being shot (Phase 10 #2) and spreads to every drone in the room the moment one spots the player (Phase 10 #3). So: peek once, get seen, duck back - and both drones kept hitting you through the crate for 2.5 seconds, including the one that never saw you at all. The bug dated from Phase 10, but Phase 15.6's second drone made it far more noticeable, and 15.6's verification only checked what each drone could *see*, not where its shots *landed*.

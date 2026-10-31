@@ -176,7 +176,7 @@ public class UltimateHudUI : MonoBehaviour
     IEnumerator RunReadyBanner()
     {
         if (readyBanner == null) yield break;
-        if (readyBannerText != null) readyBannerText.text = "OVERWATCH PROTOCOL READY";
+        if (readyBannerText != null) readyBannerText.text = "OVERWATCH PROTOCOL READY - PRESS [" + controller.activateKeyDisplay + "]";
         readyBanner.SetActive(true);
         yield return new WaitForSeconds(2.2f);
         readyBanner.SetActive(false);

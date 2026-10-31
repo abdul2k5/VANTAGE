@@ -54448,7 +54448,7 @@ MonoBehaviour:
   crouchEyeHeight: 0.9
   crouchSpeedMultiplier: 0.5
   crouchTransitionSeconds: 0.15
-  standEyeOffsetForSight: 1
+  standEyeOffsetForSight: 1.5
   crouchEyeOffsetForSight: 0.4
   jumpHeight: 0.8
   landingPenaltySeconds: 0.2
