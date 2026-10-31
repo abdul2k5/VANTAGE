@@ -45,6 +45,10 @@ public class Sentinel : MonoBehaviour
     public float missChanceNear = 0.03f;
     [Tooltip("Miss chance (0-1) once the player is at this Sentinel's max detection range - interpolated from missChanceNear between perfectAimDistance and range.")]
     public float missChanceAtMaxRange = 0.4f;
+    [Header("Blind fire (alerted but can't see the player - smoke, cover, behind)")]
+    /// <summary>Random offset around the last known position, metres. Small enough that standing still gets you hit, small enough that a sidestep clears it.</summary>
+    public float blindSpreadRadius = 0.5f;
+    public float blindAimHeight = 1.0f;
 
 
 
@@ -67,7 +71,9 @@ public class Sentinel : MonoBehaviour
     float blindRemaining;
     float revealRemaining;
     float forcedAlertRemaining;
-    Vector3 forcedAlertTarget;
+    /// <summary>Where this Sentinel last knew the player to be - updated every frame it can see them, and
+    /// on ForceAlert (being shot / a roommate's call). Blind fire aims here, not at the live position.</summary>
+    Vector3 lastKnownPlayerPosition;
 
     bool isPushing;
     Vector3 pushTarget;
@@ -132,7 +138,7 @@ public class Sentinel : MonoBehaviour
     {
         bool wasAlert = state == State.Alert;
         forcedAlertRemaining = Mathf.Max(forcedAlertRemaining, forcedAlertSeconds);
-        forcedAlertTarget = towardPosition;
+        lastKnownPlayerPosition = towardPosition;
         if (!wasAlert) fireTimer = Random.Range(reactionDelayMin, reactionDelayMax);
     }
 
@@ -227,6 +233,7 @@ void Update()
         if (player == null) return;
 
         bool seesPlayer = CanSeePlayer();
+        if (seesPlayer) lastKnownPlayerPosition = player.position;
         bool forcedAlert = forcedAlertRemaining > 0f;
         bool shouldBeAlert = seesPlayer || forcedAlert;
         bool justSpotted = shouldBeAlert && state != State.Alert;
@@ -242,7 +249,7 @@ void Update()
             agent.isStopped = true;
             // Line of sight wins when available (the real player position); a forced alert with
             // no current sight falls back to wherever the trigger (damage/roommate call) pointed.
-            FaceTowards(seesPlayer ? player.position : forcedAlertTarget);
+            FaceTowards(seesPlayer ? player.position : lastKnownPlayerPosition);
 
             if (justSpotted)
             {
@@ -371,16 +378,22 @@ public bool CanSeePlayer()
 void Fire()
     {
         Vector3 origin = muzzle != null ? muzzle.position : transform.position + Vector3.up * 1f;
+
+        // Alerted but blind (smoke, cover, you're behind it): it can't know where you are now, so
+        // it sprays where it last saw you instead of tracking you live.
+        if (!CanSeePlayer())
+        {
+            FireBlind(origin);
+            return;
+        }
+
         // Aim at the same point CanSeePlayer() checks, so "it can see you" and "it can hit you"
         // agree: standing behind a crate leaves your head exposed, crouching doesn't.
         float aimHeight = playerController != null ? playerController.EyeHeightOffset : 0.9f;
         Vector3 end = player.position + Vector3.up * aimHeight;
 
-        // Alert (from a roommate's call or from being shot) keeps a Sentinel firing for a couple of
-        // seconds with no line of sight. Those shots used to damage the player straight through
-        // cover; now anything on the Blocking layer in the way - crates, walls, doors - takes the
-        // bullet instead. Smoke (its own layer) does not: an alerted drone sprays back through
-        // smoke, so shooting at one from inside a smoke is a trade, not a free hit.
+        // Sight and line of fire use slightly different points (eye vs muzzle), so even with sight a
+        // crate edge can still be in the way of the shot - it takes the bullet instead of the player.
         RaycastHit blockHit;
         if (Physics.Linecast(origin, end, out blockHit, blockingMask))
         {
@@ -400,6 +413,41 @@ void Fire()
 
         var health = player.GetComponent<PlayerHealth>();
         if (health != null) health.TakeDamage(damagePerHit, transform.position);
+    }
+
+    /// <summary>
+    /// A shot at the last known position plus a little spread, resolved as a real ray: it only hurts
+    /// the player if it physically reaches their collider. Stay put after shooting from smoke and the
+    /// burst finds you; sidestep and it chews up the empty spot (bullet holes show where it went).
+    /// Smoke isn't in the mask, so these pass through it - cover still stops them.
+    /// </summary>
+    void FireBlind(Vector3 origin)
+    {
+        Vector2 jitter = Random.insideUnitCircle * blindSpreadRadius;
+        Vector3 aim = lastKnownPlayerPosition + Vector3.up * blindAimHeight
+            + new Vector3(jitter.x, Random.Range(-0.3f, 0.3f), jitter.y);
+        Vector3 dir = (aim - origin).normalized;
+        float maxDistance = range + 15f;
+
+        RaycastHit hit;
+        int mask = blockingMask | LayerMask.GetMask("Player");
+        if (!Physics.Raycast(origin, dir, out hit, maxDistance, mask, QueryTriggerInteraction.Ignore))
+        {
+            if (feedback != null) feedback.PlayShot(origin, origin + dir * maxDistance);
+            return;
+        }
+
+        if (feedback != null) feedback.PlayShot(origin, hit.point);
+
+        if (hit.collider.transform == player || hit.collider.transform.IsChildOf(player))
+        {
+            var health = player.GetComponent<PlayerHealth>();
+            if (health != null) health.TakeDamage(damagePerHit, transform.position);
+        }
+        else if (BulletImpactPool.Instance != null)
+        {
+            BulletImpactPool.Instance.SpawnDecal(hit.point, hit.normal, hit.collider.transform, false);
+        }
     }
 
     /// <summary>A missed shot still has to land somewhere - raycasts past the player along the same line the tracer took and leaves a bullet hole on whatever wall/cover is behind them.</summary>

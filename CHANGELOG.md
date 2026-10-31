@@ -2,6 +2,18 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 15.21: blind drones fire at where you were, not where you are
+
+**Why:** After 15.20 let bullets pass through smoke both ways, an alerted drone that couldn't see the player still aimed every shot at the player's *live* position - so it tracked you perfectly through smoke (or around a corner) as if it could see you. The playtester suggested giving drones bad aim while you're in smoke. Considered and rejected a flat higher miss chance: it's random, so getting hit or not feels like luck and teaches nothing. Instead, drones now behave like a real shooter who's lost sight of you.
+
+**What changed:**
+- Each Sentinel tracks a **last known player position** - updated every frame it can see you, and when it's shot or called in by a roommate (`ForceAlert`).
+- When it fires without sight (`FireBlind`), it aims at that last known position plus a small spread (0.5m around, +/-0.3m vertical), and the shot is a real ray: it only damages the player if it physically reaches their collider. Missed rounds leave bullet holes where they land, so the player can see the burst chewing up the spot they just left. Cover still stops these shots; smoke doesn't.
+- Aimed fire when the drone *can* see you is unchanged.
+- The result is a learnable rule that fits the core dynamic: shoot from smoke and stand still, you get hit; shoot and reposition, you don't.
+
+**Verified** in Play mode with smoke between the player and an alerted drone, 40 shots per case at an open spot 11m away: stand still 28/40 hits; step 0.75m 0/40; step 1.5m 0/40; no smoke (drone sees you) 35/40, same as before. At a spot where a crate covers the player's lower body, half the blind shots hit the crate instead - partial cover still helps while blind.
+
 ## Phase 15.20: denser smoke you can shoot through
 
 **Why:** Playtest feedback, two parts. (1) Up close the smoke was still faintly see-through - door and crate outlines showed through it, because the puffs spawned in a layer only 0.4m deep, so a close view looked through very few overlapping puffs. (2) The player couldn't shoot through it: the screenshot showed a bullet hole sitting on the (invisible) smoke box. The smoke was on the Blocking layer, which stopped drone sight, drone bullets *and* player bullets alike.
