@@ -2,6 +2,16 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 15.17: sensitivity slider drives both look axes; lower minimum
+
+**Why:** Checking the sensitivity range turned up a real bug: the settings slider only ever changed horizontal look. Yaw is handled by `PlayerController` (which the slider updates), but pitch is handled by `FollowCamera` on the child camera, which had its own separate `mouseSensitivity` fixed at 2 and never read the setting. A player who set sensitivity to 1.0 got 1.0 left/right but 2.0 up/down - vertical movement twice as fast as horizontal, which makes precise aim (headshots especially) feel inconsistent. Separately, the slider's floor was 1.0 and the playtester was already sitting at it, so it was too high for low-sensitivity players.
+
+**What changed:**
+- `FollowCamera` now reads sensitivity from its parent `PlayerController`, so one setting drives both axes (its own field remains only as a fallback if no player is found).
+- Slider minimum lowered 1.0 -> 0.3 (max still 10; the code clamp already allowed down to 0.1).
+
+**Verified** in Play mode: moving the slider to 0.3 and 4.0 updates both the yaw and pitch sensitivity to the same value and the on-screen readout; playtester's saved setting restored afterwards.
+
 ## Phase 15.16: Holding Angle eased back to a teaching room
 
 **Why:** Playtest feedback: Room 3 was dying-hard even for an experienced FPS player, so a newcomer would bounce off it. It's only the third room, and it had picked up four separate difficulty increases in one session: a second drone (15.6), damage 15 -> 20 (15.9), the door requiring both kills (15.7), and standing behind a crate no longer hiding you (15.13) - plus a death there restarts from Room 1, since the checkpoint is at Room 5. Each change was reasonable alone; stacked on an early room they weren't.

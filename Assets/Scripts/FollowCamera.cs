@@ -4,11 +4,19 @@ using UnityEngine.InputSystem;
 /// <summary>Mouse-look pitch for the camera, which sits as a child of the player (which handles yaw).</summary>
 public class FollowCamera : MonoBehaviour
 {
+    /// <summary>Fallback only - pitch normally uses the PlayerController's sensitivity, so the settings slider
+    /// drives both axes. (It used to use this field alone, fixed at 2, so the slider only changed yaw.)</summary>
     public float mouseSensitivity = 2f;
     public float minPitch = -80f;
     public float maxPitch = 80f;
 
     float pitch;
+    PlayerController player;
+
+    void Awake()
+    {
+        player = GetComponentInParent<PlayerController>();
+    }
 
     void Update()
     {
@@ -17,7 +25,8 @@ public class FollowCamera : MonoBehaviour
         var mouse = Mouse.current;
         if (mouse == null) return;
 
-        float mouseY = mouse.delta.ReadValue().y * mouseSensitivity * 0.1f;
+        float sensitivity = player != null ? player.mouseSensitivity : mouseSensitivity;
+        float mouseY = mouse.delta.ReadValue().y * sensitivity * 0.1f;
         pitch = Mathf.Clamp(pitch - mouseY, minPitch, maxPitch);
         transform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
     }
