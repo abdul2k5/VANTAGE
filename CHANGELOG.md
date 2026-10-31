@@ -2,6 +2,12 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 15.10: dot crosshair is a round dot
+
+**Why:** Playtest feedback: the "dot" crosshair style was actually a small square (a sprite-less UI Image), which reads as blocky and doesn't match the round colour swatches right next to it in the same settings tab.
+
+**What changed:** The in-game dot, the settings preview dot and the DOT style tile icon now use the project's existing `CircleChip` sprite (already used by the colour swatches - no new asset). Turned on mipmaps for `CircleChip` so a 128px circle downscaled to an 8px dot stays smooth-edged instead of aliasing; the 32px swatches get slightly smoother edges from the same change. Size/gap/outline/colour settings all still apply unchanged.
+
 ## Phase 15.9: one consistent drone damage
 
 **Why:** Playtest feedback: drones hit for different amounts depending on the room (15 in Holding Angle, 20 in Recon-Dash, 25 in The Round), which made the player's health bar unreadable - the same hit could cost a different chunk of HP room to room, so the player couldn't build a reliable sense of "how many more hits can I take". Consistency is the more useful thing to learn here than a hidden damage ramp.
