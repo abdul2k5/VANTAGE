@@ -2,6 +2,12 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 15.16: Holding Angle eased back to a teaching room
+
+**Why:** Playtest feedback: Room 3 was dying-hard even for an experienced FPS player, so a newcomer would bounce off it. It's only the third room, and it had picked up four separate difficulty increases in one session: a second drone (15.6), damage 15 -> 20 (15.9), the door requiring both kills (15.7), and standing behind a crate no longer hiding you (15.13) - plus a death there restarts from Room 1, since the checkpoint is at Room 5. Each change was reasonable alone; stacked on an early room they weren't.
+
+**What changed:** Kept both drones (the "clear one angle at a time" lesson stays) and kept damage at the game-wide 20, but slowed Room 3's drones only: reaction delay 0.8s -> 1.5s (time from spotting you to first shot) and fire interval 0.8s -> 1.2s. A peek now gives a comfortable window to aim and land a headshot (one-shot kill) before taking a hit, and a bad peek costs one hit instead of two. The difficulty curve now reads: Room 3 1.5s, Rooms 4-7 0.5s, The Round 0.35s.
+
 ## Phase 15.15: Game Over buttons stack without a gap
 
 **Why:** Playtest screenshot: on the Game Over screen before reaching the checkpoint, there was a big empty gap between RESTART and MAIN MENU. Each button had a fixed height authored for the 3-button checkpoint layout (RETRY FROM CHECKPOINT / RESTART FROM BEGINNING / MAIN MENU); the 2-button layout just hides the middle one, leaving its slot empty.
