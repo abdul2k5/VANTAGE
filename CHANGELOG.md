@@ -2,6 +2,24 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.5: post-plant phase - reinforcements, disarm threat, utility refill, visible charge
+
+**Why:** Playtest: "after i planted the breach i wanna see the breach itself and then there should be more going on after planting it rather than just waiting for it to go". The countdown sent the Round's two drones to push the site, but the objective makes you kill those same two before planting. So the waves sent nobody, and the 20s countdown was dead air. The charge itself was a 0.55m dark box with a pea-sized core.
+
+**What changed:**
+- **Reinforcements:** after the plant, 2 drones drop in through the roof at about 4s, and 2 more at about 11s. Each landing spot gets a pulsing red warning light and an alarm 1.5s before the drone lands. They push towards the charge. They come from a prefab (`Assets/Prefabs/Sentinel_Reinforcement.prefab`), not hidden scene objects, so checkpoint resets (which re-activate every scene drone) can't wake them early. Reaction time is 0.5-0.7s, because they land in view.
+- **Disarm threat:** any drone within 1.8m of the charge disarms it over 4s, shown on the HUD ("DISARMING 65%") and on the device (amber flicker, ring lights going dark). If it finishes, you lose. Progress drains slowly when no drone is on it. **Blinded drones can't disarm**, so a flash buys time. This makes the countdown about keeping drones off the charge instead of hiding in a corner.
+- **Utility refill on plant:** +1 charge of each ability, capped at max, so holding the site is played with smoke, flash and dart, the game's core "utility before you peek" idea.
+- The detonation takes out every drone left in the room, so one can't kill the player behind the win screen.
+- The charge is 1.7x bigger, with a thicker beam and a brighter light.
+- Objective text now warns about the reinforcements before the plant and switches to a post-plant line after it. A retry restores it, and the retry also removes every spawned drone and warning light.
+
+**Verified** in Play mode (player invulnerable, both defenders killed, then plant):
+- Utility went Smoke 0→1, Flash 0→1, Dash 1→2, Recon stayed at its max of 1.
+- The warning lights appeared at about 2s, and the first wave landed at about 4s.
+- Drones that could see the player stopped to shoot. With the player hidden, they reached the charge and the disarm climbed to 100%.
+- The Game Over screen then showed the disarm message.
+
 ## Phase 17.4: room layouts reshaped around each room's lesson
 
 **Why:** Playtest feedback, second half: "each time i walk into a room its just one single room and like its straight up just shooting... the rooms just one box". Each room *told* you its lesson in text, but the space itself was an open rectangle, so every room played the same way. Now each room gets 1-2 solid pieces chosen so the space *teaches* the lesson, rather than just being decorated. "Nothing too much" was the brief, so 14 pieces in total across 8 rooms.

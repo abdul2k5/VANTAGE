@@ -56,6 +56,12 @@ public abstract class Ability : MonoBehaviour
         charges = maxCharges;
     }
 
+    /// <summary>Gives back some charges without exceeding max - the Breach Charge plant hands back 1 of each.</summary>
+    public void AddCharges(int amount)
+    {
+        charges = Mathf.Min(maxCharges, Charges + amount);
+    }
+
     /// <summary>Perform the ability. Return false to abort without starting the cooldown.</summary>
     protected abstract bool OnUse();
 }

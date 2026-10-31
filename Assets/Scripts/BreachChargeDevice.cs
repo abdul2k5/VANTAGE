@@ -22,8 +22,11 @@ public class BreachChargeDevice : MonoBehaviour
     public float dangerPulseSpeed = 9f;
     public float redZoneSeconds = 5f;
 
+    public Color disarmColor = new Color(1f, 0.8f, 0.2f, 1f);
+
     float countdownPulsePhase;
     bool planted;
+    float disarm01;
 
     void Awake()
     {
@@ -97,19 +100,43 @@ public class BreachChargeDevice : MonoBehaviour
         float intensity = Mathf.Lerp(0.6f, 2.2f, pulse01);
 
         SetCoreEmission(color, intensity);
+        // Being disarmed reads on the device itself: the core flickers amber and the ring lights go dark one by
+        // one as the drone works, so you can see how close it is without looking at the HUD.
+        if (disarm01 > 0f && Mathf.Repeat(countdownPulsePhase, 1f) < 0.5f) color = disarmColor;
+
         if (redLight != null)
         {
             redLight.color = color;
-            redLight.intensity = Mathf.Lerp(1.5f, 6f, pulse01);
+            redLight.intensity = Mathf.Lerp(3f, 10f, pulse01);
         }
         if (ringLightRenderers != null)
         {
-            foreach (var r in ringLightRenderers) SetEmission(r, color, intensity * 0.6f);
+            int lit = Mathf.CeilToInt((1f - disarm01) * ringLightRenderers.Length);
+            for (int i = 0; i < ringLightRenderers.Length; i++)
+            {
+                SetEmission(ringLightRenderers[i], i < lit ? color : Color.black, i < lit ? intensity * 0.8f : 0f);
+            }
         }
         if (beamRenderer != null)
         {
             SetEmission(beamRenderer, color, intensity);
         }
+    }
+
+    /// <summary>0 = untouched, 1 = disarmed. Driven by RoundController while a drone is at the charge.</summary>
+    public void SetDisarmProgress(float frac01)
+    {
+        disarm01 = Mathf.Clamp01(frac01);
+    }
+
+    /// <summary>Lost to a disarm: the canister stays, but goes dark.</summary>
+    public void ShowDisarmed()
+    {
+        planted = false;
+        SetCoreEmission(Color.black, 0f);
+        if (ringLightRenderers != null) foreach (var r in ringLightRenderers) SetEmission(r, Color.black, 0f);
+        if (redLight != null) redLight.enabled = false;
+        if (beamRenderer != null) beamRenderer.gameObject.SetActive(false);
     }
 
     public void Detonate()
@@ -138,5 +165,6 @@ public class BreachChargeDevice : MonoBehaviour
         Hide();
         planted = false;
         countdownPulsePhase = 0f;
+        disarm01 = 0f;
     }
 }

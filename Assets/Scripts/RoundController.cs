@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 
 /// <summary>
-/// Runs the post-plant phase: Sentinels push the site in waves, a countdown ticks to
-/// detonation, and the player has to survive it. Dying during an active round is a loss,
-/// not a normal respawn - PlayerHealth checks IsRoundActive before respawning.
+/// Runs the post-plant phase: a countdown ticks to detonation while reinforcement drones drop in and go for
+/// the charge. Any drone that reaches it starts disarming it - kill it (or flash it) before it finishes, or
+/// the round is lost. Planting also hands back one charge of each ability, so holding the site is played
+/// with utility, the same way every room before it was. Dying during an active round is a loss.
 /// </summary>
 public class RoundController : MonoBehaviour
 {
@@ -33,6 +35,39 @@ public class RoundController : MonoBehaviour
     public Sentinel[] siteDefenders;
     public float[] waveDelaysSeconds = { 0f, 10f, 20f };
 
+    [System.Serializable]
+    public class ReinforcementSpawn
+    {
+        public Vector3 position;
+        [Tooltip("Seconds after the plant that the drone lands. The warning light starts before this.")]
+        public float landTime;
+    }
+
+    [Header("Reinforcements (drop in after the plant and go for the charge)")]
+    [Tooltip("Prefab asset, not a scene object - so checkpoint resets (which re-activate every scene Sentinel) never wake it early.")]
+    public Sentinel reinforcementPrefab;
+    public ReinforcementSpawn[] reinforcementSpawns;
+    public float telegraphSeconds = 1.5f;
+    public float dropHeight = 4f;
+    public float dropSeconds = 0.8f;
+    public Color telegraphColor = new Color(1f, 0.15f, 0.1f, 1f);
+    public AudioClip telegraphSound;
+    public AudioClip dropSound;
+
+    [Header("Disarm - a drone at the charge defuses it")]
+    public float disarmSeconds = 4f;
+    public float disarmRadius = 1.8f;
+    [Tooltip("Progress lost per second while no drone is on the charge, as a fraction of a full disarm.")]
+    public float disarmDecayPerSecond = 0.25f;
+    public Color disarmColor = new Color(1f, 0.8f, 0.2f, 1f);
+    public AudioClip disarmTickSound;
+    public AudioClip disarmedSound;
+    public string disarmedMessage = "A drone disarmed the Breach Charge. Kill or flash anything that reaches it.";
+
+    [Header("Post-plant")]
+    public int plantUtilityRefill = 1;
+    public string postPlantObjective = "Reinforcements inbound - keep them off the charge until it blows. (+1 of each ability)";
+
     [Header("Audio - accelerating beep as detonation nears")]
     public AudioClip beepSound;
     public float beepIntervalStart = 1.5f;
@@ -48,6 +83,11 @@ public class RoundController : MonoBehaviour
 
     bool roundActive;
     AudioSource audioSource;
+    Vector3 chargePosition;
+    float disarmProgress;
+    readonly List<GameObject> spawned = new List<GameObject>();
+    int objectiveRoom = -1;
+    string savedObjective;
 
     public bool IsRoundActive { get { return roundActive; } }
 
@@ -69,8 +109,209 @@ public class RoundController : MonoBehaviour
     {
         if (roundActive) return;
         roundActive = true;
-        StartCoroutine(RunWaves(sitePosition));
+        disarmProgress = 0f;
+        // The charge sits wherever the player stood inside the zone, not necessarily the zone's centre.
+        chargePosition = device != null ? device.transform.position : sitePosition;
+        RefillUtility();
+        SetPostPlantObjective();
+        StartCoroutine(RunWaves(chargePosition));
         StartCoroutine(RunTimer());
+        if (reinforcementPrefab != null && reinforcementSpawns != null)
+        {
+            for (int i = 0; i < reinforcementSpawns.Length; i++) StartCoroutine(RunReinforcement(reinforcementSpawns[i]));
+        }
+    }
+
+    void RefillUtility()
+    {
+        var rm = RoomManager.Instance;
+        if (rm == null || rm.abilities == null || plantUtilityRefill <= 0) return;
+        Ability[] all = { rm.abilities.reconDart, rm.abilities.smokeWall, rm.abilities.flash, rm.abilities.dash };
+        for (int i = 0; i < all.Length; i++)
+        {
+            if (all[i] == null) continue;
+            all[i].AddCharges(plantUtilityRefill);
+            all[i].ResetCooldown();
+        }
+    }
+
+    void SetPostPlantObjective()
+    {
+        var rm = RoomManager.Instance;
+        if (rm == null || rm.CurrentRoom < 0 || string.IsNullOrEmpty(postPlantObjective)) return;
+        objectiveRoom = rm.CurrentRoom;
+        savedObjective = rm.rooms[objectiveRoom].objective;
+        rm.rooms[objectiveRoom].objective = postPlantObjective;
+        rm.RefreshObjectiveText();
+    }
+
+    void RestoreObjective()
+    {
+        var rm = RoomManager.Instance;
+        if (rm == null || objectiveRoom < 0) return;
+        rm.rooms[objectiveRoom].objective = savedObjective;
+        objectiveRoom = -1;
+        rm.RefreshObjectiveText();
+    }
+
+    /// <summary>
+    /// Warning light and alarm on the landing spot, then the drone drops in through the open roof and pushes
+    /// the charge. The Sentinel and its agent stay off during the drop - an agent can't be moved off the
+    /// NavMesh, and a drone shouldn't be able to shoot before it has landed.
+    /// </summary>
+    IEnumerator RunReinforcement(ReinforcementSpawn spawn)
+    {
+        float wait = Mathf.Max(0f, spawn.landTime - telegraphSeconds - dropSeconds);
+        yield return new WaitForSeconds(wait);
+        if (!roundActive) yield break;
+
+        Light warnLight;
+        Renderer warnDisc;
+        var marker = BuildTelegraph(spawn.position, out warnLight, out warnDisc);
+        spawned.Add(marker);
+        PlaySfxAt(telegraphSound, spawn.position);
+
+        float t = 0f;
+        while (t < telegraphSeconds)
+        {
+            t += Time.deltaTime;
+            float pulse = 0.5f + 0.5f * Mathf.Sin(t * 14f);
+            warnLight.intensity = Mathf.Lerp(2f, 9f, pulse);
+            SetEmission(warnDisc, telegraphColor * Mathf.Lerp(0.8f, 3f, pulse));
+            yield return null;
+        }
+        if (!roundActive) yield break;
+
+        Vector3 toCharge = chargePosition - spawn.position;
+        toCharge.y = 0f;
+        var rotation = toCharge.sqrMagnitude > 0.01f ? Quaternion.LookRotation(toCharge) : Quaternion.identity;
+        var drone = Instantiate(reinforcementPrefab, spawn.position, rotation);
+        drone.name = "Sentinel_Reinforcement";
+        // Assigned now, not in its Start: Start waits until the drop ends, and other systems (flash, footsteps,
+        // reveal) loop over every drone in the meantime.
+        if (RoomManager.Instance != null) drone.player = RoomManager.Instance.player;
+        spawned.Add(drone.gameObject);
+        var agent = drone.GetComponent<NavMeshAgent>();
+        drone.enabled = false;
+        if (agent != null) agent.enabled = false;
+        PlaySfxAt(dropSound, spawn.position);
+
+        Vector3 top = spawn.position + Vector3.up * dropHeight;
+        t = 0f;
+        while (t < dropSeconds && drone != null && drone.gameObject.activeSelf)
+        {
+            t += Time.deltaTime;
+            float k = Mathf.Clamp01(t / dropSeconds);
+            drone.transform.position = Vector3.Lerp(top, spawn.position, 1f - (1f - k) * (1f - k));
+            yield return null;
+        }
+        if (marker != null) Destroy(marker);
+        if (drone == null || !drone.gameObject.activeSelf || !roundActive) yield break;
+
+        drone.transform.position = spawn.position;
+        if (agent != null) { agent.enabled = true; agent.Warp(spawn.position); }
+        drone.enabled = true;
+        drone.PushTowards(chargePosition);
+    }
+
+    GameObject BuildTelegraph(Vector3 position, out Light light, out Renderer disc)
+    {
+        var root = new GameObject("ReinforcementWarning");
+        root.transform.position = position;
+
+        var discGo = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        discGo.name = "Disc";
+        Destroy(discGo.GetComponent<Collider>());
+        discGo.transform.SetParent(root.transform, false);
+        discGo.transform.localPosition = new Vector3(0f, 0.01f, 0f);
+        discGo.transform.localScale = new Vector3(1.3f, 0.005f, 1.3f);
+        disc = discGo.GetComponent<Renderer>();
+        var mat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+        mat.color = Color.black;
+        disc.sharedMaterial = mat;
+
+        var lightGo = new GameObject("WarnLight");
+        lightGo.transform.SetParent(root.transform, false);
+        lightGo.transform.localPosition = new Vector3(0f, 3f, 0f);
+        lightGo.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+        light = lightGo.AddComponent<Light>();
+        light.type = LightType.Spot;
+        light.color = telegraphColor;
+        light.range = 6f;
+        light.spotAngle = 50f;
+        light.intensity = 2f;
+        return root;
+    }
+
+    static void SetEmission(Renderer r, Color c)
+    {
+        if (r == null) return;
+        var mat = r.sharedMaterial;
+        mat.EnableKeyword("_EMISSION");
+        mat.SetColor("_EmissionColor", c);
+    }
+
+    /// <summary>
+    /// Fills while any living, un-blinded drone is within disarmRadius of the charge, drains slowly when none
+    /// is. Blinded drones can't disarm, so a flash on a drone at the charge buys time as well as a kill.
+    /// </summary>
+    bool UpdateDisarm(out bool disarming)
+    {
+        disarming = false;
+        for (int i = 0; i < spawned.Count && !disarming; i++)
+        {
+            if (spawned[i] == null || !spawned[i].activeSelf) continue;
+            var s = spawned[i].GetComponent<Sentinel>();
+            if (s != null && s.enabled && IsDisarming(s)) disarming = true;
+        }
+        if (siteDefenders != null)
+        {
+            for (int i = 0; i < siteDefenders.Length && !disarming; i++)
+            {
+                if (siteDefenders[i] != null && siteDefenders[i].gameObject.activeSelf && IsDisarming(siteDefenders[i])) disarming = true;
+            }
+        }
+
+        if (disarming) disarmProgress += Time.deltaTime / disarmSeconds;
+        else disarmProgress -= Time.deltaTime * disarmDecayPerSecond;
+        disarmProgress = Mathf.Clamp01(disarmProgress);
+        if (device != null) device.SetDisarmProgress(disarmProgress);
+        return disarmProgress >= 1f;
+    }
+
+    bool IsDisarming(Sentinel s)
+    {
+        if (s.IsBlinded) return false;
+        Vector3 d = s.transform.position - chargePosition;
+        d.y = 0f;
+        return d.magnitude <= disarmRadius;
+    }
+
+    void LoseToDisarm()
+    {
+        roundActive = false;
+        StopAllCoroutines(); // the calling coroutine stops at its next yield; it yields break right after this
+        if (timerPanel != null) timerPanel.SetActive(false);
+        if (chargeIcon != null) chargeIcon.SetActive(false);
+        if (device != null) device.ShowDisarmed();
+        PlaySfx(disarmedSound);
+        if (GameOverController.Instance != null) GameOverController.Instance.ShowGameOver(disarmedMessage);
+    }
+
+    /// <summary>The blast takes out every drone still in the room - and stops one finishing the player off behind the win screen.</summary>
+    void ClearDrones()
+    {
+        for (int i = 0; i < spawned.Count; i++) if (spawned[i] != null) spawned[i].SetActive(false);
+        if (siteDefenders != null)
+        {
+            for (int i = 0; i < siteDefenders.Length; i++) if (siteDefenders[i] != null) siteDefenders[i].gameObject.SetActive(false);
+        }
+    }
+
+    void DestroySpawned()
+    {
+        for (int i = 0; i < spawned.Count; i++) if (spawned[i] != null) Destroy(spawned[i]);
+        spawned.Clear();
     }
 
     IEnumerator RunWaves(Vector3 sitePosition)
@@ -114,6 +355,7 @@ public class RoundController : MonoBehaviour
 
         float remaining = detonationSeconds;
         float beepTimer = 0f;
+        float disarmTickTimer = 0f;
 
         while (remaining > 0f && roundActive)
         {
@@ -128,10 +370,36 @@ public class RoundController : MonoBehaviour
                 beepTimer = beepInterval;
             }
 
+            bool disarming;
+            if (UpdateDisarm(out disarming))
+            {
+                LoseToDisarm();
+                yield break;
+            }
+            if (disarming)
+            {
+                disarmTickTimer -= Time.deltaTime;
+                if (disarmTickTimer <= 0f)
+                {
+                    PlaySfx(disarmTickSound);
+                    disarmTickTimer = 0.4f;
+                }
+            }
+
             if (timerPanel != null) timerPanel.SetActive(true);
             if (timerLabel != null)
             {
-                timerLabel.text = "BREACH CHARGE: " + Mathf.CeilToInt(Mathf.Max(remaining, 0f)) + "s";
+                int secs = Mathf.CeilToInt(Mathf.Max(remaining, 0f));
+                if (disarmProgress > 0f)
+                {
+                    timerLabel.text = "BREACH " + secs + "s  -  DISARMING " + Mathf.RoundToInt(disarmProgress * 100f) + "%";
+                    timerLabel.color = disarming ? disarmColor : timerNormalColor;
+                }
+                else
+                {
+                    timerLabel.text = "BREACH CHARGE: " + secs + "s";
+                    timerLabel.color = timerNormalColor;
+                }
             }
             if (device != null) device.SetCountdownProgress(remaining, detonationSeconds);
 
@@ -144,6 +412,7 @@ public class RoundController : MonoBehaviour
             if (timerPanel != null) timerPanel.SetActive(false);
             if (chargeIcon != null) chargeIcon.SetActive(false);
             if (device != null) device.Detonate();
+            ClearDrones();
             PlaySfx(detonationSound);
             yield return StartCoroutine(PlayDetonationFx());
             ShowWin();
@@ -200,6 +469,11 @@ public class RoundController : MonoBehaviour
         if (chargeIcon != null) chargeIcon.SetActive(false);
     }
 
+    void PlaySfxAt(AudioClip clip, Vector3 position)
+    {
+        if (clip != null && AudioManager.Instance != null) AudioManager.Instance.PlaySfxAtPoint(clip, position);
+    }
+
     void PlaySfx(AudioClip clip)
     {
         if (clip == null || audioSource == null) return;
@@ -235,6 +509,9 @@ public class RoundController : MonoBehaviour
     {
         roundActive = false;
         StopAllCoroutines();
+        DestroySpawned();
+        disarmProgress = 0f;
+        RestoreObjective();
         if (timerPanel != null) timerPanel.SetActive(false);
         if (chargeIcon != null) chargeIcon.SetActive(false);
         if (winPanel != null) winPanel.SetActive(false);
