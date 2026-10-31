@@ -2,6 +2,14 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 15.5: Weak Point door waits for every drone
+
+**Why:** Playtest bug: the Room 2 exit door opened after only 2 of the 4 drones were down. `WeakPointRoomGate` was written when the room had a single Sentinel and only ever listened for that one's death; Phase 13 added 3 more drones but never told the gate about them, so killing `Sentinel_WeakPoint_01` opened the door whether the rest were still up or not. That undercut the room's point - it's the headshot practice room, and leaving early skips most of the practice.
+
+**What changed:** `WeakPointRoomGate` now takes an array of Sentinels (all 4 drones wired in) and counts kills, unlocking only when the last one dies. The "clean headshot" vs "try the eye next time" objective message now reflects all 4 kills - silent success only if every drone was dropped with a headshot, the nudge if any one was a body shot.
+
+**Verified:** in Play mode, killed the drones one at a time: door stayed locked after kills 1-3 and opened on kill 4; with one body-shot kill in the mix, the objective correctly showed the nudge.
+
 ## Phase 15.4: room instructions stay on screen longer
 
 **Why:** Playtest feedback: the yellow per-room instruction text vanished before it could be read. Each room's brief is a full paragraph (controls, mechanic explanation, checkpoint note) that the player is meant to read while also looking around the room, and 8s wasn't enough to do both.
