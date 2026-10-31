@@ -2,6 +2,18 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.3: Recon pulse no longer whites out the screen
+
+**Why:** Playtest screenshot: after using the Recon Dart in the Dash room, the whole view went white-blue and stayed that way. Two bugs combined.
+- **The pulse shell was never deleted.** The shell's grow-and-fade coroutine ran on the dart, and the dart destroys itself one frame before the second pulse finishes fading. That killed the coroutine, so a 24m sphere was left around the player at full size.
+- **The shell was never see-through.** The material set `_Surface` to transparent but never set the blend state or the `_SURFACE_TYPE_TRANSPARENT` keyword, so it rendered opaque. Emission plus the new bloom from 17.1 turned that leftover sphere into a white-out.
+
+**What changed:**
+- Each pulse shell gets a timed `Destroy` from the engine the moment it spawns, so it disappears even if the dart is gone.
+- The shell uses URP Particles/Unlit, which is already in builds via the smoke material. It now has proper alpha blending, no depth write and no shadows, so it is genuinely transparent and fades to nothing.
+
+**Verified** in Play mode: a test dart stuck and pulsed in the Dash room. The shell reached full size at alpha 0.06, and after 4s there were no pulse objects left, even though the dart had already destroyed itself.
+
 ## Phase 17.2: Recon Dart aim starts at 0 bounces
 
 **Why:** Playtest: "the dart starts with one bounce not 0 bounces". The default was hard-coded to 1, so a player who just pressed F and aimed at a spot got a ricochet they didn't ask for, and the dart landed somewhere other than where they pointed. A straight shot is the expected default; bouncing is the advanced option for reaching round a corner.

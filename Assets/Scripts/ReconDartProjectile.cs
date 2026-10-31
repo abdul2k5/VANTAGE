@@ -193,19 +193,28 @@ public class ReconDartProjectile : MonoBehaviour
         pulseGo.name = "ReconPulse";
         pulseGo.transform.position = ScanOrigin;
         Destroy(pulseGo.GetComponent<SphereCollider>());
-        var mat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+        float grow = 0.6f;
+        // Timed destroy owned by the engine, not this coroutine: the dart destroys itself right after its last
+        // pulse, which stops this coroutine and used to leave a 24m shell stuck round the player.
+        Destroy(pulseGo, grow + 0.05f);
+
+        var mat = new Material(Shader.Find("Universal Render Pipeline/Particles/Unlit"));
+        // Setting _Surface alone doesn't make URP blend - the blend state and keyword have to be set too, or the
+        // shell renders opaque (and with bloom, whites out the screen).
         mat.SetFloat("_Surface", 1f);
         mat.SetFloat("_Blend", 0f);
+        mat.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+        mat.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+        mat.SetFloat("_ZWrite", 0f);
         mat.SetFloat("_Cull", 0f); // two-sided, so the shell still shows once it has expanded past the player
-        mat.color = pulseColor;
-        mat.EnableKeyword("_EMISSION");
-        mat.SetColor("_EmissionColor", (Vector4)pulseColor * 1.5f);
-        mat.renderQueue = 3000;
+        mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+        mat.SetColor("_BaseColor", pulseColor);
+        mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
         pulseGo.GetComponent<MeshRenderer>().sharedMaterial = mat;
+        pulseGo.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 
         float t = 0f;
-        float grow = 0.6f;
-        while (t < grow)
+        while (t < grow && pulseGo != null)
         {
             t += Time.deltaTime;
             float k = Mathf.Clamp01(t / grow);
@@ -213,10 +222,10 @@ public class ReconDartProjectile : MonoBehaviour
             pulseGo.transform.localScale = new Vector3(scale, scale, scale);
             Color c = pulseColor;
             c.a = Mathf.Lerp(0.35f, 0f, k);
-            mat.color = c;
+            mat.SetColor("_BaseColor", c);
             yield return null;
         }
-        Destroy(pulseGo);
+        if (pulseGo != null) Destroy(pulseGo);
     }
 
     void PlayAt(AudioClip clip)
