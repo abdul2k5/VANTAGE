@@ -9,6 +9,9 @@ public class PlayerController : MonoBehaviour
     public float mouseSensitivity = 2f;
     public float gravity = -20f;
 
+    [Header("Walk (hold Left Alt) - slower but silent; running footsteps are what Sentinels hear")]
+    public float walkSpeedMultiplier = 0.55f;
+
     [Header("Crouch")]
     public Transform cameraPivot;
     public float crouchHeight = 1.0f;
@@ -36,6 +39,7 @@ public class PlayerController : MonoBehaviour
 
     float standHeight;
     bool crouchHeld;
+    bool walkHeld;
     /// <summary>0 = standing, 1 = fully crouched - smoothed over crouchTransitionSeconds.</summary>
     float crouchLerp;
     bool wasGrounded = true;
@@ -45,6 +49,9 @@ public class PlayerController : MonoBehaviour
     /// <summary>Set while an ability (e.g. Dash) is driving the body itself.</summary>
     public bool SuppressMovement { get; set; }
     public bool IsCrouching { get { return crouchHeld; } }
+    public bool IsWalking { get { return walkHeld; } }
+    /// <summary>Grounded horizontal speed, for footsteps.</summary>
+    public float HorizontalSpeed { get { return cc != null ? new Vector2(cc.velocity.x, cc.velocity.z).magnitude : 0f; } }
     public bool IsAirborne { get { return cc != null && !cc.isGrounded; } }
     /// <summary>1 = fully standing, 0 = fully crouched - see standEyeOffsetForSight tooltip.</summary>
     public float EyeHeightOffset { get { return Mathf.Lerp(standEyeOffsetForSight, crouchEyeOffsetForSight, crouchLerp); } }
@@ -94,6 +101,7 @@ public class PlayerController : MonoBehaviour
         if (moveInput.sqrMagnitude > 1f) moveInput.Normalize();
 
         ApplyYaw();
+        walkHeld = kb != null && kb.leftAltKey.isPressed;
         UpdateCrouch(kb);
         UpdateJump(kb);
         ApplyMovement();
@@ -156,6 +164,7 @@ public class PlayerController : MonoBehaviour
     {
         float speedMultiplier = 1f;
         if (crouchHeld) speedMultiplier *= crouchSpeedMultiplier;
+        else if (walkHeld) speedMultiplier *= walkSpeedMultiplier;
         if (landingPenaltyRemaining > 0f) speedMultiplier *= landingSpeedMultiplier;
 
         Vector3 desired = (transform.right * moveInput.x + transform.forward * moveInput.y) * moveSpeed * speedMultiplier;

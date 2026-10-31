@@ -4289,6 +4289,7 @@ MonoBehaviour:
   missChanceAtMaxRange: 0.4
   blindSpreadRadius: 0.5
   blindAimHeight: 1
+  investigateSeconds: 2
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -5483,6 +5484,7 @@ MonoBehaviour:
   missChanceAtMaxRange: 0.4
   blindSpreadRadius: 0.5
   blindAimHeight: 1
+  investigateSeconds: 2
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -6498,6 +6500,7 @@ MonoBehaviour:
   missChanceAtMaxRange: 0.4
   blindSpreadRadius: 0.5
   blindAimHeight: 1
+  investigateSeconds: 2
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -6897,10 +6900,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 229211395}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 480, y: -10}
+  m_SizeDelta: {x: 920, y: 25}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &147166729
 MonoBehaviour:
@@ -9810,7 +9813,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 480, y: -0}
-  m_SizeDelta: {x: 960, y: 0}
+  m_SizeDelta: {x: 960, y: 45}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &229211396
 MonoBehaviour:
@@ -22397,6 +22400,7 @@ MonoBehaviour:
   missChanceAtMaxRange: 0.4
   blindSpreadRadius: 0.5
   blindAimHeight: 1
+  investigateSeconds: 2
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -24631,10 +24635,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 849293798}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 93, y: -37}
+  m_SizeDelta: {x: 73, y: 27}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &640557910
 MonoBehaviour:
@@ -26985,10 +26989,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1715469544}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 480, y: -8}
+  m_SizeDelta: {x: 928, y: 20}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &722714020
 MonoBehaviour:
@@ -29099,6 +29103,8 @@ MonoBehaviour:
   mouseSensitivity: 2
   minPitch: -80
   maxPitch: 80
+  recoilRecoveryDegreesPerSecond: 10
+  recoilRecoveryDelay: 0.3
 --- !u!114 &811350178
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30182,7 +30188,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -30, y: 30}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 113, y: 47}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &849293799
 MonoBehaviour:
@@ -33295,6 +33301,7 @@ MonoBehaviour:
   missChanceAtMaxRange: 0.4
   blindSpreadRadius: 0.5
   blindAimHeight: 1
+  investigateSeconds: 2
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -37371,7 +37378,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -20}
-  m_SizeDelta: {x: 960, y: 0}
+  m_SizeDelta: {x: 960, y: 91}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1046320914
 MonoBehaviour:
@@ -41159,6 +41166,7 @@ MonoBehaviour:
   missChanceAtMaxRange: 0.4
   blindSpreadRadius: 0.5
   blindAimHeight: 1
+  investigateSeconds: 2
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -41677,6 +41685,7 @@ MonoBehaviour:
   missChanceAtMaxRange: 0.4
   blindSpreadRadius: 0.5
   blindAimHeight: 1
+  investigateSeconds: 2
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -44995,6 +45004,7 @@ MonoBehaviour:
   missChanceAtMaxRange: 0.4
   blindSpreadRadius: 0.5
   blindAimHeight: 1
+  investigateSeconds: 2
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -45695,6 +45705,7 @@ MonoBehaviour:
   missChanceAtMaxRange: 0.4
   blindSpreadRadius: 0.5
   blindAimHeight: 1
+  investigateSeconds: 2
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -54213,6 +54224,7 @@ MonoBehaviour:
   missChanceAtMaxRange: 0.4
   blindSpreadRadius: 0.5
   blindAimHeight: 1
+  investigateSeconds: 2
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -55140,6 +55152,7 @@ GameObject:
   - component: {fileID: 1584037080}
   - component: {fileID: 1584037082}
   - component: {fileID: 1584037081}
+  - component: {fileID: 1584037083}
   m_Layer: 9
   m_Name: Player
   m_TagString: Player
@@ -55171,6 +55184,31 @@ MonoBehaviour:
   movingSpreadDegrees: 4.5
   fullSpeedForMaxSpread: 5
   crouchSpreadMultiplier: 0.5
+  recoilPitchPattern:
+  - 0.9
+  - 0.9
+  - 0.8
+  - 0.6
+  - 0.4
+  - 0.25
+  - 0.2
+  - 0.2
+  - 0.2
+  - 0.2
+  - 0.2
+  recoilYawPattern:
+  - 0
+  - 0
+  - 0.1
+  - 0.3
+  - 0.5
+  - -0.7
+  - -0.7
+  - 0.7
+  - 0.7
+  - -0.7
+  - -0.7
+  sprayResetSeconds: 0.4
   headshotMultiplier: 2.5
   headshotSound: {fileID: 8300000, guid: a35544ca8ee90fe49947fffb600ad2fe, type: 3}
   gunshotSound: {fileID: 8300000, guid: 315f7b2dedc81934180f160f6ad3c989, type: 3}
@@ -55208,6 +55246,7 @@ MonoBehaviour:
   acceleration: 40
   mouseSensitivity: 2
   gravity: -20
+  walkSpeedMultiplier: 0.55
   cameraPivot: {fileID: 811350176}
   crouchHeight: 1
   standEyeHeight: 1.6
@@ -55416,6 +55455,28 @@ MonoBehaviour:
   revealDuration: 3
   fuseSeconds: 1.5
   dartColor: {r: 0.25, g: 0.75, b: 0.95, a: 1}
+--- !u!114 &1584037083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1584037070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7923cef6d0bb368459ed70e098b697a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerFootsteps
+  stepSounds:
+  - {fileID: 8300000, guid: c8b5555c5d5d78841a7b5916ee6ca7b2, type: 3}
+  - {fileID: 8300000, guid: dbbd5ae24d112684d91033648148cc4b, type: 3}
+  - {fileID: 8300000, guid: 52fe02a07be40c2489bc6f7f84bf5ee8, type: 3}
+  - {fileID: 8300000, guid: 7e21050c636abf246b63d49297ccb5be, type: 3}
+  - {fileID: 8300000, guid: ba04015b3c397df4abd8fb279cae0a43, type: 3}
+  stepVolume: 0.5
+  strideLength: 1.9
+  minSpeed: 1
+  hearingRadius: 9
 --- !u!1 &1585029052
 GameObject:
   m_ObjectHideFlags: 0
@@ -59295,7 +59356,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 480, y: -55}
-  m_SizeDelta: {x: 960, y: 0}
+  m_SizeDelta: {x: 960, y: 36}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1715469545
 MonoBehaviour:
@@ -60185,6 +60246,7 @@ MonoBehaviour:
   missChanceAtMaxRange: 0.4
   blindSpreadRadius: 0.5
   blindAimHeight: 1
+  investigateSeconds: 2
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -71373,6 +71435,7 @@ MonoBehaviour:
   missChanceAtMaxRange: 0.4
   blindSpreadRadius: 0.5
   blindAimHeight: 1
+  investigateSeconds: 2
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -71497,6 +71560,7 @@ MonoBehaviour:
   missChanceAtMaxRange: 0.4
   blindSpreadRadius: 0.5
   blindAimHeight: 1
+  investigateSeconds: 2
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -74613,6 +74677,7 @@ MonoBehaviour:
   missChanceAtMaxRange: 0.4
   blindSpreadRadius: 0.5
   blindAimHeight: 1
+  investigateSeconds: 2
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -74794,7 +74859,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Body shots barely scratch these drones - the red eye is the real target. They can''t shoot back. Two hold still, two move: drop all four with headshots.'
+  m_Text: 'Body shots barely scratch these drones - the red eye is the real target. They can''t shoot back. Two hold still, two move: drop all four with headshots. Holding fire makes the gun climb - tap or burst.'
 --- !u!222 &3100000101
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -75946,6 +76011,7 @@ MonoBehaviour:
   missChanceAtMaxRange: 0.4
   blindSpreadRadius: 0.5
   blindAimHeight: 1
+  investigateSeconds: 2
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
@@ -76131,7 +76197,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: F to throw a Recon Dart - it reveals Sentinels through walls for a few seconds. Something's past that corner.
+  m_Text: F to throw a Recon Dart - it reveals Sentinels through walls for a few seconds. Something's past that corner. Running is loud - drones nearby turn toward your footsteps. Hold [Alt] to walk silently.
 --- !u!222 &3200000102
 CanvasRenderer:
   m_ObjectHideFlags: 0

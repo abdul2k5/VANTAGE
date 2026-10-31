@@ -2,6 +2,19 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 16.2: footsteps and walking
+
+**Why:** Sound is half of how tactical shooters are played: running is loud and gives your position away, walking is quiet. Vantage had no movement sound and drones had no hearing, so there was never a reason to move carefully - running was strictly better than anything slower. This adds a cost to speed that fits the core dynamic: take your time on the approach, and you get to choose when the fight starts.
+
+**What changed:**
+- **Running footsteps:** a step sound every 1.9m while running on the ground (5 CC0 Kenney concrete clips, never the same twice in a row).
+- **Drones hear them:** an un-alerted drone in the current room within 9m of a running footstep stops and turns toward it for 2s. It does **not** fire at the sound - but if turning gives it line of sight, it spots you through the normal reaction delay. Already-alert drones ignore sounds (so noise can't pull their aim off you), and drones in other rooms never hear you through walls.
+- **Walk = hold Left Alt:** 55% speed, silent. (Shift was already Dash.) Crouching is also silent. Jumping/airborne and Dash make no footsteps.
+- Every armed drone sits 12m+ from its room's entry, so entering a room running isn't punished on its own - you're only heard if you run up close.
+- **Teaching it:** the Recon room text now ends "Running is loud - drones nearby turn toward your footsteps. Hold [Alt] to walk silently." (Recon is the sneak-up room: one drone "past that corner".) The Weak Point text also gained "Holding fire makes the gun climb - tap or burst" for Phase 16.1. Both still fit the panel (3 lines).
+
+**Verified** in Play mode on the Recon drone: from an open spot 7m away outside its view cone, one running step made it turn and spot the player; from the same spot with no step it never saw them. At 12m a step isn't heard. A drone in another room isn't affected. Holding walk (or standing still) makes movement silent.
+
 ## Phase 16.1: recoil spray pattern
 
 **Why:** Holding the trigger was exactly as accurate as tapping - the only accuracy rule was movement spread (Phase 1). In tactical shooters the gun itself also punishes a long spray, and the fix is a skill you can learn: tap or burst, or pull down against a *fixed* pattern. That fits Vantage's core dynamic (the patient, controlled shot wins) and gives the Range room something to practise beyond "stand still".

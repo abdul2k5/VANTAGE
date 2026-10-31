@@ -52,6 +52,10 @@ public class Sentinel : MonoBehaviour
 
 
 
+    [Header("Hearing (PlayerFootsteps calls HearNoise on running footsteps)")]
+    [Tooltip("An un-alerted Sentinel that hears a running footstep stops and turns toward it for this long. It doesn't fire at the sound - if the turn gives it line of sight, the normal spot/reaction delay applies.")]
+    public float investigateSeconds = 2f;
+
     [Header("Audio")]
     [Tooltip("Looping 3D hover hum, so the player can hear a Sentinel before seeing it. Leave unassigned until Phase 6.")]
     public AudioClip hoverHum;
@@ -71,6 +75,8 @@ public class Sentinel : MonoBehaviour
     float blindRemaining;
     float revealRemaining;
     float forcedAlertRemaining;
+    float investigateRemaining;
+    Vector3 noisePosition;
     /// <summary>Where this Sentinel last knew the player to be - updated every frame it can see them, and
     /// on ForceAlert (being shot / a roommate's call). Blind fire aims here, not at the live position.</summary>
     Vector3 lastKnownPlayerPosition;
@@ -141,6 +147,17 @@ public class Sentinel : MonoBehaviour
         lastKnownPlayerPosition = towardPosition;
         if (!wasAlert) fireTimer = Random.Range(reactionDelayMin, reactionDelayMax);
     }
+
+    /// <summary>A running footstep within earshot: stop and look toward it. Ignored once already Alert - it's
+    /// already tracking the player by sight or forced alert, and a sound shouldn't pull its aim away.</summary>
+    public void HearNoise(Vector3 position)
+    {
+        if (state == State.Alert || isPushing) return;
+        noisePosition = position;
+        investigateRemaining = investigateSeconds;
+    }
+
+    public bool IsInvestigating { get { return investigateRemaining > 0f && state != State.Alert; } }
 
 /// <summary>Calls every other active Sentinel sharing this one's room in to Alert, turning toward the player's last known position even if they have no sight of their own - a spot by one Sentinel means the whole room reacts, not just the one that saw it.</summary>
     void AlertRoommates(Vector3 lastKnownPosition)
@@ -228,6 +245,12 @@ void Update()
             if (forcedAlertRemaining <= 0f) forcedAlertRemaining = 0f;
         }
 
+        if (investigateRemaining > 0f)
+        {
+            investigateRemaining -= Time.deltaTime;
+            if (investigateRemaining <= 0f) investigateRemaining = 0f;
+        }
+
         UpdateHoverHum();
 
         if (player == null) return;
@@ -273,6 +296,11 @@ void Update()
             if (isPushing)
             {
                 RunPush();
+            }
+            else if (investigateRemaining > 0f)
+            {
+                agent.isStopped = true;
+                FaceTowards(noisePosition);
             }
             else if (behaviorMode == BehaviorMode.Hold)
             {
@@ -506,6 +534,7 @@ void Fire()
         isPushing = false;
         fireTimer = 0f;
         forcedAlertRemaining = 0f;
+        investigateRemaining = 0f;
 
         state = State.Patrol;
         patrolIndex = 0;
