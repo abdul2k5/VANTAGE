@@ -161,6 +161,7 @@ void UpdateSpread()
     {
         currentAmmo--;
         PlaySfx(gunshotSound);
+        if (RunStats.Instance != null) RunStats.Instance.RecordShot();
         Vector3 origin = cam != null ? cam.transform.position : transform.position;
         Vector3 forward = cam != null ? cam.transform.forward : transform.forward;
         Vector3 dir = ApplySpread(forward, currentSpreadDegrees);
@@ -183,8 +184,10 @@ void UpdateSpread()
 
                 bool aliveBefore = sentinel.gameObject.activeSelf;
                 sentinel.TakeDamage(dealt, headshot);
+                if (RunStats.Instance != null) RunStats.Instance.RecordHit(true, headshot);
                 if (aliveBefore && !sentinel.gameObject.activeSelf)
                 {
+                    if (RunStats.Instance != null) RunStats.Instance.RecordKill();
                     if (UltimateController.Instance != null) UltimateController.Instance.AddCharge(UltimateController.Instance.chargePerKill);
                     if (KillFeedUI.Instance != null) KillFeedUI.Instance.AddKill(headshot);
                 }
@@ -200,7 +203,11 @@ void UpdateSpread()
                 BulletImpactPool.Instance.SpawnDecal(hit.point, hit.normal, hit.collider.transform, isRangeTarget);
 
                 var rangeTarget = hit.collider.GetComponentInParent<RangeTarget>();
-                if (rangeTarget != null) rangeTarget.RegisterHit();
+                if (rangeTarget != null)
+                {
+                    rangeTarget.RegisterHit();
+                    if (RunStats.Instance != null) RunStats.Instance.RecordHit(false, false);
+                }
             }
         }
 

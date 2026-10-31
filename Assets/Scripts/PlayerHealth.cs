@@ -46,6 +46,7 @@ public void TakeDamage(float amount)
         if (Invulnerable) return;
 
         currentHealth -= amount * DamageMultiplier;
+        if (RunStats.Instance != null) RunStats.Instance.RecordDamage(amount * DamageMultiplier);
         if (HitFeedbackUI.Instance != null) HitFeedbackUI.Instance.ShowDamageDirection(sourceWorldPosition);
         if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(damageSound);
 

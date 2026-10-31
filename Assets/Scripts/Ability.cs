@@ -42,6 +42,7 @@ public abstract class Ability : MonoBehaviour
         charges = Charges - 1;
         if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(activateSound);
         if (OnUsed != null) OnUsed();
+        if (RunStats.Instance != null) RunStats.Instance.RecordAbility(abilityName);
         return true;
     }
 

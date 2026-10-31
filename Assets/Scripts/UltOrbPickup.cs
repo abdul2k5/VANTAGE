@@ -41,6 +41,7 @@ public class UltOrbPickup : MonoBehaviour
         {
             UltimateController.Instance.AddCharge(chargeAmount);
         }
+        if (RunStats.Instance != null) RunStats.Instance.RecordOrb(name);
 
         collected = true;
         gameObject.SetActive(false);

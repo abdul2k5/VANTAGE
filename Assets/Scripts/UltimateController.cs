@@ -75,6 +75,7 @@ public class UltimateController : MonoBehaviour
 
         currentCharge = 0f;
         StartCoroutine(RunUltimate());
+        if (RunStats.Instance != null) RunStats.Instance.RecordUltimate();
         if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(activateSound);
         return true;
     }

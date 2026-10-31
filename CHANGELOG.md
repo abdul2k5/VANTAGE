@@ -2,6 +2,18 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 16.3: end-of-run debrief
+
+**Why:** The run ended on a single line ("BREACH SUCCESSFUL" / "MISSION FAILED") with no feedback on *how* you played, so nothing told the player what to do better next time - and nothing invited a second run. Tactical shooters end every match on a scoreboard. Separately, the win screen had **no buttons at all**: the cursor unlocked with nowhere to click, so the only way out was quitting.
+
+**What changed:**
+- **`RunStats`** tallies the whole run: total time, time per room, shots/hits (accuracy), headshot share of drone hits, kills, damage taken, each ability's uses, Overwatch uses, orbs collected, checkpoint retries. Time only counts while playing (menus, unlock cards and settings are paused). A checkpoint retry keeps counting, since the debrief covers the whole run, failed attempts included; a restart starts fresh.
+- **Win screen:** two columns, RUN stats and ROOM TIMES (all 8 rooms), plus new **PLAY AGAIN** and **MAIN MENU** buttons. The world now freezes when the win screen opens, so a surviving drone can't shoot the player and open Game Over on top of it.
+- **Game Over screen:** the same stats plus the room the run ended in. Buttons moved down to make space.
+- **One coaching tip** on both screens, picked from the weakest area in priority order: low accuracy -> "stop moving, tap or burst"; mostly body shots -> "aim at the red eye"; unused utility -> "smoke, flash or dart before you peek"; Overwatch left charged -> "press [X]"; orbs left behind; heavy damage -> "crouch behind cover, walk so they don't hear you". A good run gets "Clean run. Now do it faster." Each tip points back at a mechanic the tutorial teaches, so the end screen becomes part of the teaching.
+
+**Verified** in Play mode with a simulated run across all 8 rooms: every stat and room time is correct; collecting the same orb twice counts once; the clock stops when the win screen opens; the orb tip fires for 1/2 orbs. Rendered both screens: columns line up, nothing overlaps. PLAY AGAIN reloads straight into a fresh run (menu skipped, time unfrozen, stats reset).
+
 ## Phase 16.2: footsteps and walking
 
 **Why:** Sound is half of how tactical shooters are played: running is loud and gives your position away, walking is quiet. Vantage had no movement sound and drones had no hearing, so there was never a reason to move carefully - running was strictly better than anything slower. This adds a cost to speed that fits the core dynamic: take your time on the approach, and you get to choose when the fight starts.

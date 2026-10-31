@@ -42,6 +42,9 @@ public class RoundController : MonoBehaviour
 
     [Header("Win/Lose")]
     public GameObject winPanel;
+    [Tooltip("The win screen used to have no buttons at all - the cursor unlocked with nowhere to go.")]
+    public Button playAgainButton;
+    public Button winMainMenuButton;
 
     bool roundActive;
     AudioSource audioSource;
@@ -58,6 +61,8 @@ public class RoundController : MonoBehaviour
     void Start()
     {
         if (AudioManager.Instance != null) audioSource.outputAudioMixerGroup = AudioManager.Instance.SfxGroup;
+        if (playAgainButton != null) playAgainButton.onClick.AddListener(() => { if (GameOverController.Instance != null) GameOverController.Instance.RestartFromBeginning(); });
+        if (winMainMenuButton != null) winMainMenuButton.onClick.AddListener(() => { if (GameOverController.Instance != null) GameOverController.Instance.MainMenu(); });
     }
 
     public void BeginRound(Vector3 sitePosition)
@@ -203,6 +208,8 @@ public class RoundController : MonoBehaviour
 
     void ShowWin()
     {
+        // Stop the clock before the panel opens, so the debrief (RunDebriefUI.OnEnable) reads the final time.
+        if (RunStats.Instance != null) RunStats.Instance.Finish();
         if (timerPanel != null) timerPanel.SetActive(false);
         if (chargeIcon != null) chargeIcon.SetActive(false);
         if (winPanel != null) winPanel.transform.SetAsLastSibling();
@@ -210,6 +217,9 @@ public class RoundController : MonoBehaviour
         PlaySfx(winSound);
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
+        // Freeze the world behind the debrief - a surviving drone could otherwise still shoot the player
+        // and open Game Over on top of the win screen. Both buttons reset timeScale on their reload.
+        Time.timeScale = 0f;
     }
 
 

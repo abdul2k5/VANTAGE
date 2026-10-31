@@ -71,6 +71,7 @@ public class CheckpointManager : MonoBehaviour
     {
         if (!HasReachedCheckpoint || RoomManager.Instance == null) return;
 
+        if (RunStats.Instance != null) RunStats.Instance.RecordCheckpointRetry();
         StopAllCoroutines();
         StartCoroutine(RetryFromCheckpointRoutine());
     }

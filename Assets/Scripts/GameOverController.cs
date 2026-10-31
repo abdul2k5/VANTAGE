@@ -89,7 +89,8 @@ public class GameOverController : MonoBehaviour
         if (CheckpointManager.Instance != null) CheckpointManager.Instance.RetryFromCheckpoint();
     }
 
-    void RestartFromBeginning()
+    /// <summary>Public so the win screen's PLAY AGAIN button can reuse it.</summary>
+    public void RestartFromBeginning()
     {
         // Full scene reload resets room/health/Sentinel/ability/ult/checkpoint state back to
         // authored defaults, same trick SettingsMenuController.QuitToMenu uses - but skip the
@@ -100,7 +101,7 @@ public class GameOverController : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
 
-    void MainMenu()
+    public void MainMenu()
     {
         Time.timeScale = 1f;
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
