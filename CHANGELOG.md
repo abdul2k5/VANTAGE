@@ -2,6 +2,14 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 16.8: walk through smoke
+
+**Why:** Playtest request - the player wants to walk through their own smoke. The Smoke Wall's invisible blocker had a solid collider, so the player bumped into it like a wall. In tactical shooters smoke is something you push *through*, not around: walking into or through it is how you cross a sightline with cover.
+
+**What changed:** Player <-> Smoke collisions are switched off in the physics layer matrix (`ProjectSettings/DynamicsManager.asset`). The blocker stays solid for raycasts, which the collision matrix doesn't affect - so drone sight is still blocked, and bullets still pass through as in Phase 15.20. Standing *inside* the smoke hides you: a drone's sight ray hits the smoke's face before reaching you.
+
+**Verified** in Play mode in the Smoke room: the player walks from z=-7.5 to z=-1.5 straight through a smoke at z=-5; standing inside it, neither drone can see them, while the crossfire drone can see the same spot with the smoke removed.
+
 ## Phase 16.7: Recon Dart aim preview readable at a glance
 
 **Why:** Playtest screenshot: aiming at a nearby wall, the preview showed a blue drip hanging off the crosshair and the player "was a bit confused at first to where the dart would land". Looking straight down the arc, the part of the line nearest the eye drew as a thick blob over the crosshair, and the landing marker (a small flat disc) was lost inside it.
