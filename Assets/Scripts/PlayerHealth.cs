@@ -3,8 +3,11 @@ using UnityEngine;
 public class PlayerHealth : MonoBehaviour
 {
     public float maxHealth = 100f;
+    [Tooltip("Armor: takes damage before health does. Doesn't recover mid-room - RoomManager refills it on every room entry, the same per-room budget as ability charges.")]
+    public float maxShield = 50f;
 
     float currentHealth;
+    float currentShield;
     Vector3 respawnPosition;
 
     public float CurrentHealth { get { return currentHealth; } }
@@ -13,11 +16,14 @@ public class PlayerHealth : MonoBehaviour
     /// <summary>Scales incoming damage; 1 = normal, &lt;1 = reduced (set by the ultimate).</summary>
     public float DamageMultiplier { get; set; } = 1f;
     public float MaxHealth { get { return maxHealth; } }
+    public float CurrentShield { get { return currentShield; } }
+    public float MaxShield { get { return maxShield; } }
     public AudioClip damageSound;
 
     void Awake()
     {
         currentHealth = maxHealth;
+        currentShield = maxShield;
         respawnPosition = transform.position;
     }
 
@@ -30,10 +36,17 @@ public class PlayerHealth : MonoBehaviour
     public void FullRestore()
     {
         currentHealth = maxHealth;
+        currentShield = maxShield;
         Invulnerable = false;
         DamageMultiplier = 1f;
     }
 
+
+    /// <summary>Called by RoomManager on every room entry.</summary>
+    public void RefillShield()
+    {
+        currentShield = maxShield;
+    }
 
 public void TakeDamage(float amount)
     {
@@ -45,8 +58,11 @@ public void TakeDamage(float amount)
     {
         if (Invulnerable) return;
 
-        currentHealth -= amount * DamageMultiplier;
-        if (RunStats.Instance != null) RunStats.Instance.RecordDamage(amount * DamageMultiplier);
+        float dealt = amount * DamageMultiplier;
+        float absorbed = Mathf.Min(currentShield, dealt);
+        currentShield -= absorbed;
+        currentHealth -= dealt - absorbed;
+        if (RunStats.Instance != null) RunStats.Instance.RecordDamage(dealt, absorbed);
         if (HitFeedbackUI.Instance != null) HitFeedbackUI.Instance.ShowDamageDirection(sourceWorldPosition);
         if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(damageSound);
 

@@ -79,6 +79,10 @@ public void EnterRoom(int index, bool movePlayer = true)
             if (health != null) health.SetRespawnPoint(room.entryPoint.position);
         }
 
+        // Armor is a per-room budget, like ability charges.
+        var playerHealth = player != null ? player.GetComponent<PlayerHealth>() : null;
+        if (playerHealth != null) playerHealth.RefillShield();
+
         // The camera must not smooth-slide across the gap between rooms.
         if (followCamera != null) followCamera.SnapToTarget();
 

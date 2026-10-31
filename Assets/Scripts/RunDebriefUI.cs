@@ -40,7 +40,7 @@ public class RunDebriefUI : MonoBehaviour
         Row(labels, values, "KILLS", stats.Kills.ToString());
         Row(labels, values, "ACCURACY", Percent(stats.Hits, stats.ShotsFired) + "  (" + stats.Hits + "/" + stats.ShotsFired + ")");
         Row(labels, values, "HEADSHOTS", Percent(stats.HeadshotHits, stats.SentinelHits) + " of drone hits");
-        Row(labels, values, "DAMAGE TAKEN", Mathf.RoundToInt(stats.DamageTaken).ToString());
+        Row(labels, values, "DAMAGE TAKEN", Mathf.RoundToInt(stats.DamageTaken) + (stats.DamageAbsorbed > 0f ? "  (" + Mathf.RoundToInt(stats.DamageAbsorbed) + " by armor)" : ""));
         Row(labels, values, "UTILITY USED", UtilityBreakdown(stats));
         Row(labels, values, "OVERWATCH", stats.UltimateUses == 0 ? "not used" : "used x" + stats.UltimateUses);
         Row(labels, values, "ORBS", stats.OrbsCollected + "/" + TotalOrbs());

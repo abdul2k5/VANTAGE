@@ -17,6 +17,8 @@ public class RunStats : MonoBehaviour
     public int HeadshotHits { get; private set; }
     public int Kills { get; private set; }
     public float DamageTaken { get; private set; }
+    /// <summary>Part of DamageTaken that armor soaked up instead of health.</summary>
+    public float DamageAbsorbed { get; private set; }
     public int UltimateUses { get; private set; }
     public int CheckpointRetries { get; private set; }
     public int OrbsCollected { get { return orbsCollected.Count; } }
@@ -74,7 +76,12 @@ public class RunStats : MonoBehaviour
     }
 
     public void RecordKill() { Kills++; }
-    public void RecordDamage(float amount) { if (!Finished) DamageTaken += amount; }
+    public void RecordDamage(float amount, float absorbedByShield)
+    {
+        if (Finished) return;
+        DamageTaken += amount;
+        DamageAbsorbed += absorbedByShield;
+    }
     public void RecordUltimate() { UltimateUses++; }
     public void RecordCheckpointRetry() { CheckpointRetries++; }
 

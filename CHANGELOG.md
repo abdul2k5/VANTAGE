@@ -2,6 +2,18 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 16.5: armor
+
+**Why:** The playtester asked for a shield for the player. Of the three options discussed (per-room armor, a regenerating shield, a barrier ability), per-room armor was chosen: it is the closest match to how armor works in tactical shooters (a separate pool on top of health, not a free heal), and it fits the per-room budget Phase 16 already set up for ability charges. Since every death now ends the run (Phase 9), it also gives newer players a bit more room for one mistake per room - without the regenerating option's "hide and wait" loop, which would undercut the push to use utility.
+
+**What changed:**
+- **50 armor** on top of 100 health. Damage hits armor first; a hit bigger than the armor left takes the rest from health. The Overwatch damage reduction applies before armor.
+- **No recovery mid-room; refilled on every room entry** (and on checkpoint retry). Health still does *not* refill between rooms, so health is the run-long resource and armor is the per-room one.
+- **HUD:** a slim blue bar with its number, directly above the health bar in the same style.
+- **Debrief:** DAMAGE TAKEN now shows how much armor absorbed, e.g. "140 (65 by armor)".
+
+**Verified** in Play mode: 20-damage hits take armor 50 -> 30 -> 10, then the third hit splits 10 armor / 10 health (HP 90), the fourth is all health (70); the next room refills armor to 50 while HP stays 70; a 15 hit leaves 35 armor; with Overwatch's 0.5x a 20 hit takes 10 armor. The run stats total 95 damage with 65 absorbed. HUD render shows the armor bar at 25/50 above health at 70.
+
 ## Phase 16.4: checkpoint retry starts clean - full HP, no old smoke, arrival grace
 
 **Why:** Playtest report: after RETRY FROM CHECKPOINT, the smoke thrown before dying was still standing, and the health bar read 60 instead of 100.
