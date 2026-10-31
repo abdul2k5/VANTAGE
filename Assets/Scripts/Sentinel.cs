@@ -370,7 +370,24 @@ public bool CanSeePlayer()
 void Fire()
     {
         Vector3 origin = muzzle != null ? muzzle.position : transform.position + Vector3.up * 1f;
-        Vector3 end = player.position + Vector3.up * 0.9f;
+        // Aim at the same point CanSeePlayer() checks, so "it can see you" and "it can hit you"
+        // agree: standing behind a crate leaves your head exposed, crouching doesn't.
+        float aimHeight = playerController != null ? playerController.EyeHeightOffset : 0.9f;
+        Vector3 end = player.position + Vector3.up * aimHeight;
+
+        // Alert (from a roommate's call or from being shot) keeps a Sentinel firing for a couple of
+        // seconds with no line of sight. Those shots used to damage the player straight through
+        // cover; now anything on the Blocking layer in the way - crates, walls, a Smoke Wall -
+        // takes the bullet instead.
+        RaycastHit blockHit;
+        if (Physics.Linecast(origin, end, out blockHit, blockingMask))
+        {
+            if (feedback != null) feedback.PlayShot(origin, blockHit.point);
+            if (BulletImpactPool.Instance != null)
+                BulletImpactPool.Instance.SpawnDecal(blockHit.point, blockHit.normal, blockHit.collider.transform, false);
+            return;
+        }
+
         if (feedback != null) feedback.PlayShot(origin, end);
 
         if (Random.value < MissChanceAtCurrentDistance())

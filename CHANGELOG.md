@@ -2,6 +2,14 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 15.12: drone shots no longer pass through cover
+
+**Why:** Playtest bug: in Holding Angle the player kept taking damage while hiding behind a crate. Root cause: `Sentinel.Fire()` never checked line of fire - it applied damage straight to the player whenever its fire timer ran out while Alert. And Alert outlives sight on purpose: it holds for 2.5s after being shot (Phase 10 #2) and spreads to every drone in the room the moment one spots the player (Phase 10 #3). So: peek once, get seen, duck back - and both drones kept hitting you through the crate for 2.5 seconds, including the one that never saw you at all. The bug dated from Phase 10, but Phase 15.6's second drone made it far more noticeable, and 15.6's verification only checked what each drone could *see*, not where its shots *landed*.
+
+**What changed:** `Fire()` now linecasts from the muzzle to the player against the Blocking layer. If something's in the way, the shot hits it (tracer ends there, bullet hole on the surface) and does no damage. The aim point is now the same point `CanSeePlayer()` checks, so "it can see you" and "it can hit you" always agree. Alerted drones still turn and fire at your last known position - you hear and see suppressing fire hitting your cover - they just can't hurt you through it. Smoke Wall is on the same Blocking layer, so it now stops bullets as well as sight, which is what "Use Smoke Wall to block their view" already promised.
+
+**Verified** in Play mode, 10 shots from each Room 3 drone per position: 0 damage behind the main crate (both stances) and behind the crouch crate; in the open, only the drone with a clear line did damage, the other's shots hit the crate.
+
 ## Phase 15.11: "OVERWATCH PROTOCOL READY" banner text centred
 
 **Why:** Playtest screenshot: the ultimate-ready banner's text sat in the bottom half of its dark box instead of the middle. The label was anchored to the box's centre but had its pivot at its own top edge, so its top edge (not its middle) landed on the box's midline - pushing the whole line of text down by half its height.
