@@ -2,6 +2,14 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 15.6: second drone in Holding Angle
+
+**Why:** Playtest feedback: Room 3 felt too thin with a single drone - one held angle is a single timing check, then the room is over. A second held angle turns it into the actual skill the room is named for: isolating one angle at a time from cover instead of exposing yourself to everything at once. Kept it as a mirrored Hold pair rather than a diagonal crossfire so Room 5 onward still introduces true crossfire as the next step up.
+
+**What changed:** Added `Sentinel_R2_02` at (43, 0, 5), mirroring `Sentinel_R2_01` at (37, 0, 5) across the room's centre line - both Hold mode, facing the entry, same Room 3 tuning (0.8s reaction, 15 damage, 50 HP, 0.5x body armor). The objective text still reads correctly ("It's holding this doorway...") since both drones hold the doorway end.
+
+**Verified:** in Play mode, both drones register as Room 3 Sentinels (so alert sharing between them works), and `CanSeePlayer()` from five player positions: both see the entry, neither sees behind either crate, peeking left of the main crate exposes only `R2_01`, peeking right exposes only `R2_02` - each peek is a one-on-one fight, as intended.
+
 ## Phase 15.5: Weak Point door waits for every drone
 
 **Why:** Playtest bug: the Room 2 exit door opened after only 2 of the 4 drones were down. `WeakPointRoomGate` was written when the room had a single Sentinel and only ever listened for that one's death; Phase 13 added 3 more drones but never told the gate about them, so killing `Sentinel_WeakPoint_01` opened the door whether the rest were still up or not. That undercut the room's point - it's the headshot practice room, and leaving early skips most of the practice.
