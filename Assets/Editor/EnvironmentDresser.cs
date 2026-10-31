@@ -403,7 +403,10 @@ public static class EnvironmentDresser
         m.SetColor("_BaseColor", baseCol);
         // Plain EnableKeyword didn't stick on these saved assets (keywords came back empty, so nothing glowed).
         m.SetKeyword(new LocalKeyword(m.shader, "_EMISSION"), true);
-        m.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
+        // Must not be None: URP's material validation (run on editor start / when the Inspector shows the
+        // material) strips _EMISSION from any material whose GI flags say "no emission", which silently turned
+        // every strip and bulb dark after a restart.
+        m.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
         var emis = color * strength;
         emis.a = 1f;
         m.SetColor("_EmissionColor", emis);
