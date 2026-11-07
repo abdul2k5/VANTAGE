@@ -75,6 +75,16 @@ public class UltimateController : MonoBehaviour
     }
 
 
+    /// <summary>Ends a running ultimate early - used by CheckpointManager, because a retry shouldn't carry over one fired in the failed attempt.</summary>
+    public void CancelUltimate()
+    {
+        if (!active) return;
+        StopAllCoroutines();
+        active = false;
+        if (health != null) health.DamageMultiplier = 1f;
+        if (UltimateActiveOverlay.Instance != null) UltimateActiveOverlay.Instance.Stop();
+    }
+
     public bool TryActivate()
     {
         if (!IsReady || active) return false;

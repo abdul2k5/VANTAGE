@@ -100,9 +100,14 @@ public class CheckpointManager : MonoBehaviour
         var health = player != null ? player.GetComponent<PlayerHealth>() : null;
         var weapon = player != null ? player.GetComponent<Weapon>() : null;
 
+        // Cancel first - SetCharge is ignored while the ultimate is running.
+        if (UltimateController.Instance != null)
+        {
+            UltimateController.Instance.CancelUltimate();
+            UltimateController.Instance.SetCharge(savedUltCharge);
+        }
         if (health != null) health.FullRestore();
         if (weapon != null) weapon.Reload();
-        if (UltimateController.Instance != null) UltimateController.Instance.SetCharge(savedUltCharge);
 
         yield return new WaitForSeconds(rm.holdSeconds);
         yield return Fade(rm.fadeOverlay, 1f, 0f, rm.fadeSeconds);

@@ -34,6 +34,15 @@ public class UltimateActiveOverlay : MonoBehaviour
         routine = StartCoroutine(RunOverlay(duration));
     }
 
+    public void Stop()
+    {
+        if (routine != null) StopCoroutine(routine);
+        routine = null;
+        if (flashImage != null) flashImage.color = new Color(flashColor.r, flashColor.g, flashColor.b, 0f);
+        if (tintImage != null) tintImage.color = new Color(tintColor.r, tintColor.g, tintColor.b, 0f);
+        if (activeLabelPanel != null) activeLabelPanel.SetActive(false);
+    }
+
     IEnumerator RunOverlay(float duration)
     {
         if (tintImage != null) tintImage.color = tintColor;

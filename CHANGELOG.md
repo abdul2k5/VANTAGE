@@ -2,6 +2,14 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.9: dying during Overwatch no longer costs your checkpoint charge
+
+**Why:** Testing found two problems when dying with Overwatch running and then retrying. A checkpoint is meant to put you back exactly as you first arrived, but the saved ult charge was never restored (arriving with 50 came back as 0), because charge changes are ignored while Overwatch runs. Overwatch also kept running into Room 5, with its tint and countdown on screen for about 3.7s more, even though its damage reduction had already been removed. So a retry both took your charge and showed an ultimate that wasn't really protecting you.
+
+**What changed:** the retry now cancels a running Overwatch while the screen is black, then restores the saved charge.
+
+**Verified** in Play mode: arriving at the checkpoint with 50 charge, then dying during Overwatch and retrying, gives back 50 with Overwatch off and its tint and countdown gone. The charge is still 50 five seconds later. A retry with no Overwatch running also restores 50. Overwatch can then be fired again, and runs its full 6s with damage reduction on, then off.
+
 ## Phase 17.8: Overwatch orbs always give their charge
 
 **Why:** Playtest: "i took the orb in room 7 and my ult didnt charge". Ult charge is ignored while Overwatch is running, so that a kill mid-ultimate can't refill the next one. Orbs went through the same check, so an orb grabbed during Overwatch disappeared and gave nothing. The orb is a reward for going somewhere risky, so losing it silently felt like a bug and punished the player for taking the risk.
