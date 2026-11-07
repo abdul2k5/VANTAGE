@@ -4,494 +4,460 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// One-shot rebuild of the Settings panel to the "no force-expand, every row has an explicit
-/// preferredHeight, sliders built from DefaultControls.CreateSlider" spec. Salvages the live,
-/// already-wired objects (PreviewBox + its CrosshairController.previewStyleRoots children, the
-/// 3 style tiles, the 5 color swatch cells, the 3 menu buttons, the outline button) rather than
-/// recreating them, so none of those existing component references break. Everything else
-/// (all 6 sliders, the two-column Crosshair split, section labels) is destroyed and rebuilt.
+/// Lays out the Settings panel: a sidebar of tabs on the left, a header (tab title + one-line
+/// subtitle) and body on the right, and a footer holding the hover hint plus QUIT TO MENU / RESUME.
+/// Every setting is one full-width row: label left, control right, divider underneath.
+///
+/// Works on the live, already-wired controls - found through SettingsMenuController's own
+/// references, not by path - and only moves and restyles them, so no reference breaks and the
+/// menu can be re-run after tweaking any value below.
 /// </summary>
 public static class SettingsPanelBuilder
 {
     static readonly Color Accent = new Color(0.886f, 0.647f, 0.235f, 1f);
-    static readonly Color TileDark = new Color(0.16f, 0.17f, 0.15f, 1f);
-    static readonly Color TrackDark = new Color(0.25f, 0.26f, 0.22f, 1f);
+    static readonly Color PanelBg = new Color(0.075f, 0.08f, 0.075f, 0.97f);
+    static readonly Color SidebarBg = new Color(0.05f, 0.055f, 0.05f, 1f);
+    static readonly Color ButtonDark = new Color(0.16f, 0.17f, 0.15f, 1f);
+    static readonly Color TrackDark = new Color(0.2f, 0.21f, 0.19f, 1f);
+    static readonly Color ValueBoxBg = new Color(0.04f, 0.045f, 0.04f, 1f);
     static readonly Color LightText = new Color(0.85f, 0.85f, 0.82f, 1f);
+    static readonly Color DarkText = new Color(0.08f, 0.09f, 0.07f, 1f);
+    static readonly Color MutedText = new Color(0.55f, 0.55f, 0.52f, 1f);
+    static readonly Color Rule = new Color(1f, 1f, 1f, 0.06f);
 
-    const float RowHeight = 36f;
-    const float Spacing = 12f;
-    const float Padding = 24f;
-
-    // Shared geometry - see CHANGELOG for the arithmetic behind these.
-    const float ContentCenterY = -55f;
-    const float ContentHeight = 470f;
-    const float RowWidth = 572f; // General/Audio column content width AND Crosshair right-column width - both land here.
+    const float PanelW = 980f;
+    const float PanelH = 640f;
+    const float SidebarW = 220f;
+    const float HeaderH = 108f;
+    const float FooterH = 80f;
+    const float BodyPadX = 32f;   // body is 980 - 220 - 2*32 = 696 wide, 640 - 108 - 80 = 452 tall
+    const float RowH = 52f;
+    const float TabH = 48f;
 
     [MenuItem("Vantage/Rebuild Settings Panel")]
     public static void Rebuild()
     {
-        GameObject uiCanvas = GameObject.Find("UICanvas");
-        Transform ui = uiCanvas.transform;
-        System.Func<string, Transform> Find = delegate (string n)
+        var smc = Object.FindFirstObjectByType<SettingsMenuController>(FindObjectsInactive.Include);
+        var rooms = Object.FindFirstObjectByType<RoomSelectMenu>(FindObjectsInactive.Include);
+        var panel = (RectTransform)smc.panel.transform;
+        Font font = smc.sensitivityValueText.font;
+
+        // ---------------- FRAME ----------------
+        panel.anchorMin = panel.anchorMax = panel.pivot = new Vector2(0.5f, 0.5f);
+        panel.sizeDelta = new Vector2(PanelW, PanelH);
+        panel.anchoredPosition = Vector2.zero;
+        panel.GetComponent<Image>().color = PanelBg;
+
+        var sidebar = Child(panel, "Sidebar");
+        Place(sidebar, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, 0.5f), Vector2.zero, new Vector2(SidebarW, 0f));
+        Fill(sidebar, SidebarBg);
+        sidebar.SetSiblingIndex(0);
+
+        var sidebarRule = Child(sidebar, "SidebarRule");
+        Place(sidebarRule, new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(1f, 0.5f), Vector2.zero, new Vector2(1f, 0f));
+        Fill(sidebarRule, Rule);
+
+        var topAccent = Child(panel, "TopAccent");
+        Place(topAccent, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), Vector2.zero, new Vector2(0f, 2f));
+        Fill(topAccent, Accent);
+
+        var eyebrow = Label(sidebar, "Eyebrow", font, "PAUSED", 11, Accent, TextAnchor.UpperLeft);
+        Place(eyebrow.rectTransform, TopLeft, TopLeft, TopLeft, new Vector2(28f, -30f), new Vector2(160f, 16f));
+
+        Transform titleT = panel.Find("SettingsTitle");
+        if (titleT == null) titleT = sidebar.Find("SettingsTitle");
+        titleT.SetParent(sidebar, false);
+        var title = titleT.GetComponent<Text>();
+        StyleText(title, font, "SETTINGS", 24, LightText, TextAnchor.UpperLeft);
+        Place(title.rectTransform, TopLeft, TopLeft, TopLeft, new Vector2(28f, -46f), new Vector2(180f, 32f));
+
+        var tabList = Child(sidebar, "TabList");
+        Place(tabList, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -112f), new Vector2(0f, smc.tabButtons.Length * (TabH + 2f)));
+        var tabLayout = GetOrAdd<VerticalLayoutGroup>(tabList.gameObject);
+        Configure(tabLayout, TextAnchor.UpperLeft, 2f, 0);
+        tabLayout.childForceExpandWidth = true;
+
+        foreach (var tab in smc.tabButtons) StyleTab(tab, tabList, font);
+        Transform oldTabRow = panel.Find("TabRow");
+        if (oldTabRow != null) Object.DestroyImmediate(oldTabRow.gameObject);
+
+        var escHint = Label(sidebar, "EscHint", font, "ESC  ·  RESUME", 12, MutedText, TextAnchor.LowerLeft);
+        Place(escHint.rectTransform, Vector2.zero, Vector2.zero, Vector2.zero, new Vector2(28f, 26f), new Vector2(170f, 18f));
+
+        var content = Child(panel, "Content");
+        Place(content, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+        content.offsetMin = new Vector2(SidebarW, 0f);
+        content.offsetMax = Vector2.zero;
+
+        var headerTitle = Label(content, "HeaderTitle", font, "GENERAL", 22, LightText, TextAnchor.UpperLeft);
+        Place(headerTitle.rectTransform, TopLeft, TopLeft, TopLeft, new Vector2(36f, -30f), new Vector2(560f, 30f));
+        var headerSub = Label(content, "HeaderSubtitle", font, "", 13, MutedText, TextAnchor.UpperLeft);
+        Place(headerSub.rectTransform, TopLeft, TopLeft, TopLeft, new Vector2(36f, -62f), new Vector2(680f, 20f));
+        var headerRule = Child(content, "HeaderRule");
+        Inset(headerRule, new Vector2(0f, 1f), -92f, 36f);
+        Fill(headerRule, Rule);
+
+        var body = Child(content, "Body");
+        Place(body, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+        body.offsetMin = new Vector2(BodyPadX, FooterH);
+        body.offsetMax = new Vector2(-BodyPadX, -HeaderH);
+
+        var footer = Child(content, "Footer");
+        Place(footer, Vector2.zero, new Vector2(1f, 0f), new Vector2(0.5f, 0f), Vector2.zero, new Vector2(0f, FooterH));
+        var footerRule = Child(footer, "FooterRule");
+        Inset(footerRule, new Vector2(0f, 1f), 0f, 36f);
+        Fill(footerRule, Rule);
+
+        var hint = Label(footer, "HintText", font, smc.defaultHint, 13, MutedText, TextAnchor.MiddleLeft);
+        Place(hint.rectTransform, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+        hint.rectTransform.offsetMin = new Vector2(36f, 0f);
+        hint.rectTransform.offsetMax = new Vector2(-(36f + 150f + 12f + 150f + 24f), 0f);
+        hint.horizontalOverflow = HorizontalWrapMode.Wrap;
+
+        FooterButton(smc.resumeButton, footer, font, "RESUME", -36f, Accent, DarkText, "Back to the game. Esc does the same.");
+        FooterButton(smc.quitToMenuButton, footer, font, "QUIT TO MENU", -36f - 150f - 12f, ButtonDark, LightText, "Back to the title screen. This run's progress is lost.");
+
+        foreach (var tp in smc.tabPanels)
         {
-            // Re-queried live every call rather than cached once, since this method destroys
-            // objects partway through - a cached array would hold dangling references past that point.
-            Transform[] live = ui.GetComponentsInChildren<Transform>(true);
-            for (int i = 0; i < live.Length; i++) if (live[i] != null && live[i].name == n) return live[i];
-            Debug.LogError("[SettingsPanelBuilder] Could not find '" + n + "'");
-            return null;
-        };
-
-        Transform settingsPanel = Find("SettingsPanel");
-        RectTransform panelRt = settingsPanel as RectTransform;
-        panelRt.anchorMin = panelRt.anchorMax = panelRt.pivot = new Vector2(0.5f, 0.5f);
-        panelRt.sizeDelta = new Vector2(900f, 620f);
-        panelRt.anchoredPosition = Vector2.zero;
-
-        SetAnchoredY(Find("SettingsTitle"), 270f);
-        SetAnchoredY(Find("TabRow"), 215f);
-
-        SettingsMenuController smc = Object.FindFirstObjectByType<SettingsMenuController>(FindObjectsInactive.Include);
-
-        Transform generalTab = Find("TabPanel_General");
-        Transform crosshairTab = Find("TabPanel_Crosshair");
-        Transform audioTab = Find("TabPanel_Audio");
+            var rt = (RectTransform)tp.transform;
+            rt.SetParent(body, false);
+            Place(rt, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+            GetOrAdd<CanvasGroup>(tp);
+        }
 
         // ---------------- GENERAL ----------------
-        SetRect(generalTab, 620f, ContentHeight, ContentCenterY);
-        RemoveIfPresent<ContentSizeFitter>(generalTab.gameObject);
-        ConfigureVLG(GetOrAdd<VerticalLayoutGroup>(generalTab.gameObject), TextAnchor.UpperCenter, false, true, false, false, Spacing, Padding);
-
-        Transform oldSensRow = generalTab.Find("SensitivityRow");
-        if (oldSensRow != null) Object.DestroyImmediate(oldSensRow.gameObject);
-
-        Slider sensSlider; Text sensValueText;
-        GameObject sensRow = BuildSliderRow(generalTab, "SensitivityRow", "SENSITIVITY", 1f, 10f, 3.3f, false);
-        ExtractSliderRefs(sensRow, out sensSlider, out sensValueText);
-        sensRow.transform.SetSiblingIndex(0);
-
-        Transform resumeBtn = generalTab.Find("ResumeButton");
-        Transform restartBtn = generalTab.Find("RestartRoomButton");
-        Transform quitBtn = generalTab.Find("QuitToMenuButton");
-        AddLayoutElement(resumeBtn.gameObject, 300f, 46f);
-        AddLayoutElement(restartBtn.gameObject, 300f, 46f);
-        AddLayoutElement(quitBtn.gameObject, 300f, 46f);
-        resumeBtn.SetSiblingIndex(1);
-        restartBtn.SetSiblingIndex(2);
-        quitBtn.SetSiblingIndex(3);
+        var general = smc.sensitivitySlider.transform.parent.parent;
+        Configure(GetOrAdd<VerticalLayoutGroup>(general.gameObject), TextAnchor.UpperLeft, 0f, 0);
+        SliderRow(smc.sensitivitySlider, smc.sensitivityValueText, font, 280f, "How fast the view turns with the mouse. Aiming down the scope turns at about half this.");
+        ToggleRow(smc.checkpointsToggleButton, font, "ON: dying from Room 5 onwards lets you retry from the Room 5 checkpoint. OFF: any death sends you back to Room 1.");
 
         // ---------------- AUDIO ----------------
-        SetRect(audioTab, 620f, ContentHeight, ContentCenterY);
-        RemoveIfPresent<ContentSizeFitter>(audioTab.gameObject);
-        ConfigureVLG(GetOrAdd<VerticalLayoutGroup>(audioTab.gameObject), TextAnchor.UpperLeft, false, true, false, false, Spacing, Padding);
+        var audio = smc.masterSlider.transform.parent.parent;
+        Configure(GetOrAdd<VerticalLayoutGroup>(audio.gameObject), TextAnchor.UpperLeft, 0f, 0);
+        DestroyChild(audio, "VolumeHeader");
+        SliderRow(smc.masterSlider, smc.masterValueText, font, 280f, "Everything: music, effects and menu sounds.");
+        SliderRow(smc.musicSlider, smc.musicValueText, font, 280f, "Background music only.");
+        SliderRow(smc.sfxSlider, smc.sfxValueText, font, 280f, "Gunfire, abilities, drones and menu sounds.");
 
-        foreach (string n in new[] { "MasterRow", "MusicRow", "SFXRow" })
-        {
-            Transform old = audioTab.Find(n);
-            if (old != null) Object.DestroyImmediate(old.gameObject);
-        }
+        // ---------------- ROOMS ----------------
+        var roomsTab = rooms.transform;
+        Configure(GetOrAdd<VerticalLayoutGroup>(roomsTab.gameObject), TextAnchor.UpperLeft, 20f, 0);
+        DestroyChild(roomsTab, "RoomsHeader");
+        DestroyChild(roomsTab, "RoomsHint");
+        var grid = Child(roomsTab, "RoomGrid");
+        var gridLayout = GetOrAdd<GridLayoutGroup>(grid.gameObject);
+        gridLayout.cellSize = new Vector2(162f, 150f);
+        gridLayout.spacing = new Vector2(16f, 16f);
+        gridLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        gridLayout.constraintCount = 4;
+        gridLayout.childAlignment = TextAnchor.UpperLeft;
+        Size(grid.gameObject, 696f, 316f);
+        grid.SetSiblingIndex(0);
 
-        Transform volHeader = audioTab.Find("VolumeHeader");
-        ResetTextRect(volHeader, RowWidth, 24f);
-        AddLayoutElement(volHeader.gameObject, RowWidth, 30f);
-        volHeader.SetSiblingIndex(0);
+        var restart = smc.restartRoomButton;
+        restart.transform.SetParent(roomsTab, false);
+        restart.transform.SetSiblingIndex(1);
+        Size(restart.gameObject, 240f, 40f);
+        StyleButton(restart, font, "RESTART CURRENT ROOM", ButtonDark, LightText);
+        Hint(restart.gameObject, null, "Reset the room you're in and start it again from the entrance.");
 
-        GameObject masterRow = BuildSliderRow(audioTab, "MasterRow", "MASTER", 0f, 1f, 0.8f, true);
-        GameObject musicRow = BuildSliderRow(audioTab, "MusicRow", "MUSIC", 0f, 1f, 0.8f, true);
-        GameObject sfxRow = BuildSliderRow(audioTab, "SFXRow", "SFX", 0f, 1f, 0.8f, true);
-        masterRow.transform.SetSiblingIndex(1);
-        musicRow.transform.SetSiblingIndex(2);
-        sfxRow.transform.SetSiblingIndex(3);
-        Slider masterSlider, musicSlider, sfxSlider; Text masterValueText, musicValueText, sfxValueText;
-        ExtractSliderRefs(masterRow, out masterSlider, out masterValueText);
-        ExtractSliderRefs(musicRow, out musicSlider, out musicValueText);
-        ExtractSliderRefs(sfxRow, out sfxSlider, out sfxValueText);
+        rooms.grid = grid;
+        rooms.font = font;
+        rooms.settings = smc;
+        EditorUtility.SetDirty(rooms);
 
         // ---------------- CROSSHAIR ----------------
-        Transform previewBox = Find("PreviewBox");
-        Transform optCross = Find("Option_CROSS");
-        Transform optDot = Find("Option_DOT");
-        Transform optBrackets = Find("Option_BRACKETS");
-        Transform cell0 = Find("SwatchCell_0");
-        Transform cell1 = Find("SwatchCell_1");
-        Transform cell2 = Find("SwatchCell_2");
-        Transform cell3 = Find("SwatchCell_3");
-        Transform cell4 = Find("SwatchCell_4");
-        Transform styleHeader = Find("StyleHeader");
-        Transform colorHeader = Find("ColorHeader");
-        Transform outlineButtonT = Find("OutlineButton");
+        var crosshair = smc.sizeSlider.transform.parent.parent.parent; // row -> RightColumn -> tab
+        var columns = GetOrAdd<HorizontalLayoutGroup>(crosshair.gameObject);
+        Configure(columns, TextAnchor.UpperLeft, 24f, 0);
+        var left = crosshair.Find("LeftColumn");
+        var right = crosshair.Find("RightColumn");
+        Size(left.gameObject, 200f, 452f);
+        Size(right.gameObject, 472f, 452f);
+        Configure(GetOrAdd<VerticalLayoutGroup>(left.gameObject), TextAnchor.UpperLeft, 0f, 0);
+        Configure(GetOrAdd<VerticalLayoutGroup>(right.gameObject), TextAnchor.UpperLeft, 6f, 0);
+        Size(left.Find("PreviewBox").gameObject, 200f, 200f);
 
-        // Rescue salvaged objects out of the containers about to be destroyed.
-        previewBox.SetParent(crosshairTab, false);
-        optCross.SetParent(crosshairTab, false);
-        optDot.SetParent(crosshairTab, false);
-        optBrackets.SetParent(crosshairTab, false);
-        cell0.SetParent(crosshairTab, false);
-        cell1.SetParent(crosshairTab, false);
-        cell2.SetParent(crosshairTab, false);
-        cell3.SetParent(crosshairTab, false);
-        cell4.SetParent(crosshairTab, false);
-        styleHeader.SetParent(crosshairTab, false);
-        colorHeader.SetParent(crosshairTab, false);
-        outlineButtonT.SetParent(crosshairTab, false);
+        SectionHeader(right.Find("StyleHeader"), font, "STYLE");
+        Size(right.Find("TileRow").gameObject, 472f, 72f);
+        Size(right.Find("Spacer1").gameObject, 472f, 14f);
+        SectionHeader(right.Find("ColorHeader"), font, "COLOR");
+        Size(right.Find("ChipRow").gameObject, 472f, 58f);
+        Size(right.Find("Spacer2").gameObject, 472f, 14f);
+        SliderRow(smc.sizeSlider, smc.sizeValueText, font, 200f, "Length of the crosshair lines.");
+        SliderRow(smc.gapSlider, smc.gapValueText, font, 200f, "Space between the lines and the centre.");
+        ToggleRow(smc.outlineButton, font, "Dark border around the crosshair so it stays visible on bright walls.");
 
-        // Includes LeftColumn/RightColumn so reruns are idempotent instead of accumulating duplicates -
-        // everything worth keeping was already rescued above.
-        foreach (string n in new[] { "PreviewGroup", "StyleRow", "SwatchRow", "SizeRow", "GapRow", "LeftColumn", "RightColumn" })
+        string[] shapes = { "Cross: four lines around the centre.", "Dot: a single point.", "Brackets: four corners." };
+        for (int i = 0; i < smc.styleTileOutlines.Length; i++) Hint(smc.styleTileOutlines[i].gameObject, null, "Crosshair shape. " + shapes[Mathf.Min(i, shapes.Length - 1)]);
+        foreach (var ring in smc.colorChipSelectedRings)
         {
-            Transform old = crosshairTab.Find(n);
-            if (old != null) Object.DestroyImmediate(old.gameObject);
+            var swatch = ring.transform.parent.Find(ring.name.Replace("ColorRing", "Swatch"));
+            if (swatch != null) Hint(swatch.gameObject, null, "Crosshair colour.");
         }
 
-        RemoveIfPresent<VerticalLayoutGroup>(crosshairTab.gameObject);
-        RemoveIfPresent<HorizontalLayoutGroup>(crosshairTab.gameObject);
-        RemoveIfPresent<ContentSizeFitter>(crosshairTab.gameObject);
-        SetRect(crosshairTab, 880f, ContentHeight, ContentCenterY);
-        HorizontalLayoutGroup columns = crosshairTab.gameObject.AddComponent<HorizontalLayoutGroup>();
-        ConfigureHLG(columns, TextAnchor.UpperCenter, true, true, false, false, 16f, 16f);
-
-        GameObject leftCol = NewUIObject("LeftColumn", crosshairTab);
-        AddLayoutElement(leftCol, 260f, ContentHeight - 32f);
-        ConfigureVLG(leftCol.AddComponent<VerticalLayoutGroup>(), TextAnchor.UpperCenter, false, true, false, false, Spacing, 0f);
-
-        previewBox.SetParent(leftCol.transform, false);
-        RectTransform pbRt = previewBox as RectTransform;
-        pbRt.sizeDelta = new Vector2(260f, 260f);
-        pbRt.anchoredPosition = Vector2.zero;
-        AddLayoutElement(previewBox.gameObject, 260f, 260f);
-        RescalePreview(previewBox);
-
-        GameObject rightCol = NewUIObject("RightColumn", crosshairTab);
-        AddLayoutElement(rightCol, RowWidth, ContentHeight - 32f);
-        ConfigureVLG(rightCol.AddComponent<VerticalLayoutGroup>(), TextAnchor.UpperLeft, false, true, false, false, Spacing, 0f);
-
-        styleHeader.SetParent(rightCol.transform, false);
-        ResetTextRect(styleHeader, RowWidth, 24f);
-        AddLayoutElement(styleHeader.gameObject, RowWidth, 24f);
-
-        GameObject tileRow = NewUIObject("TileRow", rightCol.transform);
-        AddLayoutElement(tileRow, RowWidth, 72f);
-        ConfigureHLG(tileRow.AddComponent<HorizontalLayoutGroup>(), TextAnchor.MiddleLeft, false, true, false, false, Spacing, 0f);
-
-        Outline[] tileOutlines = new Outline[3];
-        RectTransform[] tileIconRoots = new RectTransform[3];
-        Transform[] tiles = { optCross, optDot, optBrackets };
-        for (int i = 0; i < 3; i++)
+        // ---------------- WIRE ----------------
+        var so = new SerializedObject(smc);
+        so.FindProperty("headerTitle").objectReferenceValue = headerTitle;
+        so.FindProperty("headerSubtitle").objectReferenceValue = headerSub;
+        so.FindProperty("hintText").objectReferenceValue = hint;
+        var titles = so.FindProperty("tabTitles");
+        var subtitles = so.FindProperty("tabSubtitles");
+        titles.arraySize = subtitles.arraySize = smc.tabPanels.Length;
+        for (int i = 0; i < smc.tabPanels.Length; i++)
         {
-            Transform tile = tiles[i];
-            tile.SetParent(tileRow.transform, false);
-            RectTransform tileRt = tile as RectTransform;
-            tileRt.sizeDelta = new Vector2(72f, 72f);
-            tileRt.anchoredPosition = Vector2.zero;
-            AddLayoutElement(tile.gameObject, 72f, 72f);
-
-            Transform label = tile.Find("Label");
-            if (label != null) Object.DestroyImmediate(label.gameObject);
-
-            Image tileImg = tile.GetComponent<Image>();
-            tileImg.color = TileDark;
-
-            Outline outline = tile.GetComponent<Outline>();
-            if (outline == null) outline = tile.gameObject.AddComponent<Outline>();
-            outline.effectDistance = new Vector2(2f, -2f);
-            outline.useGraphicAlpha = false;
-            outline.enabled = false;
-            tileOutlines[i] = outline;
-
-            Transform icon = tile.Find("Preview");
-            if (icon == null) icon = tile.Find("Icon"); // already renamed by a previous run of this tool
-            icon.name = "Icon";
-            tileIconRoots[i] = icon as RectTransform;
+            string t, s;
+            TabText(smc.tabPanels[i].name, out t, out s);
+            titles.GetArrayElementAtIndex(i).stringValue = t;
+            subtitles.GetArrayElementAtIndex(i).stringValue = s;
         }
-
-        AddSpacer(rightCol.transform, "Spacer1", RowWidth, 16f);
-
-        colorHeader.SetParent(rightCol.transform, false);
-        ResetTextRect(colorHeader, RowWidth, 24f);
-        AddLayoutElement(colorHeader.gameObject, RowWidth, 24f);
-
-        GameObject chipRow = NewUIObject("ChipRow", rightCol.transform);
-        AddLayoutElement(chipRow, RowWidth, 58f);
-        ConfigureHLG(chipRow.AddComponent<HorizontalLayoutGroup>(), TextAnchor.UpperLeft, false, true, false, false, Spacing, 0f);
-
-        Transform[] cells = { cell0, cell1, cell2, cell3, cell4 };
-        for (int i = 0; i < 5; i++)
-        {
-            Transform cell = cells[i];
-            cell.SetParent(chipRow.transform, false);
-            RectTransform cellRt = cell as RectTransform;
-            cellRt.sizeDelta = new Vector2(70f, 58f);
-            cellRt.anchoredPosition = Vector2.zero;
-            AddLayoutElement(cell.gameObject, 70f, 58f);
-
-            Transform ring = cell.Find("ColorRing_" + i);
-            Transform swatch = cell.Find("Swatch_" + i);
-            RectTransform swatchRt = swatch as RectTransform;
-            swatchRt.sizeDelta = new Vector2(32f, 32f);
-            swatchRt.anchoredPosition = new Vector2(0f, 7f);
-            RectTransform ringRt = ring as RectTransform;
-            ringRt.sizeDelta = new Vector2(40f, 40f);
-            ringRt.anchoredPosition = new Vector2(0f, 7f);
-            ring.GetComponent<Image>().color = Color.white;
-
-            Transform nameLabel = swatch.Find("Label");
-            if (nameLabel != null)
-            {
-                RectTransform nameRt = nameLabel as RectTransform;
-                nameRt.anchoredPosition = new Vector2(0f, -21f);
-                nameRt.sizeDelta = new Vector2(70f, 16f);
-
-                Text nameText = nameLabel.GetComponent<Text>();
-                nameText.fontSize = 13;
-                nameText.fontStyle = FontStyle.Bold;
-                nameText.color = Color.white;
-                nameText.alignment = TextAnchor.UpperCenter;
-                nameText.horizontalOverflow = HorizontalWrapMode.Overflow;
-            }
-        }
-
-        AddSpacer(rightCol.transform, "Spacer2", RowWidth, 16f);
-
-        GameObject sizeRow = BuildSliderRow(rightCol.transform, "SizeRow", "SIZE", 0.5f, 2f, 1f, true);
-        GameObject gapRow = BuildSliderRow(rightCol.transform, "GapRow", "GAP", 0.4f, 3f, 1f, true);
-        Slider sizeSlider, gapSlider; Text sizeValueText, gapValueText;
-        ExtractSliderRefs(sizeRow, out sizeSlider, out sizeValueText);
-        ExtractSliderRefs(gapRow, out gapSlider, out gapValueText);
-
-        GameObject outlineRow = NewUIObject("OutlineRow", rightCol.transform);
-        AddLayoutElement(outlineRow, RowWidth, RowHeight);
-        ConfigureHLG(outlineRow.AddComponent<HorizontalLayoutGroup>(), TextAnchor.MiddleLeft, false, true, false, false, Spacing, 0f);
-
-        GameObject outlineLabelGO = NewText(outlineRow.transform, "Label", "OUTLINE", 16, TextAnchor.MiddleLeft);
-        AddLayoutElement(outlineLabelGO, 160f, RowHeight);
-
-        outlineButtonT.SetParent(outlineRow.transform, false);
-        RectTransform outlineBtnRt = outlineButtonT as RectTransform;
-        outlineBtnRt.sizeDelta = new Vector2(100f, 30f);
-        outlineBtnRt.anchoredPosition = Vector2.zero;
-        AddLayoutElement(outlineButtonT.gameObject, 100f, 30f);
-        Image outlineBtnImg = outlineButtonT.GetComponent<Image>();
-        Text outlineBtnLabel = outlineButtonT.GetComponentInChildren<Text>();
-        RectTransform outlineLabelInnerRt = outlineBtnLabel.rectTransform;
-        outlineLabelInnerRt.anchorMin = Vector2.zero;
-        outlineLabelInnerRt.anchorMax = Vector2.one;
-        outlineLabelInnerRt.offsetMin = Vector2.zero;
-        outlineLabelInnerRt.offsetMax = Vector2.zero;
-        outlineBtnLabel.alignment = TextAnchor.MiddleCenter;
-
-        // ---------------- WIRE SettingsMenuController ----------------
-        SerializedObject so = new SerializedObject(smc);
-        SetRef(so, "sensitivitySlider", sensSlider);
-        SetRef(so, "sensitivityValueText", sensValueText);
-        SetRef(so, "resumeButton", resumeBtn.GetComponent<Button>());
-        SetRef(so, "restartRoomButton", restartBtn.GetComponent<Button>());
-        SetRef(so, "quitToMenuButton", quitBtn.GetComponent<Button>());
-
-        SetRef(so, "sizeSlider", sizeSlider);
-        SetRef(so, "sizeValueText", sizeValueText);
-        SetRef(so, "gapSlider", gapSlider);
-        SetRef(so, "gapValueText", gapValueText);
-        SetRef(so, "outlineButton", outlineButtonT.GetComponent<Button>());
-        SetRef(so, "outlineButtonImage", outlineBtnImg);
-        SetRef(so, "outlineButtonLabel", outlineBtnLabel);
-
-        SetArray(so, "styleTileOutlines", tileOutlines);
-        SetArray(so, "styleTileIconRoots", tileIconRoots);
-
-        SetRef(so, "masterSlider", masterSlider);
-        SetRef(so, "masterValueText", masterValueText);
-        SetRef(so, "musicSlider", musicSlider);
-        SetRef(so, "musicValueText", musicValueText);
-        SetRef(so, "sfxSlider", sfxSlider);
-        SetRef(so, "sfxValueText", sfxValueText);
-
         so.ApplyModifiedPropertiesWithoutUndo();
 
         EditorUtility.SetDirty(smc);
-        EditorUtility.SetDirty(uiCanvas);
         EditorSceneManager.MarkSceneDirty(smc.gameObject.scene);
-
         Debug.Log("[SettingsPanelBuilder] Rebuild complete.");
     }
 
-    static void RescalePreview(Transform previewBox)
+    static readonly Vector2 TopLeft = new Vector2(0f, 1f);
+
+    static void TabText(string panelName, out string title, out string subtitle)
     {
-        // Preview bars were authored for the old 160x100 box (previewScaleBoost=2.6 in CrosshairController).
-        // New box is 260x260 - scale the boost by the same ratio so the glyph fills it proportionally.
-        foreach (Transform child in previewBox)
+        switch (panelName)
         {
-            if (child.name.StartsWith("Preview_Crosshair_")) child.localScale = Vector3.one; // reset; CrosshairController drives this at runtime
+            case "TabPanel_Rooms": title = "ROOM SELECT"; subtitle = "Replay a cleared room. A room resets to how you first found it when you enter."; return;
+            case "TabPanel_Crosshair": title = "CROSSHAIR"; subtitle = "Changes show in the preview straight away."; return;
+            case "TabPanel_Audio": title = "AUDIO"; subtitle = "100% is the standard mix."; return;
+            default: title = "GENERAL"; subtitle = "Mouse and run options."; return;
         }
     }
 
-    static void SetAnchoredY(Transform t, float y)
+    // ---------------- ROWS ----------------
+
+    static void SliderRow(Slider slider, Text value, Font font, float sliderWidth, string hint)
     {
-        RectTransform rt = t as RectTransform;
-        rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, y);
+        var row = (RectTransform)slider.transform.parent;
+        StyleRow(row, font, hint);
+
+        Size(slider.gameObject, sliderWidth, 20f);
+        var bg = slider.transform.Find("Background");
+        if (bg != null) bg.GetComponent<Image>().color = TrackDark;
+        if (slider.fillRect != null) slider.fillRect.GetComponent<Image>().color = Accent;
+        if (slider.handleRect != null)
+        {
+            slider.handleRect.sizeDelta = new Vector2(12f, 0f);
+            slider.handleRect.GetComponent<Image>().color = LightText;
+        }
+
+        // The number sits in a small dark box so it reads as a value, not a second label.
+        Transform box = value.transform.parent;
+        if (box.name != "ValueBox")
+        {
+            var boxGo = new GameObject("ValueBox", typeof(RectTransform), typeof(Image));
+            boxGo.transform.SetParent(row, false);
+            boxGo.transform.SetSiblingIndex(value.transform.GetSiblingIndex());
+            value.transform.SetParent(boxGo.transform, false);
+            box = boxGo.transform;
+        }
+        box.GetComponent<Image>().color = ValueBoxBg;
+        box.GetComponent<Image>().raycastTarget = false;
+        Size(box.gameObject, 72f, 32f);
+        Stretch(value.rectTransform);
+        StyleText(value, font, null, 15, Accent, TextAnchor.MiddleCenter);
     }
 
-    static void SetRect(Transform t, float width, float height, float centerY)
+    static void ToggleRow(Button toggle, Font font, string hint)
     {
-        RectTransform rt = t as RectTransform;
-        rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0.5f, 0.5f);
-        rt.sizeDelta = new Vector2(width, height);
-        rt.anchoredPosition = new Vector2(0f, centerY);
+        StyleRow((RectTransform)toggle.transform.parent, font, hint);
+        Size(toggle.gameObject, 96f, 32f);
+        var label = toggle.GetComponentInChildren<Text>(true);
+        Stretch(label.rectTransform);
+        StyleText(label, font, null, 14, LightText, TextAnchor.MiddleCenter);
+    }
+
+    static void StyleRow(RectTransform row, Font font, string hint)
+    {
+        var bg = GetOrAdd<Image>(row.gameObject);
+        bg.color = new Color(1f, 1f, 1f, 0f);
+        bg.raycastTarget = true;
+
+        var layout = GetOrAdd<HorizontalLayoutGroup>(row.gameObject);
+        Configure(layout, TextAnchor.MiddleLeft, 16f, 0);
+        layout.padding = new RectOffset(12, 12, 0, 0);
+
+        var le = GetOrAdd<LayoutElement>(row.gameObject);
+        le.preferredWidth = -1f;
+        le.flexibleWidth = 1f;
+        le.minHeight = le.preferredHeight = RowH;
+
+        var label = row.Find("Label").GetComponent<Text>();
+        StyleText(label, font, null, 16, LightText, TextAnchor.MiddleLeft);
+        var labelLe = GetOrAdd<LayoutElement>(label.gameObject);
+        labelLe.preferredWidth = -1f;
+        labelLe.minWidth = 100f;
+        labelLe.flexibleWidth = 1f;
+        labelLe.preferredHeight = RowH;
+
+        var divider = Child(row, "Divider");
+        GetOrAdd<LayoutElement>(divider.gameObject).ignoreLayout = true;
+        Place(divider, Vector2.zero, new Vector2(1f, 0f), new Vector2(0.5f, 0f), Vector2.zero, new Vector2(0f, 1f));
+        Fill(divider, Rule);
+
+        Hint(row.gameObject, bg, hint);
+    }
+
+    static void SectionHeader(Transform t, Font font, string text)
+    {
+        StyleText(t.GetComponent<Text>(), font, text, 12, MutedText, TextAnchor.LowerLeft);
+        Size(t.gameObject, 472f, 22f);
+    }
+
+    // ---------------- SIDEBAR + FOOTER ----------------
+
+    static void StyleTab(Button tab, Transform list, Font font)
+    {
+        tab.transform.SetParent(list, false);
+        var le = GetOrAdd<LayoutElement>(tab.gameObject);
+        le.minHeight = le.preferredHeight = TabH;
+        le.preferredWidth = -1f;
+
+        var label = tab.transform.Find("Label").GetComponent<Text>();
+        Stretch(label.rectTransform);
+        label.rectTransform.offsetMin = new Vector2(28f, 0f);
+        StyleText(label, font, null, 15, LightText, TextAnchor.MiddleLeft);
+
+        var indicator = Child(tab.transform, "Indicator");
+        Place(indicator, Vector2.zero, new Vector2(0f, 1f), new Vector2(0f, 0.5f), Vector2.zero, new Vector2(4f, 0f));
+        Fill(indicator, Accent);
+
+        // ShowTab owns the tab's own background colour, so hover gets its own layer: a faint white
+        // overlay that the button's colour tint fades from invisible (normal) to visible (hover).
+        var hover = Child(tab.transform, "Hover");
+        Place(hover, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+        Fill(hover, new Color(1f, 1f, 1f, 0.05f));
+        hover.SetSiblingIndex(0);
+        tab.targetGraphic = hover.GetComponent<Image>();
+        var colors = tab.colors;
+        colors.normalColor = new Color(1f, 1f, 1f, 0f);
+        colors.highlightedColor = Color.white;
+        colors.pressedColor = Color.white;
+        colors.selectedColor = new Color(1f, 1f, 1f, 0f);
+        colors.fadeDuration = 0.08f;
+        tab.colors = colors;
+        tab.transition = Selectable.Transition.ColorTint;
+    }
+
+    static void FooterButton(Button button, Transform footer, Font font, string text, float rightX, Color bg, Color fg, string hint)
+    {
+        button.transform.SetParent(footer, false);
+        var rt = (RectTransform)button.transform;
+        Place(rt, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(rightX, 0f), new Vector2(150f, 40f));
+        StyleButton(button, font, text, bg, fg);
+        Hint(button.gameObject, null, hint);
+    }
+
+    static void StyleButton(Button button, Font font, string text, Color bg, Color fg)
+    {
+        button.GetComponent<Image>().color = bg;
+        var label = button.GetComponentInChildren<Text>(true);
+        Stretch(label.rectTransform);
+        StyleText(label, font, text, 14, fg, TextAnchor.MiddleCenter);
+    }
+
+    static void Hint(GameObject go, Graphic highlight, string text)
+    {
+        var h = GetOrAdd<SettingsHoverHint>(go);
+        h.text = text;
+        h.highlight = highlight;
+    }
+
+    // ---------------- HELPERS ----------------
+
+    static RectTransform Child(Transform parent, string name)
+    {
+        var t = parent.Find(name);
+        if (t == null)
+        {
+            var go = new GameObject(name, typeof(RectTransform));
+            go.transform.SetParent(parent, false);
+            t = go.transform;
+        }
+        return (RectTransform)t;
+    }
+
+    static void DestroyChild(Transform parent, string name)
+    {
+        var t = parent.Find(name);
+        if (t != null) Object.DestroyImmediate(t.gameObject);
     }
 
     static T GetOrAdd<T>(GameObject go) where T : Component
     {
-        T c = go.GetComponent<T>();
-        if (c == null) c = go.AddComponent<T>();
-        return c;
+        var c = go.GetComponent<T>();
+        return c != null ? c : go.AddComponent<T>();
     }
 
-    static void RemoveIfPresent<T>(GameObject go) where T : Component
+    static void Place(RectTransform rt, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot, Vector2 pos, Vector2 size)
     {
-        T c = go.GetComponent<T>();
-        if (c != null) Object.DestroyImmediate(c);
+        rt.anchorMin = anchorMin;
+        rt.anchorMax = anchorMax;
+        rt.pivot = pivot;
+        rt.anchoredPosition = pos;
+        rt.sizeDelta = size;
     }
 
-    static void ConfigureVLG(VerticalLayoutGroup g, TextAnchor align, bool controlW, bool controlH, bool expandW, bool expandH, float spacing, float padding)
+    static void Stretch(RectTransform rt)
     {
-        g.childAlignment = align;
-        g.childControlWidth = controlW;
-        g.childControlHeight = controlH;
-        g.childForceExpandWidth = expandW;
-        g.childForceExpandHeight = expandH;
-        g.spacing = spacing;
-        g.padding = new RectOffset((int)padding, (int)padding, (int)padding, (int)padding);
+        Place(rt, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
     }
 
-    static void ConfigureHLG(HorizontalLayoutGroup g, TextAnchor align, bool controlW, bool controlH, bool expandW, bool expandH, float spacing, float padding)
+    /// <summary>A 1px horizontal rule across the parent at height y (from the anchor), inset from both sides.</summary>
+    static void Inset(RectTransform rt, Vector2 anchorY, float y, float inset)
     {
-        g.childAlignment = align;
-        g.childControlWidth = controlW;
-        g.childControlHeight = controlH;
-        g.childForceExpandWidth = expandW;
-        g.childForceExpandHeight = expandH;
-        g.spacing = spacing;
-        g.padding = new RectOffset((int)padding, (int)padding, (int)padding, (int)padding);
+        Place(rt, new Vector2(0f, anchorY.y), new Vector2(1f, anchorY.y), new Vector2(0.5f, 1f), new Vector2(0f, y), new Vector2(-2f * inset, 1f));
     }
 
-    static GameObject NewUIObject(string name, Transform parent)
+    static void Fill(RectTransform rt, Color color)
     {
-        GameObject go = new GameObject(name, typeof(RectTransform));
-        go.transform.SetParent(parent, false);
-        return go;
+        var img = GetOrAdd<Image>(rt.gameObject);
+        img.color = color;
+        img.raycastTarget = false;
     }
 
-    static void AddLayoutElement(GameObject go, float width, float height)
+    static Text Label(Transform parent, string name, Font font, string text, int size, Color color, TextAnchor alignment)
     {
-        LayoutElement le = go.GetComponent<LayoutElement>();
-        if (le == null) le = go.AddComponent<LayoutElement>();
-        le.preferredWidth = width;
-        le.preferredHeight = height;
-        le.minHeight = height;
-
-        // A LayoutElement only matters to a parent whose childControlWidth/Height reads it.
-        // Several parents here have childControlWidth=false by design (buttons must keep their
-        // own fixed width instead of being stretched) - for those, set sizeDelta directly too,
-        // since otherwise the child keeps its GameObject-creation default (100x100) and every
-        // row collapses to fit inside that instead of its intended size.
-        RectTransform rt = go.GetComponent<RectTransform>();
-        if (rt != null) rt.sizeDelta = new Vector2(width, height);
-    }
-
-    static void AddSpacer(Transform parent, string name, float width, float height)
-    {
-        GameObject go = NewUIObject(name, parent);
-        AddLayoutElement(go, width, height);
-    }
-
-    static void ResetTextRect(Transform t, float width, float height)
-    {
-        RectTransform rt = t as RectTransform;
-        rt.sizeDelta = new Vector2(width, height);
-        rt.anchoredPosition = Vector2.zero;
-    }
-
-    static GameObject NewText(Transform parent, string name, string text, int fontSize, TextAnchor align)
-    {
-        GameObject go = NewUIObject(name, parent);
-        Text t = go.AddComponent<Text>();
-        t.text = text;
-        t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        t.fontSize = fontSize;
-        t.alignment = align;
-        t.color = LightText;
+        var rt = Child(parent, name);
+        var t = GetOrAdd<Text>(rt.gameObject);
+        StyleText(t, font, text, size, color, alignment);
         t.raycastTarget = false;
-        return go;
+        return t;
     }
 
-    static GameObject BuildSliderRow(Transform parent, string name, string labelText, float min, float max, float initialValue, bool percent)
+    static void StyleText(Text t, Font font, string text, int size, Color color, TextAnchor alignment)
     {
-        GameObject row = NewUIObject(name, parent);
-        AddLayoutElement(row, RowWidth, RowHeight);
-        ConfigureHLG(row.AddComponent<HorizontalLayoutGroup>(), TextAnchor.MiddleLeft, true, true, false, false, Spacing, 0f);
-
-        GameObject labelGO = NewText(row.transform, "Label", labelText, 16, TextAnchor.MiddleLeft);
-        AddLayoutElement(labelGO, 160f, RowHeight);
-
-        GameObject sliderGO = DefaultControls.CreateSlider(new DefaultControls.Resources());
-        sliderGO.name = "Slider";
-        sliderGO.transform.SetParent(row.transform, false);
-        AddLayoutElement(sliderGO, 320f, 20f);
-
-        Slider slider = sliderGO.GetComponent<Slider>();
-        slider.minValue = min;
-        slider.maxValue = max;
-        slider.wholeNumbers = false;
-        slider.value = initialValue;
-
-        Transform bg = sliderGO.transform.Find("Background");
-        RectTransform bgRt = bg as RectTransform;
-        bgRt.anchorMin = new Vector2(0f, 0.5f);
-        bgRt.anchorMax = new Vector2(1f, 0.5f);
-        bgRt.sizeDelta = new Vector2(0f, 6f);
-        bgRt.anchoredPosition = Vector2.zero;
-        bg.GetComponent<Image>().color = TrackDark;
-
-        Transform fillArea = sliderGO.transform.Find("Fill Area");
-        RectTransform fillAreaRt = fillArea as RectTransform;
-        fillAreaRt.anchorMin = new Vector2(0f, 0.5f);
-        fillAreaRt.anchorMax = new Vector2(1f, 0.5f);
-        fillAreaRt.sizeDelta = new Vector2(-20f, 6f);
-        fillAreaRt.anchoredPosition = Vector2.zero;
-
-        Transform fill = fillArea.Find("Fill");
-        fill.GetComponent<Image>().color = Accent;
-
-        Transform handleArea = sliderGO.transform.Find("Handle Slide Area");
-        Transform handle = handleArea.Find("Handle");
-        RectTransform handleRt = handle as RectTransform;
-        handleRt.sizeDelta = new Vector2(14f, 22f);
-        handle.GetComponent<Image>().color = Accent;
-
-        string initialText = percent ? (Mathf.RoundToInt(initialValue * 100f) + "%") : initialValue.ToString("0.0");
-        GameObject valueGO = NewText(row.transform, "Value", initialText, 16, TextAnchor.MiddleLeft);
-        AddLayoutElement(valueGO, 60f, RowHeight);
-
-        return row;
+        if (text != null) t.text = text;
+        t.font = font;
+        t.fontSize = size;
+        t.color = color;
+        t.alignment = alignment;
+        t.fontStyle = FontStyle.Normal;
     }
 
-    static void ExtractSliderRefs(GameObject row, out Slider slider, out Text valueText)
+    static void Size(GameObject go, float width, float height)
     {
-        slider = row.transform.Find("Slider").GetComponent<Slider>();
-        valueText = row.transform.Find("Value").GetComponent<Text>();
+        var le = GetOrAdd<LayoutElement>(go);
+        le.preferredWidth = width;
+        le.minHeight = le.preferredHeight = height;
+        ((RectTransform)go.transform).sizeDelta = new Vector2(width, height);
     }
 
-    static void SetRef(SerializedObject so, string prop, Object value)
+    static void Configure(HorizontalOrVerticalLayoutGroup g, TextAnchor align, float spacing, int padding)
     {
-        SerializedProperty p = so.FindProperty(prop);
-        if (p == null) { Debug.LogError("[SettingsPanelBuilder] Missing property: " + prop); return; }
-        p.objectReferenceValue = value;
-    }
-
-    static void SetArray(SerializedObject so, string prop, Object[] values)
-    {
-        SerializedProperty p = so.FindProperty(prop);
-        if (p == null) { Debug.LogError("[SettingsPanelBuilder] Missing property: " + prop); return; }
-        p.arraySize = values.Length;
-        for (int i = 0; i < values.Length; i++) p.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
+        g.childAlignment = align;
+        g.childControlWidth = true;
+        g.childControlHeight = true;
+        g.childForceExpandWidth = false;
+        g.childForceExpandHeight = false;
+        g.spacing = spacing;
+        g.padding = new RectOffset(padding, padding, padding, padding);
     }
 }

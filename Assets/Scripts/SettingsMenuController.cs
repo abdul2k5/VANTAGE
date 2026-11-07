@@ -21,11 +21,26 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
     [Header("Tabs")]
     public Button[] tabButtons;
     public GameObject[] tabPanels;
+    /// <summary>The one accent colour: selected tab label and marker, toggles that are ON, selected crosshair tile.</summary>
     public Color tabActiveColor = new Color(0.886f, 0.647f, 0.235f, 1f);
+    /// <summary>OFF toggles and other neutral buttons.</summary>
     public Color tabInactiveColor = new Color(0.16f, 0.17f, 0.15f, 1f);
-    /// <summary>Dark text reads on the amber active tab; light grey reads on the dark inactive tabs. ShowTab swaps both the background and the label together so no tab can end up dark-on-dark.</summary>
     public Color tabActiveTextColor = new Color(0.08f, 0.09f, 0.07f, 1f);
     public Color tabInactiveTextColor = new Color(0.85f, 0.85f, 0.82f, 1f);
+    /// <summary>Sidebar tab backgrounds: the selected one is lifted slightly, the rest blend into the sidebar.</summary>
+    public Color sidebarTabActiveBg = new Color(0.13f, 0.14f, 0.13f, 1f);
+    public Color sidebarTabInactiveBg = new Color(0.13f, 0.14f, 0.13f, 0f);
+    public Color sidebarTabInactiveText = new Color(0.6f, 0.6f, 0.57f, 1f);
+
+    [Header("Header + footer")]
+    public Text headerTitle;
+    public Text headerSubtitle;
+    public string[] tabTitles;
+    public string[] tabSubtitles;
+    public Text hintText;
+    public string defaultHint = "Hover a setting to see what it does.";
+    public float tabFadeSeconds = 0.16f;
+    public float tabSlideDistance = 14f;
 
     [Header("General Tab")]
     public PlayerController player;
@@ -63,6 +78,8 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
     public Text sfxValueText;
 
     int currentTab;
+    Coroutine tabFade;
+    string shownHint;
 
     void Awake()
     {
@@ -82,7 +99,7 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
             for (int i = 0; i < tabButtons.Length; i++)
             {
                 int idx = i;
-                if (tabButtons[i] != null) tabButtons[i].onClick.AddListener(() => ShowTab(idx));
+                if (tabButtons[i] != null) tabButtons[i].onClick.AddListener(() => OnTabClicked(idx));
             }
         }
 
@@ -141,6 +158,7 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
         if (CrosshairController.Instance != null) CrosshairController.Instance.SetCrosshairVisible(false);
 
         RefreshAllControlsFromState();
+        ShowHint(null);
         ShowTab(currentTab);
     }
 
@@ -171,6 +189,13 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    void OnTabClicked(int index)
+    {
+        if (index == currentTab) return;
+        if (AudioManager.Instance != null) AudioManager.Instance.PlayUIClick();
+        ShowTab(index);
+    }
+
     public void ShowTab(int index)
     {
         if (tabPanels == null || index < 0 || index >= tabPanels.Length) return;
@@ -188,12 +213,59 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
                 if (tabButtons[i] == null) continue;
                 bool isActive = i == index;
                 var img = tabButtons[i].GetComponent<Image>();
-                if (img != null) img.color = isActive ? tabActiveColor : tabInactiveColor;
+                if (img != null) img.color = isActive ? sidebarTabActiveBg : sidebarTabInactiveBg;
 
                 var label = tabButtons[i].GetComponentInChildren<Text>();
-                if (label != null) label.color = isActive ? tabActiveTextColor : tabInactiveTextColor;
+                if (label != null) label.color = isActive ? tabActiveColor : sidebarTabInactiveText;
+
+                var marker = tabButtons[i].transform.Find("Indicator");
+                if (marker != null) marker.gameObject.SetActive(isActive);
             }
         }
+
+        if (headerTitle != null && tabTitles != null && index < tabTitles.Length) headerTitle.text = tabTitles[index];
+        if (headerSubtitle != null && tabSubtitles != null && index < tabSubtitles.Length) headerSubtitle.text = tabSubtitles[index];
+
+        if (tabPanels[index] != null && isActiveAndEnabled && Application.isPlaying)
+        {
+            if (tabFade != null) StopCoroutine(tabFade);
+            tabFade = StartCoroutine(FadeInTab(tabPanels[index]));
+        }
+    }
+
+    /// <summary>Fade and slide the new tab in. Runs on unscaled time - the game is paused while the menu is open.</summary>
+    System.Collections.IEnumerator FadeInTab(GameObject tab)
+    {
+        var group = tab.GetComponent<CanvasGroup>();
+        if (group == null) group = tab.AddComponent<CanvasGroup>();
+        var rt = (RectTransform)tab.transform;
+
+        float t = 0f;
+        while (t < tabFadeSeconds)
+        {
+            t += Time.unscaledDeltaTime;
+            float k = Mathf.Clamp01(t / tabFadeSeconds);
+            float eased = 1f - (1f - k) * (1f - k);
+            group.alpha = eased;
+            rt.anchoredPosition = new Vector2((1f - eased) * tabSlideDistance, 0f);
+            yield return null;
+        }
+        group.alpha = 1f;
+        rt.anchoredPosition = Vector2.zero;
+        tabFade = null;
+    }
+
+    /// <summary>Footer text for whatever the pointer is over. Null or empty puts back the default.</summary>
+    public void ShowHint(string text)
+    {
+        shownHint = text;
+        if (hintText != null) hintText.text = string.IsNullOrEmpty(text) ? defaultHint : text;
+    }
+
+    /// <summary>Only clears if this hint is still the one showing - moving straight from one row to the next fires the new enter before the old exit.</summary>
+    public void ClearHint(string text)
+    {
+        if (shownHint == text) ShowHint(null);
     }
 
     /// <summary>Same as picking the current room in Room Select: the room resets and the player is put back as they arrived.
@@ -235,6 +307,7 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
     void OnOutlineToggleClicked()
     {
         if (CrosshairController.Instance == null) return;
+        if (AudioManager.Instance != null) AudioManager.Instance.PlayUIClick();
         CrosshairController.Instance.SetOutline(!CrosshairController.Instance.CurrentOutline);
         UpdateOutlineLabel();
     }
@@ -266,13 +339,18 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
     {
         if (CrosshairController.Instance == null) return;
         bool on = CrosshairController.Instance.CurrentOutline;
-        if (outlineButtonLabel != null) outlineButtonLabel.text = on ? "ON" : "OFF";
+        if (outlineButtonLabel != null)
+        {
+            outlineButtonLabel.text = on ? "ON" : "OFF";
+            outlineButtonLabel.color = on ? tabActiveTextColor : tabInactiveTextColor;
+        }
         if (outlineButtonImage != null) outlineButtonImage.color = on ? tabActiveColor : tabInactiveColor;
     }
 
 void OnCheckpointsToggleClicked()
     {
         bool on = PlayerPrefs.GetInt("CheckpointsEnabled", 1) == 1;
+        if (AudioManager.Instance != null) AudioManager.Instance.PlayUIClick();
         PlayerPrefs.SetInt("CheckpointsEnabled", on ? 0 : 1);
         UpdateCheckpointsToggleLabel();
     }
@@ -280,7 +358,11 @@ void OnCheckpointsToggleClicked()
     void UpdateCheckpointsToggleLabel()
     {
         bool on = PlayerPrefs.GetInt("CheckpointsEnabled", 1) == 1;
-        if (checkpointsToggleButtonLabel != null) checkpointsToggleButtonLabel.text = on ? "ON" : "OFF";
+        if (checkpointsToggleButtonLabel != null)
+        {
+            checkpointsToggleButtonLabel.text = on ? "ON" : "OFF";
+            checkpointsToggleButtonLabel.color = on ? tabActiveTextColor : tabInactiveTextColor;
+        }
         if (checkpointsToggleButtonImage != null) checkpointsToggleButtonImage.color = on ? tabActiveColor : tabInactiveColor;
     }
 

@@ -31,8 +31,8 @@ public class CrosshairController : MonoBehaviour
     float gapMultiplier = 1f;
     bool outlineOn;
 
-    /// <summary>The real HUD crosshair is sized for a full screen; inside the small settings preview box it'd read as a speck without this. Tuned for the 260x260 preview box (was 2.6 for the old 160x100 box - scaled by the 2.6x size ratio).</summary>
-    const float previewScaleBoost = 6.8f;
+    /// <summary>The real HUD crosshair is sized for a full screen; inside the small settings preview box it'd read as a speck without this. Tuned for the 200x200 preview box (6.8 for the old 260 box, scaled by 200/260; 2.6 before that for the 160x100 box).</summary>
+    const float previewScaleBoost = 5.2f;
 
     readonly Dictionary<RectTransform, Vector2[]> baseBarPositions = new Dictionary<RectTransform, Vector2[]>();
 

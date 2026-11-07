@@ -19,28 +19,22 @@ public static class SettingsPanelValidator
     public static void ValidateMenuItem()
     {
         int errors = Validate();
-        if (errors == 0) Debug.Log("[SettingsPanelValidator] PASS - 0 errors across all 3 tabs.");
+        if (errors == 0) Debug.Log("[SettingsPanelValidator] PASS - 0 errors across all tabs.");
         else Debug.LogError("[SettingsPanelValidator] FAIL - " + errors + " error(s). See above.");
     }
 
     public static int Validate()
     {
-        GameObject ui = GameObject.Find("UICanvas");
-        Transform[] all = ui.GetComponentsInChildren<Transform>(true);
-        Transform panel = null;
-        Transform[] tabPanels = new Transform[3];
-        string[] tabNames = { "TabPanel_General", "TabPanel_Crosshair", "TabPanel_Audio" };
-
-        for (int i = 0; i < all.Length; i++)
+        SettingsMenuController smc = Object.FindFirstObjectByType<SettingsMenuController>(FindObjectsInactive.Include);
+        if (smc == null || smc.panel == null) { Debug.LogError("[SettingsPanelValidator] SettingsPanel not found."); return 1; }
+        Transform panel = smc.panel.transform;
+        Transform[] tabPanels = new Transform[smc.tabPanels.Length];
+        string[] tabNames = new string[smc.tabPanels.Length];
+        for (int t = 0; t < tabPanels.Length; t++)
         {
-            if (all[i].name == "SettingsPanel") panel = all[i];
-            for (int t = 0; t < tabNames.Length; t++)
-            {
-                if (all[i].name == tabNames[t]) tabPanels[t] = all[i];
-            }
+            tabPanels[t] = smc.tabPanels[t] != null ? smc.tabPanels[t].transform : null;
+            tabNames[t] = tabPanels[t] != null ? tabPanels[t].name : "tab " + t;
         }
-
-        if (panel == null) { Debug.LogError("[SettingsPanelValidator] SettingsPanel not found."); return 1; }
 
         RectTransform panelRt = panel as RectTransform;
         int totalErrors = 0;
@@ -49,8 +43,6 @@ public static class SettingsPanelValidator
         // valid, up-to-date world corners (Unity doesn't update layout for inactive GameObjects).
         bool wasActive = panel.gameObject.activeSelf;
         panel.gameObject.SetActive(true);
-
-        SettingsMenuController smc = Object.FindFirstObjectByType<SettingsMenuController>(FindObjectsInactive.Include);
 
         for (int t = 0; t < tabPanels.Length; t++)
         {
@@ -141,6 +133,8 @@ public static class SettingsPanelValidator
         List<Transform> siblings = new List<Transform>();
         foreach (Transform child in parent)
         {
+            // Row dividers are a 1px line under the whole row, overlapping its contents by design.
+            if (child.name == "Divider") continue;
             if (child.gameObject.activeInHierarchy && child as RectTransform != null) siblings.Add(child);
         }
 

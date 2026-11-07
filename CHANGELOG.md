@@ -2,6 +2,30 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.27: Settings menu redesign
+
+**Why:** The user asked how the settings menu could look cleaner, then said to do all of it. The old menu was wide and short, with a row of tabs across the top. Each tab laid out its controls in its own way, amber was used on most elements, and Restart Room sat between Resume and Quit.
+
+**What changed:**
+- **Sidebar layout:** the tabs are a column on the left under "PAUSED / SETTINGS". The selected tab has an amber marker and label, and the others are grey with a faint hover highlight. The right side has a header (tab title plus a one-line subtitle), the body, and a footer. The panel is 980x640, which gives each tab 696x452 of space.
+- **One row style everywhere:** every setting is a full-width row, with the name on the left and the control on the right. Each row has a thin divider under it and a faint highlight on hover. Slider values sit in a small dark box in amber, so they read as values rather than labels. Toggles are amber with dark text when ON.
+- **Less amber:** amber now marks only the selected tab, values, ON toggles, slider fills, selected crosshair options and RESUME. Section labels and hints are grey.
+- **Actions in the footer:** QUIT TO MENU and RESUME are at the bottom right of the panel. RESTART CURRENT ROOM moved into the Rooms tab, where it belongs.
+- **Room Select as cards:** a 4x2 grid. Each card shows the room number, name and status text, plus a coloured status bar: green for cleared, amber for in progress, dark with a padlock for locked. The room you're in has an amber outline.
+- **Hover descriptions:** hovering a row, card, crosshair option or footer button explains it in the footer (for example "Background music only." or "Clear Room 5 to unlock the rooms after it.").
+- **Feel:** tabs fade and slide in over 0.16s, running on unscaled time because the game is paused. Switching tabs and flipping toggles play the UI click.
+- **Fixes along the way:** the shield bar stayed visible behind the menu, because the list of HUD elements to hide had two empty slots instead of it. The crosshair preview was scaled down for the smaller 200px preview box.
+- **Tooling:** `Vantage > Rebuild Settings Panel` now builds this layout. It finds the controls through `SettingsMenuController`'s references and only moves and restyles them, so no wiring changes and it can be re-run. `Vantage > Validate Settings Panel` now checks all four tabs.
+
+**Verified:**
+- The validator reports 0 errors across all four tabs.
+- Each tab was captured in Play mode and looked right.
+- Hovering showed the right text and highlight, including moving straight from one row to the next.
+- Locked cards can't be clicked and give the unlock hint.
+- Clicking a cleared card closed the menu and jumped to that room, keeping furthest progress.
+- RESUME unpauses and locks the cursor.
+- The selected style tile and colour chip highlight.
+
 ## Phase 17.26: Room Select rows fit the panel
 
 **Why:** Playtest screenshot: rows 7 and 8 hung below the bottom of the settings panel, and the list sat left of centre under the tabs.
