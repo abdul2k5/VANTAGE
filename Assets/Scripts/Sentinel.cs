@@ -95,6 +95,7 @@ public class Sentinel : MonoBehaviour
     public float pushArriveDistance = 1.5f;
 
     public bool IsBlinded { get { return blindRemaining > 0f; } }
+    public float BlindRemaining { get { return blindRemaining; } }
     /// <summary>True while a Recon Dart (or the ultimate) is showing this Sentinel through walls.</summary>
     public bool IsRevealed { get { return revealRemaining > 0f; } }
     /// <summary>Index into RoomManager.rooms this Sentinel belongs to - used by CheckpointManager to only reset Rooms 5-8 defenders on a checkpoint retry.</summary>
@@ -115,6 +116,7 @@ public class Sentinel : MonoBehaviour
         agent.speed = patrolSpeed;
         feedback = GetComponent<WeaponFeedback>();
         if (feedback == null) feedback = gameObject.AddComponent<WeaponFeedback>();
+        gameObject.AddComponent<SentinelBlindVisual>();
 
         hoverAudioSource = gameObject.AddComponent<AudioSource>();
         hoverAudioSource.loop = true;

@@ -2,6 +2,20 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.12: you can see when a drone is flashed
+
+**Why:** Playtest: "can we add a something to tell if the drone is flashed". Nothing on a drone showed whether a flash had landed, so the player couldn't tell if they had a safe window or how long it would last, and the core "utility before you peek" idea depends on knowing that. The request was inspired by how Valorant shows a flashed character, so only the idea is used here, with an original look built for a drone.
+
+**What changed (new `SentinelBlindVisual`):**
+- The drone's eye burns white-hot and pulses, its body sags and wobbles, and four sparks circle above it.
+- The sparks flicker for the last 0.75s of the blind, so the player can see the window closing.
+- The glow sits exactly on the headshot hitbox and only the body wobbles, so aiming at the glow is still a headshot.
+- It's built from code when first needed, so scene drones and reinforcements both get it. It has no colliders, so it can't block shots.
+
+**First attempt, rejected after looking at renders:** a stronger light on the drone blew out the wall behind it, and the red eye stayed in place while the body sagged, so the glow sat below the real hitbox. The light is now much weaker, the red eye is hidden during the blind, and the body sags much less.
+
+**Verified** in Play mode: a ray aimed at the glow hits the drone's weak point. Sparks stay on until the warning, then flicker. The eye and body return to normal after the blind, and after a checkpoint reset of a drone killed while flashed. A reinforcement drone from the prefab shows the effect. Renders confirm it reads up close and from about 9m.
+
 ## Phase 17.11: flash range 7m to 10m
 
 **Why:** Playtest: "the flash seems to have a small range". Drones can spot the player from 22m and sit about 13m from each room's entry, so a 7m flash meant walking more than halfway across a room, usually in view, before it could reach anything. That works against using utility *before* you peek.
