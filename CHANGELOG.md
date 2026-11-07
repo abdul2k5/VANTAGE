@@ -2,6 +2,16 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.22: Volume sliders default to 100%
+
+**Why:** User feedback: the sliders should start at 100%, not 80%. The game was balanced at the old 80% default, so making 100% simply mean full mixer volume would have made the default louder than every playtest so far. Kept all three sliders: Music versus SFX is the split players actually use (music off, game sounds on), Master sets everything at once, and the game has no voice or separate ambience to justify more.
+
+**What changed:**
+- `AudioManager.fullSliderLevel` (0.8): each slider's value is multiplied by it before conversion to decibels, so 100% plays at what 80% did before (-1.94 dB per channel).
+- Defaults are now 100% in code and in the scene. The developer machine's saved settings were moved to 100% too, since a saved 80% would now be quieter than before.
+
+**Verified** in Play mode. On launch the sliders read 100%, the mixer -1.94 dB on all three channels, same as the old default. 50% gives -7.96 dB, and 0% is silent (-80 dB).
+
 ## Phase 17.21: Saved volume settings apply on launch
 
 **Why:** An audit of the Master/Music/SFX sliders found the routing correct (every AudioSource goes to the Music or SFX group, both under Master, all three volumes exposed), but on launch the mixer sat at 0 dB despite saved values of 80%. `AudioMixer.SetFloat` is ignored during `Awake`, which is where `AudioManager` applied the saved volumes, so a player who had turned music off heard it at full volume again after restarting until they touched the slider.

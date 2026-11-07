@@ -27,9 +27,12 @@ public class AudioManager : MonoBehaviour
     [Header("UI")]
     public AudioClip uiClickSound;
 
-    [Range(0f, 1f)] public float masterVolume = 0.8f;
-    [Range(0f, 1f)] public float musicVolume = 0.8f;
-    [Range(0f, 1f)] public float sfxVolume = 0.8f;
+    [Range(0f, 1f)] public float masterVolume = 1f;
+    [Range(0f, 1f)] public float musicVolume = 1f;
+    [Range(0f, 1f)] public float sfxVolume = 1f;
+
+    [Tooltip("Each slider at 100% plays at this share of full mixer volume, so the default 100% matches the mix the game was balanced at (the old 80% default).")]
+    [Range(0f, 1f)] public float fullSliderLevel = 0.8f;
 
     const string MasterParam = "MasterVolume";
     const string MusicParam = "MusicVolume";
@@ -140,17 +143,17 @@ public class AudioManager : MonoBehaviour
 
     void ApplyMasterMixerVolume()
     {
-        if (mixer != null) mixer.SetFloat(MasterParam, LinearToDecibel(masterVolume));
+        if (mixer != null) mixer.SetFloat(MasterParam, LinearToDecibel(masterVolume * fullSliderLevel));
     }
 
     void ApplyMusicMixerVolume()
     {
-        if (mixer != null) mixer.SetFloat(MusicParam, LinearToDecibel(musicVolume));
+        if (mixer != null) mixer.SetFloat(MusicParam, LinearToDecibel(musicVolume * fullSliderLevel));
     }
 
     void ApplySfxMixerVolume()
     {
-        if (mixer != null) mixer.SetFloat(SfxParam, LinearToDecibel(sfxVolume));
+        if (mixer != null) mixer.SetFloat(SfxParam, LinearToDecibel(sfxVolume * fullSliderLevel));
     }
 
     public void SetMasterVolume(float value)
