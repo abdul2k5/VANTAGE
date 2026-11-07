@@ -34,9 +34,20 @@ public class Weapon : MonoBehaviour
 
     [Header("Audio")]
     public AudioClip gunshotSound;
+    [Tooltip("First reload beat: the old magazine comes out.")]
     public AudioClip reloadSound;
+    [Tooltip("Second reload beat: the new magazine goes in.")]
+    public AudioClip reloadMagInSound;
+    [Tooltip("Last reload beat, on the frame the ammo refills, so the player can hear when the gun is ready.")]
+    public AudioClip reloadReadySound;
+    [Tooltip("These clips peak about 60% higher than the gunshot, and a reload shouldn't be louder than the gun.")]
+    [Range(0f, 1f)] public float reloadVolume = 0.6f;
     public AudioClip emptyClickSound;
     public AudioClip hitSound;
+
+    [Header("Reload timing - shared with GunViewmodelAnimator so sound and animation stay in step")]
+    [Range(0f, 1f)] public float reloadMagOutAt = 0.2f;
+    [Range(0f, 1f)] public float reloadMagInAt = 0.62f;
 
     /// <summary>Where the visible tracer/muzzle flash originates. The hit-detection raycast still fires from the camera center.</summary>
     public Transform muzzle;
@@ -45,6 +56,7 @@ public class Weapon : MonoBehaviour
     float fireTimer;
     bool isReloading;
     float reloadTimer;
+    int reloadBeatsPlayed;
     float currentSpreadDegrees;
     WeaponFeedback feedback;
     AudioSource audioSource;
@@ -94,10 +106,21 @@ public class Weapon : MonoBehaviour
         if (isReloading)
         {
             reloadTimer -= Time.deltaTime;
+            if (reloadBeatsPlayed == 0 && ReloadProgress01 >= reloadMagOutAt)
+            {
+                PlaySfx(reloadSound, reloadVolume);
+                reloadBeatsPlayed = 1;
+            }
+            if (reloadBeatsPlayed == 1 && ReloadProgress01 >= reloadMagInAt)
+            {
+                PlaySfx(reloadMagInSound, reloadVolume);
+                reloadBeatsPlayed = 2;
+            }
             if (reloadTimer <= 0f)
             {
                 isReloading = false;
                 currentAmmo = maxAmmo;
+                PlaySfx(reloadReadySound, reloadVolume);
             }
         }
 
@@ -151,10 +174,10 @@ void UpdateSpread()
         if (CrosshairController.Instance != null) CrosshairController.Instance.SetSpreadFraction(frac01);
     }
 
-    void PlaySfx(AudioClip clip)
+    void PlaySfx(AudioClip clip, float volume = 1f)
     {
         if (clip == null || audioSource == null) return;
-        audioSource.PlayOneShot(clip);
+        audioSource.PlayOneShot(clip, volume);
     }
 
     public void Fire()
@@ -257,7 +280,7 @@ void UpdateSpread()
     {
         isReloading = true;
         reloadTimer = reloadSeconds;
-        PlaySfx(reloadSound);
+        reloadBeatsPlayed = 0;
     }
 
     /// <summary>Instant reload, kept for callers (e.g. RoomManager on respawn) that want ammo topped up with no delay.</summary>

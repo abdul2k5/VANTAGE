@@ -43438,10 +43438,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 849293798}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 93, y: -37}
+  m_SizeDelta: {x: 73, y: 27}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &640557910
 MonoBehaviour:
@@ -49193,10 +49193,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1715469544}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 480, y: -8}
+  m_SizeDelta: {x: 928, y: 20}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &722714020
 MonoBehaviour:
@@ -51848,6 +51848,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 774341064}
+  - component: {fileID: 774341065}
   m_Layer: 0
   m_Name: PlayerGunViewmodel
   m_TagString: Untagged
@@ -51872,6 +51873,29 @@ Transform:
   - {fileID: 906150083}
   m_Father: {fileID: 811350176}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &774341065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 774341063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1b2e7aa7600149439f39ccc5d4c59a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GunViewmodelAnimator
+  weapon: {fileID: 1584037071}
+  magazine: {fileID: 1253907781}
+  reloadPositionOffset: {x: -0.05, y: -0.07, z: -0.04}
+  reloadTiltDegrees: {x: -22, y: 8, z: 14}
+  returnStartsAt: 0.78
+  magazineDropDistance: 0.52
+  magazineInsertDistance: 0.48
+  magazineFallDuration: 0.16
+  magazineSlideDuration: 0.24
+  seatJoltDistance: 0.012
+  seatJoltDuration: 0.1
 --- !u!1 &774883607
 GameObject:
   m_ObjectHideFlags: 0
@@ -56432,7 +56456,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -30, y: 30}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 113, y: 47}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &849293799
 MonoBehaviour:
@@ -69410,7 +69434,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -20}
-  m_SizeDelta: {x: 960, y: 0}
+  m_SizeDelta: {x: 960, y: 36}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1046320914
 MonoBehaviour:
@@ -103787,9 +103811,14 @@ MonoBehaviour:
   headshotMultiplier: 2.5
   headshotSound: {fileID: 8300000, guid: a35544ca8ee90fe49947fffb600ad2fe, type: 3}
   gunshotSound: {fileID: 8300000, guid: 315f7b2dedc81934180f160f6ad3c989, type: 3}
-  reloadSound: {fileID: 8300000, guid: 806a48e816e39d54b9fd2cd60a44a75b, type: 3}
+  reloadSound: {fileID: 8300000, guid: 88a6b04201c45d748883f8c231d8d4dd, type: 3}
+  reloadMagInSound: {fileID: 8300000, guid: 2487b6fa0f45f9148a6e30b16253fd29, type: 3}
+  reloadReadySound: {fileID: 8300000, guid: aafa43c9592f60646824b84be4dd3b9a, type: 3}
+  reloadVolume: 0.6
   emptyClickSound: {fileID: 8300000, guid: 7dd0e4d2538646842b2b76b193c66916, type: 3}
   hitSound: {fileID: 8300000, guid: daa0b262cd9eb8d4f9f0eef474a071c9, type: 3}
+  reloadMagOutAt: 0.2
+  reloadMagInAt: 0.62
   muzzle: {fileID: 205273782}
 --- !u!114 &1584037072
 MonoBehaviour:
@@ -111934,7 +111963,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 480, y: -0}
-  m_SizeDelta: {x: 960, y: 0}
+  m_SizeDelta: {x: 960, y: 36}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1715469545
 MonoBehaviour:

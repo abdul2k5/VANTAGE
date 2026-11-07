@@ -2,6 +2,17 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.15: reload animation and three-beat reload sound
+
+**Why:** Playtest request. A reload is the moment the player can't shoot, so they need to feel it and know when it ends without looking down at the ammo count. Before, the gun didn't move at all and one thud played at the start, which said nothing about when it would be ready. In a game about choosing when to commit, knowing by ear that the gun is ready matters.
+
+**What changed:**
+- **Animation:** the gun tilts and dips, the old magazine falls away, a new one slides up and seats with a small bump, then the gun comes back up. It's driven by code from reload progress rather than an animation clip, so it always fits the reload time, and pausing or an instant refill can't leave the gun stuck in the wrong pose.
+- **Sound:** three beats, magazine out, magazine in, and a click on the exact frame the ammo refills. Sound and animation read the same timing values, so they can't drift apart. The clips play at 60% volume because they peak well above the gunshot.
+- The 1.4s reload time and the rules for when you can reload haven't changed. This is feedback only.
+
+**Verified** in Play mode, frame-stepped: a full reload took 71 frames (1.42s), with the beats at 0.30s and 0.88s, and ammo refilled at the end. The gun and magazine return exactly to their starting pose. An instant refill mid-reload, as used on checkpoint retry, resets the pose on the next frame. Unlocking the cursor freezes the reload and pose, and it finishes normally afterwards. This caught one bug before commit: the new magazine started on screen and would have popped into view, so it now starts below the screen edge. How the sounds actually sound hasn't been judged by ear yet.
+
 ## Phase 17.14: room instructions become pop-up cards, with one objective line on screen
 
 **Why:** Playtest suggestion: "instead of texts on the top we change it to pop up cards... so it forces the player to read it". The instructions were a text strip that faded after 18s while the player was already moving and being shot at, under two more bars of title and objective. It was easy to miss, and a tutorial built around one core idea can't rely on being read mid-fight. The objective stays on screen, because it changes during a room ("Door unlocked", the post-plant warning), and a player who has dismissed a card and got into a fight still needs a reminder. So the card teaches the room once, and the line says what to do now.
