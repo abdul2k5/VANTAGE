@@ -2,6 +2,16 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.7: pressing Retry can't send you back to Game Over
+
+**Why:** Testing found that pressing Retry with drones in view often reopened the Game Over screen partway through the fade (2 of 3 presses in one run). The failed attempt's drones stay live until the screen is black, and the player's health isn't restored until then, so one more hit counted as another death. It made a working retry look broken, right at the moment the player is being asked to try again.
+
+**What changed:**
+- The player takes no damage from the moment any Game Over opens until the retry restores them. This covers losing to a disarm too, where the player can still be alive on low health.
+- Drones lose sight of the player when the retry fade starts, rather than once the screen is already black.
+
+**Verified** in Play mode: 8 of 8 retries went through after mid-round deaths with reinforcements firing. A retry after a disarm loss on 10 health also went through, with health unchanged during the fade. Damage works normally again after the retry.
+
 ## Phase 17.6: checkpoint retry no longer locks you out of planting
 
 **Why:** Testing the checkpoint retry after a plant found the game could become impossible to finish. The drones, charge and objective all reset, but the plant site still counted as planted, so back in The Round holding [4] did nothing and there was no way to win. The site's reset existed but nothing called it.

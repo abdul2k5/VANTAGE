@@ -59,6 +59,11 @@ public class GameOverController : MonoBehaviour
     {
         if (panel == null) return;
 
+        // Set here, not in PlayerHealth.Die, because losing to a disarm can leave the player alive.
+        var rm = RoomManager.Instance;
+        var health = rm != null && rm.player != null ? rm.player.GetComponent<PlayerHealth>() : null;
+        if (health != null) health.AttemptOver = true;
+
         bool hasCheckpoint = CheckpointManager.Instance != null && CheckpointManager.Instance.HasReachedCheckpoint;
 
         if (retryCheckpointButton != null) retryCheckpointButton.gameObject.SetActive(hasCheckpoint);

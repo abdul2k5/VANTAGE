@@ -15,6 +15,8 @@ public class PlayerHealth : MonoBehaviour
     public bool Invulnerable { get; set; }
     /// <summary>Scales incoming damage; 1 = normal, &lt;1 = reduced (set by the ultimate).</summary>
     public float DamageMultiplier { get; set; } = 1f;
+    /// <summary>True from Game Over until a retry restores the player. Drones keep firing during the retry fade, and a hit then would reopen Game Over.</summary>
+    public bool AttemptOver { get; set; }
     public float MaxHealth { get { return maxHealth; } }
     public float CurrentShield { get { return currentShield; } }
     public float MaxShield { get { return maxShield; } }
@@ -39,6 +41,7 @@ public class PlayerHealth : MonoBehaviour
         currentShield = maxShield;
         Invulnerable = false;
         DamageMultiplier = 1f;
+        AttemptOver = false;
     }
 
 
@@ -56,7 +59,7 @@ public void TakeDamage(float amount)
     /// <summary>sourceWorldPosition drives the on-screen damage-direction indicator.</summary>
     public void TakeDamage(float amount, Vector3 sourceWorldPosition)
     {
-        if (Invulnerable) return;
+        if (Invulnerable || AttemptOver) return;
 
         float dealt = amount * DamageMultiplier;
         float absorbed = Mathf.Min(currentShield, dealt);

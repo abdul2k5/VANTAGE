@@ -87,8 +87,11 @@ public class CheckpointManager : MonoBehaviour
     {
         var rm = RoomManager.Instance;
 
+        // Before the fade, not after it: the failed attempt's drones are still live until the screen is black.
+        rm.HoldEntryGrace();
         yield return Fade(rm.fadeOverlay, 0f, 1f, rm.fadeSeconds);
 
+        // Again here - firing cancels the grace, and the click on Retry can fire a shot during the fade.
         rm.HoldEntryGrace();
         ResetRooms5To8();
         rm.EnterRoom(CheckpointRoomIndex);
