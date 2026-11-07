@@ -2,6 +2,15 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.21: Saved volume settings apply on launch
+
+**Why:** An audit of the Master/Music/SFX sliders found the routing correct (every AudioSource goes to the Music or SFX group, both under Master, all three volumes exposed), but on launch the mixer sat at 0 dB despite saved values of 80%. `AudioMixer.SetFloat` is ignored during `Awake`, which is where `AudioManager` applied the saved volumes, so a player who had turned music off heard it at full volume again after restarting until they touched the slider.
+
+**What changed:**
+- `AudioManager` applies the saved volumes in `Start` instead of `Awake`.
+
+**Verified** in Play mode. With Music saved at 25%, the mixer read -12.04 dB on frame 1 (before the fix it read 0 dB). Dragging the sliders already worked, and still does: 50% Master reads -6.02 dB, 0% SFX reads -80 dB. The user's saved settings were restored after the test.
+
 ## Phase 17.20: Flash is thrown, bounces once, and walls block it
 
 **Why:** Playtest: "i flashed here and the drone that was behind this wall got flashed". The flash blinded every drone within 10m of the player, walls or not, and the burst only appeared at the player, so a drone stunned behind solid wall looked like a bug. The room was deliberately built that way ("walk up safe, pop, peek"), but a safe window that needs no aim or awareness isn't much of a skill. With a thrown flash, the player still never has to peek first, but they have to place it: bank it off a wall round the corner so it pops where the drones can see it. Asked for in the style of a well-known bounce flash, using the mechanic only, with no names or assets taken from it.

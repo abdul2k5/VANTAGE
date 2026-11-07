@@ -67,12 +67,17 @@ public class AudioManager : MonoBehaviour
         sfxSource.playOnAwake = false;
         sfxSource.outputAudioMixerGroup = sfxGroup;
 
-        ApplyMasterMixerVolume();
-        ApplyMusicMixerVolume();
-        ApplySfxMixerVolume();
         PlayMenuMusic();
 
         StartCoroutine(RouteUnassignedAudioSources());
+    }
+
+    void Start()
+    {
+        // AudioMixer.SetFloat is ignored during Awake, so the saved volumes only take effect from here.
+        ApplyMasterMixerVolume();
+        ApplyMusicMixerVolume();
+        ApplySfxMixerVolume();
     }
 
     /// <summary>Converts a 0-1 slider value to the dB a mixer exposed-parameter expects (log curve).</summary>
