@@ -201,8 +201,11 @@ public class AbilityUnlockCardUI : MonoBehaviour
             roomNumberText.text = roomNumber.ToString();
             roomNumberText.gameObject.SetActive(!hasIcon);
         }
-        if (keyText != null) keyText.text = string.IsNullOrEmpty(data.key) ? "" : "[" + data.key + "]";
-        if (nameText != null) nameText.text = data.abilityName;
+        // The ultimate's card usually opens because it just charged, so say so. It can also be forced
+        // open in the last room before charging, and then it stays a plain explainer.
+        bool ultReady = showingUltimate && ultimate != null && ultimate.IsReady;
+        if (keyText != null) keyText.text = string.IsNullOrEmpty(data.key) ? "" : (ultReady ? "PRESS [" + data.key + "]" : "[" + data.key + "]");
+        if (nameText != null) nameText.text = ultReady ? data.abilityName + " READY" : data.abilityName;
         if (descriptionText != null) descriptionText.text = data.description;
         if (tipText != null) tipText.text = data.tip;
 

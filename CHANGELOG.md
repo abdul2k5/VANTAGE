@@ -2,6 +2,18 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.25: Planted charge stays visible, plant prompt, reinforcement eyes, Overwatch READY card
+
+**Why:** Playtest: after planting, the charge wasn't on the site; standing on the site gave no hint which key plants; post-plant reinforcement drones had purple eyes; and the Overwatch card that pops up when the ultimate first charges didn't say it was ready.
+
+**What changed:**
+- **Planted charge stays:** stepping off the site called the cancel-plant path even after planting, and that path hides the device, so the charge, its beam and its light vanished as soon as the player moved to cover. Leaving the site now only cancels a plant that's still in progress.
+- **Plant prompt:** standing on the site shows "HOLD [4] TO PLANT THE BREACH CHARGE" in the plant bar's box, with the bar empty. Holding 4 while moving or in the air shows "STAND STILL TO PLANT", since that cancels the plant. The countdown replaces the prompt once planting starts.
+- **Reinforcement eyes:** the drones' eye material only existed inside the scene, so the reinforcement prefab saved it as missing and Unity drew it magenta. It's now a project asset, `Assets/Materials/SentinelEye.mat` (same red), used by the prefab.
+- **Overwatch card:** when it opens because Overwatch just charged, the title reads "OVERWATCH PROTOCOL READY" and the key line "PRESS [X]". If it's forced open in The Round before charging, it stays the plain explainer.
+
+**Verified** in Play mode: on the site the prompt shows; a real 4-key hold (simulated input) planted it; teleporting 6m off the site left the canister, beam and light on; both reinforcements that landed used SentinelEye and showed red eyes in a capture; the card title fits on one line (391px of text in a 460px box).
+
 ## Phase 17.24: Room Select
 
 **Why:** Professor's suggestion: let the player go back to a room they've already completed, with the room reset to its original state. The user added that the player must also be able to go back to where they were. For example, someone in Room 5 replays Room 3, then returns to Room 5, while Rooms 6-8 stay locked because Room 5 isn't finished yet.

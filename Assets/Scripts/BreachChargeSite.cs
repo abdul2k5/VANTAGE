@@ -12,6 +12,7 @@ public class BreachChargeSite : MonoBehaviour
     public float plantSeconds = 4f;
     public float moveCancelThreshold = 0.15f;
     public Key plantKey = Key.Digit4;
+    public string plantKeyDisplay = "4";
 
     public GameObject progressRoot;
     public Image progressFill;
@@ -57,7 +58,8 @@ public class BreachChargeSite : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerInside = false;
-            CancelPlant();
+            // Once planted, stepping off the site must leave the charge where it is - CancelPlant hides the device.
+            if (!planted) CancelPlant();
         }
     }
 
@@ -85,6 +87,8 @@ public class BreachChargeSite : MonoBehaviour
         if (!holding || moving || airborne || damagedThisFrame || MainMenuController.IsOpen || Cursor.lockState != CursorLockMode.Locked)
         {
             CancelPlant();
+            bool menuOpen = MainMenuController.IsOpen || Cursor.lockState != CursorLockMode.Locked;
+            if (!menuOpen) ShowPrompt(holding && (moving || airborne) ? "STAND STILL TO PLANT" : "HOLD [" + plantKeyDisplay + "] TO PLANT THE BREACH CHARGE");
             return;
         }
 
@@ -101,6 +105,14 @@ public class BreachChargeSite : MonoBehaviour
         {
             Plant();
         }
+    }
+
+    /// <summary>Standing on the site without planting: same box as the progress bar, left empty, telling the player the key.</summary>
+    void ShowPrompt(string text)
+    {
+        if (progressRoot != null) progressRoot.SetActive(true);
+        if (progressFill != null) progressFill.fillAmount = 0f;
+        if (progressLabel != null) progressLabel.text = text;
     }
 
     void CancelPlant()
