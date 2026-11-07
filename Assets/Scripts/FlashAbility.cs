@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class FlashAbility : Ability
 {
-    public float radius = 7f;
+    public float radius = 10f;
     public float blindDuration = 3.5f;
     public Color flashColor = new Color(1f, 0.97f, 0.85f, 0.9f);
 

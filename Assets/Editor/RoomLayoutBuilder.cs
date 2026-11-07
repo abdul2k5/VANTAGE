@@ -57,7 +57,7 @@ public static class RoomLayoutBuilder
         Wall(smoke, "Wall_E", new Vector3(83.65f, 0f, -1.5f), 4.3f, wall, trim);
 
         // Flash (x=120): a wall just short of the drones with a corner on the west side. From that corner
-        // both drones (and the whole patrol) are inside the 7m flash radius: walk up safe, pop, peek.
+        // both drones (and the whole patrol) are inside the flash radius: walk up safe, pop, peek.
         var flash = Group(root, "Flash");
         Wall(flash, "Wall", new Vector3(121.65f, 0f, 2.2f), 8.3f, wall, trim);
 

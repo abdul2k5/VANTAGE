@@ -2,6 +2,14 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.11: flash range 7m to 10m
+
+**Why:** Playtest: "the flash seems to have a small range". Drones can spot the player from 22m and sit about 13m from each room's entry, so a 7m flash meant walking more than halfway across a room, usually in view, before it could reach anything. That works against using utility *before* you peek.
+
+**What changed:** the radius is now 10m. You can flash from about mid-room, but still not from the doorway, so you still have to move up first.
+
+**Verified** in Play mode with the real flash on the Flash room's Hold drone: blinded at 9.5m, not blinded at 10.5m or from the room entry.
+
 ## Phase 17.10: flashed drones stop shooting and stop moving
 
 **Why:** Playtest: "i thought i flashed the drone but apparently it wasnt". Testing showed the drones often were flashed, but kept shooting anyway. A drone already called into a fight kept firing during the blind, and shooting a flashed drone made it fire back. A stationary player took 1 hit when flashing mid-fight, and 3 hits when also shooting a flashed drone. Flash is meant to create the safe window this whole game is built around, so a flashed drone that fires back breaks the "utility before you peek" idea and makes the flash look like it missed.
