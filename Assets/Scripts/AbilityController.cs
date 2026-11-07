@@ -31,12 +31,17 @@ public class AbilityController : MonoBehaviour
         if (kb == null) return;
 
         if (smokeWallUnlocked && smokeWall != null && kb.qKey.wasPressedThisFrame) smokeWall.TryUse();
-        if (flashUnlocked && flash != null && kb.eKey.wasPressedThisFrame) flash.TryUse();
+        if (flashUnlocked && flash != null)
+        {
+            // Hold to ready it in hand (preview line), release to throw. One held ability at a time.
+            if (kb.eKey.wasPressedThisFrame && (reconDart == null || !reconDart.IsAiming)) flash.BeginAim();
+            if (flash.IsAiming && kb.eKey.wasReleasedThisFrame) flash.ReleaseAim();
+        }
         if (dashUnlocked && dash != null && kb.leftShiftKey.wasPressedThisFrame) dash.TryUse();
         if (reconDartUnlocked && reconDart != null)
         {
             // Hold to aim (preview line), right-click to change bounces, release to fire.
-            if (kb.fKey.wasPressedThisFrame) reconDart.BeginAim();
+            if (kb.fKey.wasPressedThisFrame && (flash == null || !flash.IsAiming)) reconDart.BeginAim();
             var mouse = Mouse.current;
             if (reconDart.IsAiming && mouse != null && mouse.rightButton.wasPressedThisFrame) reconDart.CycleBounces();
             if (reconDart.IsAiming && kb.fKey.wasReleasedThisFrame) reconDart.ReleaseAim();

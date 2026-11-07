@@ -16,6 +16,11 @@ public class GunViewmodelAnimator : MonoBehaviour
     [Tooltip("Aim amount at which the scope view is fully in and the gun disappears.")]
     [Range(0f, 1f)] public float scopeFullAt = 0.9f;
 
+    [Header("Holding the flash - gun drops to free the other hand")]
+    public Vector3 loweredPositionOffset = new Vector3(0.06f, -0.2f, -0.08f);
+    public Vector3 loweredTiltDegrees = new Vector3(25f, -12f, 0f);
+    public float lowerSeconds = 0.12f;
+
     [Header("Reload pose")]
     public Vector3 reloadPositionOffset = new Vector3(-0.05f, -0.07f, -0.04f);
     public Vector3 reloadTiltDegrees = new Vector3(-22f, 8f, 14f);
@@ -46,6 +51,7 @@ public class GunViewmodelAnimator : MonoBehaviour
     float baseFieldOfView;
     Renderer[] gunRenderers;
     bool gunHidden;
+    float lowered;
 
     /// <summary>True once the scope view has fully replaced the gun. Weapon starts its tracer elsewhere then, since the muzzle is right in front of the player's eye.</summary>
     public bool ScopeViewUp { get { return gunHidden; } }
@@ -89,8 +95,12 @@ public class GunViewmodelAnimator : MonoBehaviour
         if (scopeOverlay != null) scopeOverlay.SetAmount(Mathf.InverseLerp(scopeFadeStart, scopeFullAt, aim));
         SetGunHidden(aim >= scopeFullAt);
 
-        transform.localPosition = Vector3.Lerp(basePosition, aimPosition, aim) + reloadPositionOffset * weight + Vector3.up * jolt;
-        transform.localRotation = baseRotation * Quaternion.Euler(reloadTiltDegrees * weight);
+        float lowerRate = lowerSeconds > 0f ? Time.deltaTime / lowerSeconds : 1f;
+        lowered = Mathf.MoveTowards(lowered, weapon.HoldingFlash ? 1f : 0f, lowerRate);
+        float low = Mathf.SmoothStep(0f, 1f, lowered);
+
+        transform.localPosition = Vector3.Lerp(basePosition, aimPosition, aim) + reloadPositionOffset * weight + loweredPositionOffset * low + Vector3.up * jolt;
+        transform.localRotation = baseRotation * Quaternion.Euler(reloadTiltDegrees * weight + loweredTiltDegrees * low);
 
         if (magazine != null) magazine.localPosition = magazineBasePosition + magazineDownPerMetre * MagazineDrop(progress);
     }

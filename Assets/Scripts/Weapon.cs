@@ -82,6 +82,8 @@ public class Weapon : MonoBehaviour
     public bool IsAiming { get; private set; }
     /// <summary>0 = at the hip, 1 = fully aimed. Read by GunViewmodelAnimator and PlayerController.</summary>
     public float AimAmount01 { get; private set; }
+    /// <summary>True while the Flash is readied in hand - the gun is lowered and can't fire or aim.</summary>
+    public bool HoldingFlash { get { return abilities != null && abilities.flash != null && abilities.flash.IsAiming; } }
 
     void Awake()
     {
@@ -139,6 +141,8 @@ public class Weapon : MonoBehaviour
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
 
         var mouse = Mouse.current;
+        if (HoldingFlash) return;
+
         if (mouse != null && mouse.leftButton.isPressed && !isReloading && fireTimer <= 0f && currentAmmo > 0)
         {
             Fire();
@@ -166,7 +170,7 @@ public class Weapon : MonoBehaviour
         var mouse = Mouse.current;
         // Right-click adds bounces while the Recon Dart is being aimed, so it can't also zoom.
         bool aimingDart = abilities != null && abilities.reconDart != null && abilities.reconDart.IsAiming;
-        IsAiming = mouse != null && mouse.rightButton.isPressed && !isReloading && !aimingDart
+        IsAiming = mouse != null && mouse.rightButton.isPressed && !isReloading && !aimingDart && !HoldingFlash
             && !MainMenuController.IsOpen && Cursor.lockState == CursorLockMode.Locked;
 
         // Real time when paused, so a card or Game Over opening mid-aim doesn't leave the scope view stuck behind it.

@@ -2,6 +2,20 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.20: Flash is thrown, bounces once, and walls block it
+
+**Why:** Playtest: "i flashed here and the drone that was behind this wall got flashed". The flash blinded every drone within 10m of the player, walls or not, and the burst only appeared at the player, so a drone stunned behind solid wall looked like a bug. The room was deliberately built that way ("walk up safe, pop, peek"), but a safe window that needs no aim or awareness isn't much of a skill. With a thrown flash, the player still never has to peek first, but they have to place it: bank it off a wall round the corner so it pops where the drones can see it. Asked for in the style of a well-known bounce flash, using the mechanic only, with no names or assets taken from it.
+
+**What changed:**
+- **Hold E to ready it:** the gun lowers and the flash glows in the player's other hand, with a preview line of the throw and a marker where it will pop. The gun can't fire or aim while it's held. Release E to throw, so a quick tap still throws straight ahead.
+- **Flight:** it bounces off the first surface it hits, then pops on the next contact, 0.2s after the bounce, or after 1s, whichever comes first. It uses the Recon Dart's flight code, so it pops where the preview shows.
+- **Blinding:** only drones within 10m of the pop with a clear line to it, using the same wall layer the drones see through. Blinded drones still can't shoot or move.
+- **Burst:** the light now casts shadows, so it visibly stops at walls just as the blind does, and the glowing shell is smaller so it can't poke through a nearby wall.
+- One held ability at a time: the flash and the Recon Dart can't be aimed together. A checkpoint retry clears a flash in flight.
+- The Flash room card explains the throw and the bank shot.
+
+**Verified:** A scan of the Flash room using the game's own flight code found 32 standing spots hidden from both drones. All 32 have a throw that blinds both, so the room still works without peeking. Throwing straight into the wall from the spot in the playtest screenshot now pops on the player's side and blinds neither drone, which was also checked live. In Play mode, holding the flash showed it in hand with the gun lowered. Clicking while holding fired nothing and didn't scope. A real throw from behind the wall banked off the side wall, popped after 0.3s and blinded both drones. The first scanned throw blinded neither, because the patrolling drone had moved 1m, out of range. The pop was just past 10m, a reminder that the throw needs aiming. The E key itself couldn't be pressed in the test harness, so the throw was triggered through the same calls the key handler makes. Real keyboard and feel need a playtest.
+
 ## Phase 17.19: drone hitboxes now match the model
 
 **Why:** Playtest report: "im not even aiming at the drone and its still getting hit with and without zoom", with a screenshot of the crosshair well below a drone. Every drone had a collider running from the floor to 1.8m, sized for a person-shaped enemy, while the visible hovering model only spans about 1.26m to 1.58m. So an invisible pillar stood under each drone: shooting the air beneath one counted as a hit, and it also stopped bullets reaching anything behind it. The real model was added in Phase 6e without the collider being resized. The new scope made it obvious, but it was there at the hip too. In a game built on careful aiming, a hit has to mean you aimed at the thing.

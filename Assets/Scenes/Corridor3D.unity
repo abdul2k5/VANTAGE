@@ -51945,6 +51945,9 @@ MonoBehaviour:
   scopeOverlay: {fileID: 1014819133}
   scopeFadeStart: 0.6
   scopeFullAt: 0.9
+  loweredPositionOffset: {x: 0.06, y: -0.2, z: -0.08}
+  loweredTiltDegrees: {x: 25, y: -12, z: 0}
+  lowerSeconds: 0.12
   reloadPositionOffset: {x: -0.05, y: -0.07, z: -0.04}
   reloadTiltDegrees: {x: -22, y: 8, z: 14}
   returnStartsAt: 0.78
@@ -104129,6 +104132,15 @@ MonoBehaviour:
   radius: 10
   blindDuration: 3.5
   flashColor: {r: 1, g: 0.97, b: 0.85, a: 0.9}
+  throwSpeed: 14
+  bounces: 1
+  fuseSeconds: 1
+  popAfterBounceSeconds: 0.2
+  bounceSound: {fileID: 8300000, guid: fca8c4c09458ef94095816f454f82913, type: 3}
+  aimHint: {fileID: 1359150502}
+  previewWidth: 0.03
+  previewNearSkip: 1.5
+  handPosition: {x: -0.22, y: -0.2, z: 0.45}
 --- !u!114 &1584037079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129055,8 +129067,8 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: aa98f8cd7844ac540a3db1599cbd4c6c, type: 3}
   - key: E
     abilityName: FLASH
-    description: Blinds every drone within 10m, even round a corner. Flashed drones can't shoot or move, and their eye burns white.
-    tip: Get close behind the wall, flash, then peek. When the sparks flicker, the drone is about to recover.
+    description: Hold [E] to ready it, release to throw. It bounces once and pops, blinding drones within 10m that can see it. They can't shoot or move.
+    tip: Walls block it, so bank it off a wall round the corner instead of peeking. When the sparks flicker, the drone is about to recover.
     icon: {fileID: 21300000, guid: a444145e4a2435c49a4e399b2691469e, type: 3}
   - key: SHIFT
     abilityName: DASH
