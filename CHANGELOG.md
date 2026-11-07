@@ -2,6 +2,30 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.24: Room Select
+
+**Why:** Professor's suggestion: let the player go back to a room they've already completed, with the room reset to its original state. The user added that the player must also be able to go back to where they were. For example, someone in Room 5 replays Room 3, then returns to Room 5, while Rooms 6-8 stay locked because Room 5 isn't finished yet.
+
+**What changed:**
+- **ROOMS tab in the pause menu:** lists all 8 rooms. Cleared rooms are CLEARED, the furthest room reached is IN PROGRESS, later rooms are LOCKED and can't be clicked. Picking a room fades to its entrance.
+- **Every room resets when you go back in:** drones, orbs, medkits, the exit door and its objective, Range targets and their bullet holes, and the bomb site and round state in The Round. Utility left out is cleared. Abilities match that room, so a Room 3 replay has no Recon Dart. This also applies to walking forward through doors during a replay, so Room 3 -> Room 4 -> Room 5 resets each one.
+- **No free top-ups:** a replay gives full health. Returning to the furthest room, by Room Select or through the doors, restores the health and Overwatch charge the player first arrived there with. Replaying can't be used to heal up or charge the ultimate before a hard room.
+- **Death during a replay is practice:** the Game Over screen offers RETRY ROOM and BACK TO ROOM N instead of the checkpoint buttons, and progress is kept.
+- **Checkpoint stakes kept:** dying in the furthest room works as before. A checkpoint retry also locks the rooms past the checkpoint again in Room Select. Otherwise a player who died in The Round could jump straight back into it, and every room would act as a checkpoint.
+- **Restart Room** (General tab) now does the same as picking the current room. It used to only move the player to the entrance, leaving killed drones dead and the round running.
+- The run debrief shows "ROOM SELECT used xN" when it was used, so a practised run's time reads as one.
+- `CheckpointManager.ResetRooms5To8` now calls the shared `RoomManager.ResetRoom` per room instead of its own copy of the reset.
+
+**Verified** in Play mode, frame-stepped:
+- **The user's example:** reached Room 5 with 60 health and killed one Room 5 drone, then jumped to Room 3. Room 3 was reset, the door locked, Recon and Smoke locked, 100 health, and progress still Room 5. After clearing Room 3, its door opened. Walking on through Room 4 into Room 5 brought back the killed drone, restored 60 health, and left Rooms 6-8 locked.
+- **Replaying a cleared room:** jumping to Room 3 again brought both killed drones back with the door locked.
+- **Dying in a replay:** showed RETRY ROOM / BACK TO ROOM 5 / MAIN MENU. BACK returned to Room 5 with 60 health, AttemptOver cleared and timeScale 1.
+- **Range:** a replay re-locked the door, and only the third target hit opened it again.
+- **Weak Point:** a replay revived all 4 drones and re-locked the door, and clearing it again re-opened the door.
+- **Checkpoint:** reached Room 8, died, and retried from the checkpoint. Progress went back to Room 5.
+- **Restart Room:** in Room 5 at 40 health, it reset to the arrival health of 100.
+- No errors in the console.
+
 ## Phase 17.23: Headshots count only on the visible eye
 
 **Why:** The user's full run showed 59% headshots, and asked to tighten the zone. Measured with a grid of test rays against the drone's visible meshes, the headshot area was about 6.7 times the size of the visible eye (radius 0.18m against an eye of 0.07m). Air and body beside the eye counted as headshots. It was also wrong the other way: the body hitbox is a square box round a round body, so its corners sat in front of the eye from the side. From 60 degrees off, every shot on the visible eye scored as a body shot. Shrinking the eye collider alone made side angles worse, and a convex body collider still covered part of the eye socket, so no collider shape fixed both.

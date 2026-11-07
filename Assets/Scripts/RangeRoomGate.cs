@@ -14,9 +14,12 @@ public class RangeRoomGate : MonoBehaviour
     public string clearedObjective = "All 3 targets down. Door unlocked - head to the exit.";
 
     int hitCount;
+    string originalObjective;
 
     void Start()
     {
+        if (roomManager != null && roomIndex >= 0 && roomIndex < roomManager.rooms.Length)
+            originalObjective = roomManager.rooms[roomIndex].objective;
         if (targets == null) return;
         for (int i = 0; i < targets.Length; i++)
         {
@@ -35,5 +38,21 @@ public class RangeRoomGate : MonoBehaviour
             roomManager.rooms[roomIndex].objective = clearedObjective;
             roomManager.RefreshObjectiveText();
         }
+    }
+
+    /// <summary>Room Select: targets count again, door locked, original objective back.</summary>
+    public void ResetState()
+    {
+        hitCount = 0;
+        if (targets != null)
+        {
+            for (int i = 0; i < targets.Length; i++)
+            {
+                if (targets[i] != null) targets[i].ResetHit();
+            }
+        }
+        if (door != null) door.Relock();
+        if (roomManager != null && originalObjective != null && roomIndex >= 0 && roomIndex < roomManager.rooms.Length)
+            roomManager.rooms[roomIndex].objective = originalObjective;
     }
 }

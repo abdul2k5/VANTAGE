@@ -17,9 +17,12 @@ public class WeakPointRoomGate : MonoBehaviour
 
     int remaining;
     bool allHeadshots = true;
+    string originalObjective;
 
     void Start()
     {
+        if (roomManager != null && roomIndex >= 0 && roomIndex < roomManager.rooms.Length)
+            originalObjective = roomManager.rooms[roomIndex].objective;
         foreach (var s in sentinels)
         {
             if (s == null) continue;
@@ -40,5 +43,16 @@ public class WeakPointRoomGate : MonoBehaviour
             roomManager.rooms[roomIndex].objective = allHeadshots ? headshotObjective : bodyShotObjective;
             roomManager.RefreshObjectiveText();
         }
+    }
+
+    /// <summary>Room Select: RoomManager.ResetRoom has brought every drone back, so all of them count again.</summary>
+    public void ResetState()
+    {
+        remaining = 0;
+        foreach (var s in sentinels) if (s != null) remaining++;
+        allHeadshots = true;
+        if (door != null) door.Relock();
+        if (roomManager != null && originalObjective != null && roomIndex >= 0 && roomIndex < roomManager.rooms.Length)
+            roomManager.rooms[roomIndex].objective = originalObjective;
     }
 }

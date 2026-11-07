@@ -45,6 +45,7 @@ public class RunDebriefUI : MonoBehaviour
         Row(labels, values, "OVERWATCH", stats.UltimateUses == 0 ? "not used" : "used x" + stats.UltimateUses);
         Row(labels, values, "ORBS", stats.OrbsCollected + "/" + TotalOrbs());
         if (stats.CheckpointRetries > 0) Row(labels, values, "CHECKPOINT RETRIES", stats.CheckpointRetries.ToString());
+        if (stats.RoomSelects > 0) Row(labels, values, "ROOM SELECT", "used x" + stats.RoomSelects);
 
         if (statLabels != null) statLabels.text = labels.ToString().TrimEnd();
         if (statValues != null) statValues.text = values.ToString().TrimEnd();

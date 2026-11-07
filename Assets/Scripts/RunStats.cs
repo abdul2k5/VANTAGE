@@ -21,6 +21,8 @@ public class RunStats : MonoBehaviour
     public float DamageAbsorbed { get; private set; }
     public int UltimateUses { get; private set; }
     public int CheckpointRetries { get; private set; }
+    /// <summary>Jumps through Room Select or Restart Room - shown on the debrief so a practised run's time reads as one.</summary>
+    public int RoomSelects { get; private set; }
     public int OrbsCollected { get { return orbsCollected.Count; } }
     public bool Finished { get; private set; }
 
@@ -84,6 +86,7 @@ public class RunStats : MonoBehaviour
     }
     public void RecordUltimate() { UltimateUses++; }
     public void RecordCheckpointRetry() { CheckpointRetries++; }
+    public void RecordRoomSelect() { RoomSelects++; }
 
     public void RecordAbility(string abilityName)
     {

@@ -45,6 +45,12 @@ public class PlayerHealth : MonoBehaviour
     }
 
 
+    /// <summary>Used by Room Select to put the player back at the health they first arrived in a room with.</summary>
+    public void SetHealth(float health)
+    {
+        currentHealth = Mathf.Clamp(health, 1f, maxHealth);
+    }
+
     /// <summary>Called by RoomManager on every room entry.</summary>
     public void RefillShield()
     {

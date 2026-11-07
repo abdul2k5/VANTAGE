@@ -23,6 +23,11 @@ public class GameOverController : MonoBehaviour
     public AudioClip loseSound;
 
     public string defaultSubMessage = "The attempt ends here.";
+    public string replaySubMessage = "Replaying a cleared room. Your progress is safe.";
+
+    // Shown instead of the checkpoint buttons when the player dies replaying a room through Room Select.
+    Button retryRoomButton;
+    Button backToFurthestButton;
 
     void Awake()
     {
@@ -31,6 +36,13 @@ public class GameOverController : MonoBehaviour
 
     void Start()
     {
+        if (retryCheckpointButton != null)
+        {
+            retryRoomButton = CloneButton(retryCheckpointButton, "RetryRoomButton", "RETRY ROOM");
+            retryRoomButton.onClick.AddListener(RetryRoom);
+            backToFurthestButton = CloneButton(retryCheckpointButton, "BackToFurthestButton", "BACK");
+            backToFurthestButton.onClick.AddListener(BackToFurthestRoom);
+        }
         if (retryCheckpointButton != null) retryCheckpointButton.onClick.AddListener(RetryFromCheckpoint);
         if (restartBeginningButton != null) restartBeginningButton.onClick.AddListener(RestartFromBeginning);
         if (restartButton != null) restartButton.onClick.AddListener(RestartFromBeginning);
@@ -44,7 +56,7 @@ public class GameOverController : MonoBehaviour
     /// </summary>
     void StackVisibleButtons()
     {
-        Button[] order = { retryCheckpointButton, restartBeginningButton, restartButton, mainMenuButton };
+        Button[] order = { retryRoomButton, backToFurthestButton, retryCheckpointButton, restartBeginningButton, restartButton, mainMenuButton };
         float y = firstButtonY;
         for (int i = 0; i < order.Length; i++)
         {
@@ -65,13 +77,22 @@ public class GameOverController : MonoBehaviour
         if (health != null) health.AttemptOver = true;
 
         bool hasCheckpoint = CheckpointManager.Instance != null && CheckpointManager.Instance.HasReachedCheckpoint;
+        // A death while replaying a cleared room is practice - it doesn't cost the run.
+        bool replaying = rm != null && rm.IsReplaying;
 
-        if (retryCheckpointButton != null) retryCheckpointButton.gameObject.SetActive(hasCheckpoint);
-        if (restartBeginningButton != null) restartBeginningButton.gameObject.SetActive(hasCheckpoint);
-        if (restartButton != null) restartButton.gameObject.SetActive(!hasCheckpoint);
+        if (retryRoomButton != null) retryRoomButton.gameObject.SetActive(replaying);
+        if (backToFurthestButton != null)
+        {
+            backToFurthestButton.gameObject.SetActive(replaying);
+            if (replaying) SetLabel(backToFurthestButton, "BACK TO ROOM " + (rm.FurthestRoom + 1));
+        }
+        if (retryCheckpointButton != null) retryCheckpointButton.gameObject.SetActive(hasCheckpoint && !replaying);
+        if (restartBeginningButton != null) restartBeginningButton.gameObject.SetActive(hasCheckpoint && !replaying);
+        if (restartButton != null) restartButton.gameObject.SetActive(!hasCheckpoint && !replaying);
         StackVisibleButtons();
 
-        if (subText != null) subText.text = string.IsNullOrEmpty(subMessage) ? defaultSubMessage : subMessage;
+        if (string.IsNullOrEmpty(subMessage)) subMessage = replaying ? replaySubMessage : defaultSubMessage;
+        if (subText != null) subText.text = subMessage;
 
         panel.transform.SetAsLastSibling();
         panel.SetActive(true);
@@ -86,12 +107,45 @@ public class GameOverController : MonoBehaviour
 
     void RetryFromCheckpoint()
     {
+        ResumePlay();
+        if (CheckpointManager.Instance != null) CheckpointManager.Instance.RetryFromCheckpoint();
+    }
+
+    void RetryRoom()
+    {
+        ResumePlay();
+        if (RoomManager.Instance != null) RoomManager.Instance.JumpToRoom(RoomManager.Instance.CurrentRoom);
+    }
+
+    void BackToFurthestRoom()
+    {
+        ResumePlay();
+        if (RoomManager.Instance != null) RoomManager.Instance.JumpToRoom(RoomManager.Instance.FurthestRoom);
+    }
+
+    void ResumePlay()
+    {
         panel.SetActive(false);
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         Time.timeScale = 1f;
         AudioListener.pause = false;
-        if (CheckpointManager.Instance != null) CheckpointManager.Instance.RetryFromCheckpoint();
+    }
+
+    static Button CloneButton(Button source, string name, string label)
+    {
+        var copy = Instantiate(source, source.transform.parent);
+        copy.name = name;
+        copy.onClick = new Button.ButtonClickedEvent(); // drop anything wired to the original
+        SetLabel(copy, label);
+        copy.gameObject.SetActive(false);
+        return copy;
+    }
+
+    static void SetLabel(Button button, string label)
+    {
+        var text = button.GetComponentInChildren<Text>(true);
+        if (text != null) text.text = label;
     }
 
     /// <summary>Public so the win screen's PLAY AGAIN button can reuse it.</summary>

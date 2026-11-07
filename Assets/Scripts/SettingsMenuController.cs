@@ -196,10 +196,12 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    /// <summary>Same as picking the current room in Room Select: the room resets and the player is put back as they arrived.
+    /// It used to only move the player to the entrance, leaving dead drones dead and the round running.</summary>
     void RestartRoom()
     {
-        if (RoomManager.Instance != null) RoomManager.Instance.EnterRoom(RoomManager.Instance.CurrentRoom);
-        Close();
+        Close(); // first - the jump's fade runs on scaled time
+        if (RoomManager.Instance != null) RoomManager.Instance.JumpToRoom(RoomManager.Instance.CurrentRoom);
     }
 
     void QuitToMenu()

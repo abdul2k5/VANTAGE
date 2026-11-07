@@ -108,6 +108,8 @@ public class CheckpointManager : MonoBehaviour
         }
         if (health != null) health.FullRestore();
         if (weapon != null) weapon.Reload();
+        // Dying costs the rooms past the checkpoint: Room Select locks them again until they're played through.
+        rm.RewindProgressTo(CheckpointRoomIndex);
 
         yield return new WaitForSeconds(rm.holdSeconds);
         yield return Fade(rm.fadeOverlay, 1f, 0f, rm.fadeSeconds);
@@ -133,41 +135,10 @@ public class CheckpointManager : MonoBehaviour
 
     void ResetRooms5To8()
     {
-        var sentinels = Object.FindObjectsByType<Sentinel>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        for (int i = 0; i < sentinels.Length; i++)
-        {
-            if (sentinels[i].OwnerRoomIndex >= CheckpointRoomIndex) sentinels[i].ResetState();
-        }
-
-        // Inactive included - a collected orb has disabled itself.
-        var orbs = Object.FindObjectsByType<UltOrbPickup>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        for (int i = 0; i < orbs.Length; i++)
-        {
-            if (orbs[i].roomIndex >= CheckpointRoomIndex) orbs[i].ResetState();
-        }
-
-        var medkits = Object.FindObjectsByType<MedkitPickup>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        for (int i = 0; i < medkits.Length; i++)
-        {
-            if (medkits[i].roomIndex >= CheckpointRoomIndex) medkits[i].ResetState();
-        }
-
-        var gates = Object.FindObjectsByType<RoomExitGate>(FindObjectsSortMode.None);
-        for (int i = 0; i < gates.Length; i++)
-        {
-            if (gates[i].roomIndex >= CheckpointRoomIndex) gates[i].ResetState();
-        }
-
-        if (RoundController.Instance != null) RoundController.Instance.ResetState();
-
-        // Separate from the round's state - left planted, the site ignores the plant key on the way back.
-        var site = Object.FindFirstObjectByType<BreachChargeSite>(FindObjectsInactive.Include);
-        if (site != null) site.ResetState();
-
-        // Utility thrown before dying (a smoke still standing, a dart still revealing) belongs to the
-        // failed attempt - the retry should start from a clean room like the first arrival did.
+        // Drones, pickups, doors, the round and the site, plus any utility left over from the failed
+        // attempt - the retry should start from clean rooms like the first arrival did.
         var rm = RoomManager.Instance;
-        if (rm != null && rm.abilities != null) rm.abilities.ClearDeployed();
+        for (int i = CheckpointRoomIndex; i < rm.rooms.Length; i++) rm.ResetRoom(i);
     }
 
     void OnDestroy()
