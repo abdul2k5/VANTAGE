@@ -6212,8 +6212,8 @@ GameObject:
   m_Component:
   - component: {fileID: 82550399}
   - component: {fileID: 82550398}
-  - component: {fileID: 82550397}
   - component: {fileID: 82550396}
+  - component: {fileID: 82550400}
   m_Layer: 0
   m_Name: Sentinel_WeakPoint_02
   m_TagString: Untagged
@@ -6264,29 +6264,6 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 1315243740}
   pushArriveDistance: 1.5
---- !u!136 &82550397
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 82550395}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 1.8
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: -0.1}
 --- !u!195 &82550398
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -6325,6 +6302,27 @@ Transform:
   - {fileID: 1784142342}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &82550400
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 82550395}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.607, y: 0.328, z: 0.655}
+  m_Center: {x: -0.001, y: 1.421, z: -0.037}
 --- !u!21 &82578175
 Material:
   serializedVersion: 8
@@ -8874,8 +8872,8 @@ GameObject:
   m_Component:
   - component: {fileID: 113820433}
   - component: {fileID: 113820432}
-  - component: {fileID: 113820431}
   - component: {fileID: 113820426}
+  - component: {fileID: 113820434}
   m_Layer: 0
   m_Name: Sentinel_R2_01
   m_TagString: Untagged
@@ -8926,29 +8924,6 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 123409900}
   pushArriveDistance: 1.5
---- !u!136 &113820431
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 113820425}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 1.8
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: -0.1}
 --- !u!195 &113820432
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -8987,6 +8962,27 @@ Transform:
   - {fileID: 145841307}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!65 &113820434
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 113820425}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.607, y: 0.328, z: 0.655}
+  m_Center: {x: -0.001, y: 1.421, z: -0.037}
 --- !u!1 &115439846
 GameObject:
   m_ObjectHideFlags: 0
@@ -10644,8 +10640,8 @@ GameObject:
   m_Component:
   - component: {fileID: 133064073}
   - component: {fileID: 133064072}
-  - component: {fileID: 133064071}
   - component: {fileID: 133064070}
+  - component: {fileID: 133064074}
   m_Layer: 0
   m_Name: Sentinel_R3_02
   m_TagString: Untagged
@@ -10696,29 +10692,6 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 454924405}
   pushArriveDistance: 1.5
---- !u!136 &133064071
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 133064069}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 1.8
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: -0.1}
 --- !u!195 &133064072
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -10757,6 +10730,27 @@ Transform:
   - {fileID: 1549314481}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &133064074
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 133064069}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.607, y: 0.328, z: 0.655}
+  m_Center: {x: -0.001, y: 1.421, z: -0.037}
 --- !u!1 &133740978
 GameObject:
   m_ObjectHideFlags: 0
@@ -39251,8 +39245,8 @@ GameObject:
   m_Component:
   - component: {fileID: 570498414}
   - component: {fileID: 570498413}
-  - component: {fileID: 570498412}
   - component: {fileID: 570498407}
+  - component: {fileID: 570498415}
   m_Layer: 0
   m_Name: Sentinel_R6_01
   m_TagString: Untagged
@@ -39305,29 +39299,6 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 1085276114}
   pushArriveDistance: 1.5
---- !u!136 &570498412
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 570498406}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 1.8
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: -0.1}
 --- !u!195 &570498413
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -39366,6 +39337,27 @@ Transform:
   - {fileID: 390722977}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &570498415
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 570498406}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.607, y: 0.328, z: 0.655}
+  m_Center: {x: -0.001, y: 1.421, z: -0.037}
 --- !u!1 &571095804
 GameObject:
   m_ObjectHideFlags: 0
@@ -43499,10 +43491,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 849293798}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 93, y: -37}
-  m_SizeDelta: {x: 73, y: 27}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &640557910
 MonoBehaviour:
@@ -49254,10 +49246,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1715469544}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 480, y: -8}
-  m_SizeDelta: {x: 928, y: 20}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &722714020
 MonoBehaviour:
@@ -56522,7 +56514,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -30, y: 30}
-  m_SizeDelta: {x: 113, y: 47}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &849293799
 MonoBehaviour:
@@ -60846,8 +60838,8 @@ GameObject:
   m_Component:
   - component: {fileID: 908887827}
   - component: {fileID: 908887826}
-  - component: {fileID: 908887825}
   - component: {fileID: 908887820}
+  - component: {fileID: 908887828}
   m_Layer: 0
   m_Name: Sentinel_R6_02
   m_TagString: Untagged
@@ -60898,29 +60890,6 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 42533342}
   pushArriveDistance: 1.5
---- !u!136 &908887825
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 908887819}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 1.8
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: -0.1}
 --- !u!195 &908887826
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -60959,6 +60928,27 @@ Transform:
   - {fileID: 1794687633}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &908887828
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908887819}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.607, y: 0.328, z: 0.655}
+  m_Center: {x: -0.001, y: 1.421, z: -0.037}
 --- !u!1 &911389576
 GameObject:
   m_ObjectHideFlags: 0
@@ -69551,7 +69541,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -20}
-  m_SizeDelta: {x: 960, y: 36}
+  m_SizeDelta: {x: 960, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1046320914
 MonoBehaviour:
@@ -76788,8 +76778,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1157511794}
   - component: {fileID: 1157511793}
-  - component: {fileID: 1157511792}
   - component: {fileID: 1157511791}
+  - component: {fileID: 1157511795}
   m_Layer: 0
   m_Name: Sentinel_R5_02
   m_TagString: Untagged
@@ -76840,29 +76830,6 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 413252807}
   pushArriveDistance: 1.5
---- !u!136 &1157511792
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1157511790}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 1.8
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: -0.1}
 --- !u!195 &1157511793
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -76901,6 +76868,27 @@ Transform:
   - {fileID: 1673052851}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1157511795
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1157511790}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.607, y: 0.328, z: 0.655}
+  m_Center: {x: -0.001, y: 1.421, z: -0.037}
 --- !u!1 &1158357633
 GameObject:
   m_ObjectHideFlags: 0
@@ -77860,8 +77848,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1174161472}
   - component: {fileID: 1174161471}
-  - component: {fileID: 1174161470}
   - component: {fileID: 1174161469}
+  - component: {fileID: 1174161473}
   m_Layer: 0
   m_Name: Sentinel_R4_02
   m_TagString: Untagged
@@ -77912,29 +77900,6 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 515836963}
   pushArriveDistance: 1.5
---- !u!136 &1174161470
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1174161468}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 1.8
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: -0.1}
 --- !u!195 &1174161471
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -77973,6 +77938,27 @@ Transform:
   - {fileID: 1211335664}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1174161473
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1174161468}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.607, y: 0.328, z: 0.655}
+  m_Center: {x: -0.001, y: 1.421, z: -0.037}
 --- !u!1 &1175375519
 GameObject:
   m_ObjectHideFlags: 0
@@ -84085,8 +84071,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1259265924}
   - component: {fileID: 1259265923}
-  - component: {fileID: 1259265922}
   - component: {fileID: 1259265921}
+  - component: {fileID: 1259265925}
   m_Layer: 0
   m_Name: Sentinel_R2_02
   m_TagString: Untagged
@@ -84137,29 +84123,6 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 860219242}
   pushArriveDistance: 1.5
---- !u!136 &1259265922
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1259265920}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 1.8
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: -0.1}
 --- !u!195 &1259265923
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -84198,6 +84161,27 @@ Transform:
   - {fileID: 2016691214}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!65 &1259265925
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1259265920}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.607, y: 0.328, z: 0.655}
+  m_Center: {x: -0.001, y: 1.421, z: -0.037}
 --- !u!1 &1259872429
 GameObject:
   m_ObjectHideFlags: 0
@@ -85341,8 +85325,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1284871081}
   - component: {fileID: 1284871080}
-  - component: {fileID: 1284871079}
   - component: {fileID: 1284871078}
+  - component: {fileID: 1284871082}
   m_Layer: 0
   m_Name: Sentinel_WeakPoint_04
   m_TagString: Untagged
@@ -85395,29 +85379,6 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 1879494970}
   pushArriveDistance: 1.5
---- !u!136 &1284871079
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1284871077}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 1.8
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: -0.1}
 --- !u!195 &1284871080
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -85456,6 +85417,27 @@ Transform:
   - {fileID: 1008171926}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1284871082
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1284871077}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.607, y: 0.328, z: 0.655}
+  m_Center: {x: -0.001, y: 1.421, z: -0.037}
 --- !u!1 &1285913542
 GameObject:
   m_ObjectHideFlags: 0
@@ -101256,8 +101238,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1546845668}
   - component: {fileID: 1546845667}
-  - component: {fileID: 1546845666}
   - component: {fileID: 1546845661}
+  - component: {fileID: 1546845669}
   m_Layer: 0
   m_Name: Sentinel_R4_01
   m_TagString: Untagged
@@ -101310,29 +101292,6 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 1995141968}
   pushArriveDistance: 1.5
---- !u!136 &1546845666
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1546845660}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 1.8
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: -0.1}
 --- !u!195 &1546845667
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -101371,6 +101330,27 @@ Transform:
   - {fileID: 465060228}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1546845669
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1546845660}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.607, y: 0.328, z: 0.655}
+  m_Center: {x: -0.001, y: 1.421, z: -0.037}
 --- !u!1 &1547145067
 GameObject:
   m_ObjectHideFlags: 0
@@ -112144,7 +112124,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 480, y: -0}
-  m_SizeDelta: {x: 960, y: 36}
+  m_SizeDelta: {x: 960, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1715469545
 MonoBehaviour:
@@ -114205,8 +114185,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1753102726}
   - component: {fileID: 1753102725}
-  - component: {fileID: 1753102724}
   - component: {fileID: 1753102719}
+  - component: {fileID: 1753102727}
   m_Layer: 0
   m_Name: Sentinel_R3_01
   m_TagString: Untagged
@@ -114259,29 +114239,6 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 721825863}
   pushArriveDistance: 1.5
---- !u!136 &1753102724
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1753102718}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 1.8
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: -0.1}
 --- !u!195 &1753102725
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -114320,6 +114277,27 @@ Transform:
   - {fileID: 53281511}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1753102727
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1753102718}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.607, y: 0.328, z: 0.655}
+  m_Center: {x: -0.001, y: 1.421, z: -0.037}
 --- !u!1 &1753163255
 GameObject:
   m_ObjectHideFlags: 0
@@ -136069,8 +136047,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2092840389}
   - component: {fileID: 2092840388}
-  - component: {fileID: 2092840387}
   - component: {fileID: 2092840382}
+  - component: {fileID: 2092840390}
   m_Layer: 0
   m_Name: Sentinel_R5_01
   m_TagString: Untagged
@@ -136123,29 +136101,6 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 1335411533}
   pushArriveDistance: 1.5
---- !u!136 &2092840387
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2092840381}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 1.8
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: -0.1}
 --- !u!195 &2092840388
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -136184,6 +136139,27 @@ Transform:
   - {fileID: 1981062891}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2092840390
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2092840381}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.607, y: 0.328, z: 0.655}
+  m_Center: {x: -0.001, y: 1.421, z: -0.037}
 --- !u!1 &2093837214
 GameObject:
   m_ObjectHideFlags: 0
@@ -136322,8 +136298,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2095177215}
   - component: {fileID: 2095177214}
-  - component: {fileID: 2095177213}
   - component: {fileID: 2095177212}
+  - component: {fileID: 2095177216}
   m_Layer: 0
   m_Name: Sentinel_WeakPoint_03
   m_TagString: Untagged
@@ -136376,29 +136352,6 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 712809171}
   pushArriveDistance: 1.5
---- !u!136 &2095177213
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2095177211}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 1.8
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: -0.1}
 --- !u!195 &2095177214
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -136437,6 +136390,27 @@ Transform:
   - {fileID: 764619589}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2095177216
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095177211}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.607, y: 0.328, z: 0.655}
+  m_Center: {x: -0.001, y: 1.421, z: -0.037}
 --- !u!1 &2096172786
 GameObject:
   m_ObjectHideFlags: 0
@@ -140615,8 +140589,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3100000069}
   - component: {fileID: 3100000078}
-  - component: {fileID: 3100000074}
   - component: {fileID: 3100000091}
+  - component: {fileID: 3100000092}
   m_Layer: 0
   m_Name: Sentinel_WeakPoint_01
   m_TagString: Untagged
@@ -140707,29 +140681,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3100000057}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &3100000074
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3100000048}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 1.8
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: -0.1}
 --- !u!23 &3100000075
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -140883,6 +140834,27 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 3100000077}
   pushArriveDistance: 1.5
+--- !u!65 &3100000092
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3100000048}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.607, y: 0.328, z: 0.655}
+  m_Center: {x: -0.001, y: 1.421, z: -0.037}
 --- !u!1 &3200000001
 GameObject:
   m_ObjectHideFlags: 0
@@ -141770,29 +141742,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!136 &3200000053
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3200000094}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 1.8
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: -0.1}
 --- !u!4 &3200000060
 Transform:
   m_ObjectHideFlags: 0
@@ -142040,8 +141989,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3200000091}
   - component: {fileID: 3200000090}
-  - component: {fileID: 3200000053}
   - component: {fileID: 3200000089}
+  - component: {fileID: 3200000095}
   m_Layer: 0
   m_Name: Sentinel_Recon_01
   m_TagString: Untagged
@@ -142049,6 +141998,27 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!65 &3200000095
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3200000094}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.607, y: 0.328, z: 0.655}
+  m_Center: {x: -0.001, y: 1.421, z: -0.037}
 --- !u!4 &3200000096
 Transform:
   m_ObjectHideFlags: 0

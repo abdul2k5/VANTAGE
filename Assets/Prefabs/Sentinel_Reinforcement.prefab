@@ -879,8 +879,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3327749031878257283}
   - component: {fileID: 1994916262568691387}
-  - component: {fileID: 3002375540875978721}
   - component: {fileID: 5592281985988405888}
+  - component: {fileID: 92606547781210649}
   m_Layer: 0
   m_Name: Sentinel_Reinforcement
   m_TagString: Untagged
@@ -926,29 +926,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!136 &3002375540875978721
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8952233980313588106}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 1.8
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: -0.1}
 --- !u!114 &5592281985988405888
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -992,3 +969,24 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
   muzzle: {fileID: 585450165066029232}
   pushArriveDistance: 1.5
+--- !u!65 &92606547781210649
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8952233980313588106}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.607, y: 0.328, z: 0.655}
+  m_Center: {x: -0.001, y: 1.421, z: -0.037}

@@ -2,6 +2,17 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.19: drone hitboxes now match the model
+
+**Why:** Playtest report: "im not even aiming at the drone and its still getting hit with and without zoom", with a screenshot of the crosshair well below a drone. Every drone had a collider running from the floor to 1.8m, sized for a person-shaped enemy, while the visible hovering model only spans about 1.26m to 1.58m. So an invisible pillar stood under each drone: shooting the air beneath one counted as a hit, and it also stopped bullets reaching anything behind it. The real model was added in Phase 6e without the collider being resized. The new scope made it obvious, but it was there at the hip too. In a game built on careful aiming, a hit has to mean you aimed at the thing.
+
+**What changed:**
+- All 15 scene drones and the reinforcement prefab now use a box measured from the model's mesh. The front is trimmed slightly so it doesn't sit ahead of the eye's headshot area.
+- Side effects: a crouched player can now pass under a drone, since it no longer reaches the floor, though a standing player is still blocked. Recon's line-of-sight check now aims at the drone itself rather than the middle of the pillar, so low cover hides drones from it less often.
+- The eye's own hit area wasn't changed.
+
+**Verified** in Play mode, frame-stepped, firing the real gun from 7m: shots at heights of 0.3, 0.8, 1.1, 1.2 and 1.7m under and over the model, and 0.6m to the side, did no damage. A shot at the model's wing did 12.5 body damage, and a shot at the eye killed. Before the trim, walking into a drone standing up stopped the player at the box. After the trim, raycasts register a headshot out to 0.17m from the eye's centre and a body hit beyond that. This wasn't re-measured against the old hitbox, so whether headshots now feel easier or harder needs a playtest.
+
 ## Phase 17.18: aiming now looks through the scope
 
 **Why:** Playtest reaction to 17.17: "this guns got a scope and this how we zoom in lolll?" The gun came to the centre and the player stared at the back of a solid scope, with the bottom of the view blocked. It worked, but it didn't look like what the gun promises, and a scope that's obviously fake undercuts the whole feature.
