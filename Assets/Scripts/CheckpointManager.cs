@@ -146,6 +146,10 @@ public class CheckpointManager : MonoBehaviour
 
         if (RoundController.Instance != null) RoundController.Instance.ResetState();
 
+        // Separate from the round's state - left planted, the site ignores the plant key on the way back.
+        var site = Object.FindFirstObjectByType<BreachChargeSite>(FindObjectsInactive.Include);
+        if (site != null) site.ResetState();
+
         // Utility thrown before dying (a smoke still standing, a dart still revealing) belongs to the
         // failed attempt - the retry should start from a clean room like the first arrival did.
         var rm = RoomManager.Instance;

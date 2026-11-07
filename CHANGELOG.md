@@ -2,6 +2,12 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.6: checkpoint retry no longer locks you out of planting
+
+**Why:** Testing the checkpoint retry after a plant found the game could become impossible to finish. The drones, charge and objective all reset, but the plant site still counted as planted, so back in The Round holding [4] did nothing and there was no way to win. The site's reset existed but nothing called it.
+
+**What changed:** the checkpoint retry now resets the plant site too. You replay from Room 5, clear the defenders and plant again, the same as your first attempt.
+
 ## Phase 17.5: post-plant phase - reinforcements, disarm threat, utility refill, visible charge
 
 **Why:** Playtest: "after i planted the breach i wanna see the breach itself and then there should be more going on after planting it rather than just waiting for it to go". The countdown sent the Round's two drones to push the site, but the objective makes you kill those same two before planting. So the waves sent nobody, and the 20s countdown was dead air. The charge itself was a 0.55m dark box with a pea-sized core.
