@@ -2,6 +2,14 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.8: Overwatch orbs always give their charge
+
+**Why:** Playtest: "i took the orb in room 7 and my ult didnt charge". Ult charge is ignored while Overwatch is running, so that a kill mid-ultimate can't refill the next one. Orbs went through the same check, so an orb grabbed during Overwatch disappeared and gave nothing. The orb is a reward for going somewhere risky, so losing it silently felt like a bug and punished the player for taking the risk.
+
+**What changed:** orbs now always give their +25, even during Overwatch. Kills during Overwatch still give nothing. That rule exists to stop one ultimate funding the next, and a single fixed +25 orb can't do that.
+
+**Verified** in Play mode by walking into the Dash room orb: 0 to 25 normally, and 0 to 25 during Overwatch, where it used to stay at 0. The charge and one lit ring segment are still there after Overwatch ends. A kill during Overwatch still adds nothing, and a kill afterwards adds 25.
+
 ## Phase 17.7: pressing Retry can't send you back to Game Over
 
 **Why:** Testing found that pressing Retry with drones in view often reopened the Game Over screen partway through the fade (2 of 3 presses in one run). The failed attempt's drones stay live until the screen is black, and the player's health isn't restored until then, so one more hit counted as another death. It made a working retry look broken, right at the moment the player is being asked to try again.

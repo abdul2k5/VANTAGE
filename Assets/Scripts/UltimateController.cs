@@ -61,6 +61,12 @@ public class UltimateController : MonoBehaviour
         currentCharge = Mathf.Clamp(currentCharge + amount, 0f, maxCharge);
     }
 
+    /// <summary>Counts even while the ultimate is active. The orb is used up on pickup, so ignoring it would take it for nothing.</summary>
+    public void AddOrbCharge(float amount)
+    {
+        currentCharge = Mathf.Clamp(currentCharge + amount, 0f, maxCharge);
+    }
+
 /// <summary>Restores a previously snapshotted charge amount - used by CheckpointManager on a checkpoint retry. No-op while the ultimate is active.</summary>
     public void SetCharge(float amount)
     {

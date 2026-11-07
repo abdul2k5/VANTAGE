@@ -39,7 +39,7 @@ public class UltOrbPickup : MonoBehaviour
 
         if (UltimateController.Instance != null)
         {
-            UltimateController.Instance.AddCharge(chargeAmount);
+            UltimateController.Instance.AddOrbCharge(chargeAmount);
         }
         if (RunStats.Instance != null) RunStats.Instance.RecordOrb(name);
 
