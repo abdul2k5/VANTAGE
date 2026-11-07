@@ -2,6 +2,22 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.14: room instructions become pop-up cards, with one objective line on screen
+
+**Why:** Playtest suggestion: "instead of texts on the top we change it to pop up cards... so it forces the player to read it". The instructions were a text strip that faded after 18s while the player was already moving and being shot at, under two more bars of title and objective. It was easy to miss, and a tutorial built around one core idea can't rely on being read mid-fight. The objective stays on screen, because it changes during a room ("Door unlocked", the post-plant warning), and a player who has dismissed a card and got into a fight still needs a reminder. So the card teaches the room once, and the line says what to do now.
+
+**What changed:**
+- **Room cards:** every room shows a card on first entry, after the fade clears, using the existing unlock card. It pauses the game and is dismissed with Space or a click.
+- **Merged with ability cards:** Rooms 4-7 introduce an ability, so that room's card is also the unlock card, rather than two cards in a row. Rooms 1-3 and 8 show the room number where the icon would be.
+- **Once per run:** a checkpoint retry doesn't repeat any card, because re-reading after every death would get annoying. A full restart shows them again.
+- **One compact line:** the title bar, objective bar and instruction strip are now a single line such as "ROOM 6/8 FLASH   Flash the drones to open the door". Objectives are cut to short phrases, since the card does the teaching.
+- **The Round:** the plant instructions are on its card, but the post-plant warning stays on the line with no pause, so it can't freeze the most tense part of the game.
+- **Timing:** drones' entry grace uses game time, so it waits while a card is open and the full 1s still runs after dismissing. The ultimate's fallback card in The Round waits for the room card, which it would otherwise have beaten by opening during the fade.
+- Removed text that had gone stale: "within 7m" on the Flash panel and "No cover here" on the Dash card. The ultimate's tip now says it charges from killing armed drones.
+- Removed the now-unused `AutoHidePanel` and the old HUD panels.
+
+**Verified** in Play mode through real room transitions: no card while the menu is open. Each of the 8 rooms shows the right card, icon or number, and key on the frame after the fade clears, never during it. Entry grace is a full 1.00s after dismissing. The Round shows its room card and then the ultimate card. After a retry from Room 8, Rooms 5-8 show no cards and time keeps running. A restart shows Room 1's card again. All card text fits its box at the current font sizes. Holding the real Space key or clicking to dismiss wasn't tested, as the unfocused Editor drops input, but that code is unchanged.
+
 ## Phase 17.13: Weak Point drones no longer charge the ultimate
 
 **Why:** Playtest question: "when i retry from checkpoint whys the overwatch ready already". The Weak Point door needs all 4 drones dead, and each kill gave 25 charge, so every player left Room 2 with a full ultimate before they'd faced a single armed drone. It was then saved as ready at the Room 5 checkpoint, so each retry handed it back, and the Room 6 and 7 orbs did nothing unless it had already been spent. The ultimate should be earned in real fights, and those orbs were meant to help earn it.

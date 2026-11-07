@@ -3,12 +3,12 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 /// <summary>
-/// Valorant-style "you just unlocked X" card: icon, name, key, what it does, and one tip tying
-/// it back to "utility before you peek". Shown once per ability the first time
-/// AbilityController's corresponding unlocked flag flips true, plus one for the ultimate the
-/// first time it reaches full charge (or at the start of the last room if it never has).
-/// Pauses the game and unlocks the cursor while up - same mechanism as the settings panel -
-/// so dismissing with a click doesn't also fire the weapon.
+/// The pop-up card that teaches each room: name, what to do, and one tip. Shown once per run when
+/// a room is first entered, after the fade clears. Rooms that introduce an ability show its icon
+/// and key, so the room's lesson and the unlock are one card; the rest show the room number. One
+/// more card explains the ultimate the first time it reaches full charge (or in the last room if
+/// it never has). Pauses the game and unlocks the cursor while up - same mechanism as the settings
+/// panel - so dismissing with a click doesn't also fire the weapon.
 ///
 /// Lives on an always-active host (not the card panel itself) - the panel starts disabled, and
 /// a disabled GameObject's Update() never runs, which would silently kill the unlock polling.
@@ -39,17 +39,15 @@ public class AbilityUnlockCardUI : MonoBehaviour
     public float dismissGraceSeconds = 0.6f;
     public float hintFadeSeconds = 0.25f;
 
-    public AbilityController abilities;
     public UltimateController ultimate;
     public RoomManager rooms;
 
-    public CardData reconCard;
-    public CardData smokeCard;
-    public CardData flashCard;
-    public CardData dashCard;
+    [Tooltip("One per room, same order as RoomManager.rooms. Leave the icon empty to show the room number instead.")]
+    public CardData[] roomCards;
     public CardData ultimateCard;
 
-    bool prevRecon, prevSmoke, prevFlash, prevDash;
+    bool[] roomCardShown;
+    Text roomNumberText;
     bool ultimateCardShown;
     bool showing;
     bool showingUltimate;
@@ -86,11 +84,37 @@ public class AbilityUnlockCardUI : MonoBehaviour
 
         var dismissButton = card != null ? card.GetComponent<Button>() : null;
         if (dismissButton != null) dismissButton.onClick.AddListener(TryDismiss);
+
+        roomCardShown = new bool[roomCards != null ? roomCards.Length : 0];
+        BuildRoomNumberText();
+    }
+
+    /// <summary>Sits in the icon's frame for rooms with no ability to show.</summary>
+    void BuildRoomNumberText()
+    {
+        if (iconImage == null || nameText == null) return;
+
+        var go = new GameObject("RoomNumberText", typeof(RectTransform));
+        go.transform.SetParent(iconImage.transform.parent, false);
+        var rt = go.GetComponent<RectTransform>();
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.offsetMin = Vector2.zero;
+        rt.offsetMax = Vector2.zero;
+
+        roomNumberText = go.AddComponent<Text>();
+        roomNumberText.font = nameText.font;
+        roomNumberText.fontSize = 48;
+        roomNumberText.fontStyle = FontStyle.Bold;
+        roomNumberText.alignment = TextAnchor.MiddleCenter;
+        roomNumberText.color = iconImage.color;
+        roomNumberText.raycastTarget = false;
+        go.SetActive(false);
     }
 
     void Update()
     {
-        PollUnlocks();
+        PollRoomCard();
         PollUltimate();
 
         if (showing)
@@ -120,22 +144,26 @@ public class AbilityUnlockCardUI : MonoBehaviour
         dismissHint.color = c;
     }
 
-    void PollUnlocks()
+    /// <summary>Waits for the fade to clear so the room is visible behind the card, and for any other pause to end -
+    /// dismissing sets timeScale back to 1, which would unfreeze the settings panel or Game Over underneath.</summary>
+    void PollRoomCard()
     {
-        if (abilities == null || showing) return;
+        if (rooms == null || showing || roomCardShown == null) return;
+        if (MainMenuController.IsOpen || rooms.IsTransitioning || Time.timeScale == 0f) return;
 
-        if (abilities.reconDartUnlocked && !prevRecon) { prevRecon = true; Show(reconCard); return; }
-        if (abilities.smokeWallUnlocked && !prevSmoke) { prevSmoke = true; Show(smokeCard); return; }
-        if (abilities.flashUnlocked && !prevFlash) { prevFlash = true; Show(flashCard); return; }
-        if (abilities.dashUnlocked && !prevDash) { prevDash = true; Show(dashCard); return; }
-        // The flags only ever go true. They used to be re-synced to the live unlock state here, so a
-        // checkpoint retry (which re-locks Flash/Dash back in Room 5) reset them and those cards
-        // showed a second time on reaching their rooms again.
+        int room = rooms.CurrentRoom;
+        if (room < 0 || room >= roomCardShown.Length || roomCardShown[room]) return;
+
+        // Stays true for the whole run, so a checkpoint retry doesn't make the player re-read a card.
+        roomCardShown[room] = true;
+        Show(roomCards[room], room + 1);
     }
 
     void PollUltimate()
     {
         if (ultimate == null || ultimateCardShown || showing) return;
+        // The room's own card goes first - otherwise the fallback below opens during the fade into the last room.
+        if (rooms != null && roomCardShown != null && rooms.CurrentRoom >= 0 && rooms.CurrentRoom < roomCardShown.Length && !roomCardShown[rooms.CurrentRoom]) return;
 
         if (ultimate.IsReady)
         {
@@ -153,7 +181,7 @@ public class AbilityUnlockCardUI : MonoBehaviour
         }
     }
 
-    void Show(CardData data)
+    void Show(CardData data, int roomNumber = 0)
     {
         if (card == null || data == null) return;
 
@@ -162,8 +190,18 @@ public class AbilityUnlockCardUI : MonoBehaviour
         IsShowingCard = true;
         shownAtRealtime = Time.unscaledTime;
         UpdateDismissHint();
-        if (iconImage != null) iconImage.sprite = data.icon;
-        if (keyText != null) keyText.text = "[" + data.key + "]";
+        bool hasIcon = data.icon != null;
+        if (iconImage != null)
+        {
+            iconImage.sprite = data.icon;
+            iconImage.gameObject.SetActive(hasIcon);
+        }
+        if (roomNumberText != null)
+        {
+            roomNumberText.text = roomNumber.ToString();
+            roomNumberText.gameObject.SetActive(!hasIcon);
+        }
+        if (keyText != null) keyText.text = string.IsNullOrEmpty(data.key) ? "" : "[" + data.key + "]";
         if (nameText != null) nameText.text = data.abilityName;
         if (descriptionText != null) descriptionText.text = data.description;
         if (tipText != null) tipText.text = data.tip;

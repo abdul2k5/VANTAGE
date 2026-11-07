@@ -8,7 +8,6 @@ public class RoomDefinition
     public string title = "READ THE LINE";
     public string objective = "";
     public Transform entryPoint;
-    public GameObject introPanel;
 }
 
 public class RoomManager : MonoBehaviour
@@ -18,7 +17,6 @@ public class RoomManager : MonoBehaviour
     public RoomDefinition[] rooms;
     public Transform player;
     public Image fadeOverlay;
-    public Text roomTitleLabel;
     public Text objectiveLabel;
     public FollowCamera followCamera;
     public AbilityController abilities;
@@ -41,6 +39,8 @@ public class RoomManager : MonoBehaviour
     public void CancelEntryGrace() { entryGraceUntil = -1f; }
 
     public int CurrentRoom { get { return currentRoom; } }
+    /// <summary>True from the fade-out until the new room has faded back in.</summary>
+    public bool IsTransitioning { get { return transitioning; } }
 
     void Awake()
     {
@@ -92,8 +92,7 @@ public void EnterRoom(int index, bool movePlayer = true)
             abilities.ResetAllCooldowns();
         }
 
-        ShowOnlyCurrentPanel();
-        UpdateTitle();
+        UpdateObjectiveLine();
         UpdateMusic();
         if (CheckpointManager.Instance != null) CheckpointManager.Instance.NotifyRoomEntered(currentRoom);
 
@@ -107,32 +106,20 @@ public void EnterRoom(int index, bool movePlayer = true)
         else AudioManager.Instance.PlayGameplayMusic();
     }
 
-    void ShowOnlyCurrentPanel()
-    {
-        for (int i = 0; i < rooms.Length; i++)
-        {
-            if (rooms[i].introPanel == null) continue;
-            rooms[i].introPanel.SetActive(i == currentRoom);
-        }
-    }
-
-    /// <summary>Re-applies the current room's title/objective text - used by room-gate scripts (e.g. RangeRoomGate) that mutate a RoomDefinition's objective string after a door unlocks, so the HUD updates without a full room re-entry.</summary>
+    /// <summary>Re-applies the current room's objective line - used by room-gate scripts (e.g. RangeRoomGate) that mutate a RoomDefinition's objective string after a door unlocks, so the HUD updates without a full room re-entry.</summary>
     public void RefreshObjectiveText()
     {
-        UpdateTitle();
+        UpdateObjectiveLine();
     }
 
-    void UpdateTitle()
+    /// <summary>The one line of text on screen during play: where you are and what to do now. Teaching is the room card's job.</summary>
+    void UpdateObjectiveLine()
     {
+        if (objectiveLabel == null) return;
+
         var room = rooms[currentRoom];
-        if (roomTitleLabel != null)
-        {
-            roomTitleLabel.text = "ROOM " + (currentRoom + 1) + " / " + rooms.Length + "   " + room.title.ToUpper();
-        }
-        if (objectiveLabel != null)
-        {
-            objectiveLabel.text = string.IsNullOrEmpty(room.objective) ? "" : "OBJECTIVE: " + room.objective;
-        }
+        string where = "<color=#E2A53C><b>ROOM " + (currentRoom + 1) + "/" + rooms.Length + "  " + room.title.ToUpper() + "</b></color>";
+        objectiveLabel.text = string.IsNullOrEmpty(room.objective) ? where : where + "    " + room.objective;
     }
 
     IEnumerator TransitionTo(int index)

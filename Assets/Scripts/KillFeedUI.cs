@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-/// <summary>Short-lived kill notifications, stacking top-to-bottom, auto-expiring like AutoHidePanel.</summary>
+/// <summary>Short-lived kill notifications, stacking top-to-bottom, auto-expiring.</summary>
 public class KillFeedUI : MonoBehaviour
 {
     public static KillFeedUI Instance;
