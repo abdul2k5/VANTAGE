@@ -29694,6 +29694,67 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 424540019}
   m_Mesh: {fileID: 5993241569084158446, guid: 78d77395bf884274488acb59e4f8c4ad, type: 3}
+--- !u!1001 &425580208
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2733592231316202453, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_Name
+      value: Medkit_Dash
+      objectReference: {fileID: 0}
+    - target: {fileID: 3955248224529758934, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: roomIndex
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164662795070277129, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 155.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164662795070277129, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164662795070277129, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164662795070277129, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164662795070277129, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164662795070277129, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164662795070277129, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164662795070277129, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164662795070277129, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164662795070277129, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
 --- !u!1 &425978743
 GameObject:
   m_ObjectHideFlags: 0
@@ -43438,10 +43499,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 849293798}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 93, y: -37}
-  m_SizeDelta: {x: 73, y: 27}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &640557910
 MonoBehaviour:
@@ -49193,10 +49254,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1715469544}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 480, y: -8}
-  m_SizeDelta: {x: 928, y: 20}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &722714020
 MonoBehaviour:
@@ -56456,7 +56517,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -30, y: 30}
-  m_SizeDelta: {x: 113, y: 47}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &849293799
 MonoBehaviour:
@@ -69434,7 +69495,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -20}
-  m_SizeDelta: {x: 960, y: 36}
+  m_SizeDelta: {x: 960, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1046320914
 MonoBehaviour:
@@ -71368,6 +71429,67 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1069494802}
   m_CullTransparentMesh: 1
+--- !u!1001 &1070001014
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2733592231316202453, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_Name
+      value: Medkit_Smoke
+      objectReference: {fileID: 0}
+    - target: {fileID: 3955248224529758934, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: roomIndex
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164662795070277129, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 84.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164662795070277129, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164662795070277129, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164662795070277129, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164662795070277129, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164662795070277129, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164662795070277129, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164662795070277129, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164662795070277129, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164662795070277129, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 32babd158ed4c6b4ebe5d329d2c52a53, type: 3}
 --- !u!1 &1070898301
 GameObject:
   m_ObjectHideFlags: 0
@@ -111963,7 +112085,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 480, y: -0}
-  m_SizeDelta: {x: 960, y: 36}
+  m_SizeDelta: {x: 960, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1715469545
 MonoBehaviour:
@@ -128891,7 +129013,7 @@ MonoBehaviour:
   - key: Q
     abilityName: SMOKE WALL
     description: Drops a wall of smoke that blocks drone sight. You can walk through it, and bullets pass through it both ways.
-    tip: Both drones watch the gap in the wall. Smoke it, then go. They still fire at where they last saw you.
+    tip: Both drones watch the gap. Smoke it and go, but they fire where they last saw you. Green medkits heal 50, out in the open.
     icon: {fileID: 21300000, guid: aa98f8cd7844ac540a3db1599cbd4c6c, type: 3}
   - key: E
     abilityName: FLASH
@@ -142046,3 +142168,5 @@ SceneRoots:
   - {fileID: 198725479}
   - {fileID: 2117202738}
   - {fileID: 565730846}
+  - {fileID: 1070001014}
+  - {fileID: 425580208}

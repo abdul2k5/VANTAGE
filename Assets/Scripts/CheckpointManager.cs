@@ -146,6 +146,12 @@ public class CheckpointManager : MonoBehaviour
             if (orbs[i].roomIndex >= CheckpointRoomIndex) orbs[i].ResetState();
         }
 
+        var medkits = Object.FindObjectsByType<MedkitPickup>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < medkits.Length; i++)
+        {
+            if (medkits[i].roomIndex >= CheckpointRoomIndex) medkits[i].ResetState();
+        }
+
         var gates = Object.FindObjectsByType<RoomExitGate>(FindObjectsSortMode.None);
         for (int i = 0; i < gates.Length; i++)
         {

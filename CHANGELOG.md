@@ -2,6 +2,18 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.16: two medkits, placed where drones can see them
+
+**Why:** Playtest suggestion. Health doesn't refill between rooms, only armor does, so one bad fight early in the second half stayed with the player until they died or reached the end. Medkits give a way back, but free healing would remove the pressure that makes the player use utility first. So each one sits in the open and has to be earned: smoke or dash out to it, or clear the drones first. That keeps them inside the "utility before you peek" idea rather than working against it.
+
+**What changed:**
+- **Two medkits, +50 health each:** one in Smoke (Room 5) behind the wall's east side, and one in Dash (Room 7) on the opposite side from the ultimate orb, so that room offers a choice of two risky trips. They restore health only, not armor. None in The Round, which should stay the hardest test.
+- **Walk over to use:** no key and no inventory, so it can't interrupt a fight. It isn't used up at full health, so it can be left for later, and if the player is standing on one when hit, it picks up straight away.
+- **Checkpoint retry** respawns both, so a retry matches the first arrival at Room 5, the same as the orbs.
+- **Look:** a green glowing case with a white cross, which stands out from the amber orbs. The Smoke room's card now explains it.
+
+**Verified** in Play mode, frame-stepped, by moving the real character into the trigger: at full health the medkit stays. Hit for 80 while standing on it (50 absorbed by armor, 70 health) collects it and clamps at 100. Walking on with 40 health gives 90. Walking off and then being hit doesn't collect it. A retry reset brings it back. Both spots are clear of geometry, on the NavMesh and in a drone's line of sight. The card check caught the first wording being cut off, so it was shortened to fit. Whether +50 and these positions feel right needs a real playtest.
+
 ## Phase 17.15: reload animation and three-beat reload sound
 
 **Why:** Playtest request. A reload is the moment the player can't shoot, so they need to feel it and know when it ends without looking down at the ammo count. Before, the gun didn't move at all and one thud played at the start, which said nothing about when it would be ready. In a game about choosing when to commit, knowing by ear that the gun is ready matters.

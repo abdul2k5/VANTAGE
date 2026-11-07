@@ -51,6 +51,12 @@ public class PlayerHealth : MonoBehaviour
         currentShield = maxShield;
     }
 
+    /// <summary>Health only - armor already refills per room. Used by MedkitPickup.</summary>
+    public void Heal(float amount)
+    {
+        currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
+    }
+
 public void TakeDamage(float amount)
     {
         TakeDamage(amount, transform.position);
