@@ -19,6 +19,8 @@ public class Weapon : MonoBehaviour
     [Tooltip("Multiplier applied to the moving/standing spread lerp while crouched (below 1 = more accurate). Crouched + stationary is the single most accurate state in the game.")]
     public float crouchSpreadMultiplier = 0.5f;
 
+    [Header("Aiming - hold right-click. Zooms for small targets, but doesn't change where shots go")]
+    public float aimInSeconds = 0.15f;
 
     [Header("Recoil - a fixed, learnable spray pattern: the first shot is always true, a held spray climbs")]
     [Tooltip("View kick (degrees up) applied AFTER shot N of a continuous spray - index 0 is the kick after the first shot. Past the end, the last value repeats.")]
@@ -64,6 +66,7 @@ public class Weapon : MonoBehaviour
     Camera cam;
     PlayerController playerController;
     FollowCamera followCamera;
+    AbilityController abilities;
     int sprayIndex;
     float lastShotTime = -999f;
 
@@ -74,6 +77,10 @@ public class Weapon : MonoBehaviour
     public float ReloadProgress01 { get { return isReloading ? 1f - (reloadTimer / reloadSeconds) : 0f; } }
     /// <summary>0 = standing still/perfect accuracy, 1 = full-speed/max spread. Read by the crosshair to visualize spread.</summary>
     public float CurrentSpreadFraction01 { get; private set; }
+    /// <summary>True while right-click is held and the gun can be aimed. Reloading drops out of it.</summary>
+    public bool IsAiming { get; private set; }
+    /// <summary>0 = at the hip, 1 = fully aimed. Read by GunViewmodelAnimator and PlayerController.</summary>
+    public float AimAmount01 { get; private set; }
 
     void Awake()
     {
@@ -86,6 +93,7 @@ public class Weapon : MonoBehaviour
         cc = GetComponent<CharacterController>();
         cam = Camera.main;
         playerController = GetComponent<PlayerController>();
+        abilities = GetComponent<AbilityController>();
         if (cam != null) followCamera = cam.GetComponentInParent<FollowCamera>();
 
     }
@@ -98,6 +106,7 @@ public class Weapon : MonoBehaviour
     void Update()
     {
         UpdateSpread();
+        UpdateAim();
 
         if (MainMenuController.IsOpen || Cursor.lockState != CursorLockMode.Locked) return;
 
@@ -148,6 +157,18 @@ public class Weapon : MonoBehaviour
         {
             StartReload();
         }
+    }
+
+    void UpdateAim()
+    {
+        var mouse = Mouse.current;
+        // Right-click adds bounces while the Recon Dart is being aimed, so it can't also zoom.
+        bool aimingDart = abilities != null && abilities.reconDart != null && abilities.reconDart.IsAiming;
+        IsAiming = mouse != null && mouse.rightButton.isPressed && !isReloading && !aimingDart
+            && !MainMenuController.IsOpen && Cursor.lockState == CursorLockMode.Locked;
+
+        float rate = aimInSeconds > 0f ? Time.deltaTime / aimInSeconds : 1f;
+        AimAmount01 = Mathf.MoveTowards(AimAmount01, IsAiming ? 1f : 0f, rate);
     }
 
 void UpdateSpread()

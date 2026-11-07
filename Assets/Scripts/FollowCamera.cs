@@ -63,7 +63,7 @@ public class FollowCamera : MonoBehaviour
         var mouse = Mouse.current;
         if (mouse == null) return;
 
-        float sensitivity = player != null ? player.mouseSensitivity : mouseSensitivity;
+        float sensitivity = player != null ? player.LookSensitivity : mouseSensitivity;
         float mouseY = mouse.delta.ReadValue().y * sensitivity * 0.1f;
         pitch = Mathf.Clamp(pitch - mouseY, minPitch, maxPitch);
         ApplyRotation();

@@ -12,6 +12,12 @@ public class PlayerController : MonoBehaviour
     [Header("Walk (hold Left Alt) - slower but silent; running footsteps are what Sentinels hear")]
     public float walkSpeedMultiplier = 0.55f;
 
+    [Header("Aiming (hold right-click)")]
+    [Tooltip("Doesn't stack with crouching or walking - the slowest one applies.")]
+    public float aimSpeedMultiplier = 0.5f;
+    [Tooltip("Turning speed when fully aimed. Near 0.65 the view moves about as fast across the screen as it does unzoomed.")]
+    public float aimSensitivityMultiplier = 0.65f;
+
     [Header("Crouch")]
     public Transform cameraPivot;
     public float crouchHeight = 1.0f;
@@ -36,6 +42,7 @@ public class PlayerController : MonoBehaviour
     Vector3 currentVelocity;
     float verticalVelocity;
     AudioSource audioSource;
+    Weapon weapon;
 
     float standHeight;
     bool crouchHeld;
@@ -50,6 +57,8 @@ public class PlayerController : MonoBehaviour
     public bool SuppressMovement { get; set; }
     public bool IsCrouching { get { return crouchHeld; } }
     public bool IsWalking { get { return walkHeld; } }
+    /// <summary>The settings slider's sensitivity, reduced while aiming. Read for both yaw and pitch.</summary>
+    public float LookSensitivity { get { return weapon != null ? mouseSensitivity * Mathf.Lerp(1f, aimSensitivityMultiplier, weapon.AimAmount01) : mouseSensitivity; } }
     /// <summary>Grounded horizontal speed, for footsteps.</summary>
     public float HorizontalSpeed { get { return cc != null ? new Vector2(cc.velocity.x, cc.velocity.z).magnitude : 0f; } }
     public bool IsAirborne { get { return cc != null && !cc.isGrounded; } }
@@ -59,6 +68,7 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         cc = GetComponent<CharacterController>();
+        weapon = GetComponent<Weapon>();
         mouseSensitivity = PlayerPrefs.GetFloat("VantageMouseSensitivity", mouseSensitivity);
         standHeight = cc.height;
         audioSource = GetComponent<AudioSource>();
@@ -112,7 +122,7 @@ public class PlayerController : MonoBehaviour
         var mouse = Mouse.current;
         if (mouse == null) return;
 
-        float mouseX = mouse.delta.ReadValue().x * mouseSensitivity * 0.1f;
+        float mouseX = mouse.delta.ReadValue().x * LookSensitivity * 0.1f;
         transform.Rotate(Vector3.up, mouseX, Space.World);
     }
 
@@ -165,6 +175,7 @@ public class PlayerController : MonoBehaviour
         float speedMultiplier = 1f;
         if (crouchHeld) speedMultiplier *= crouchSpeedMultiplier;
         else if (walkHeld) speedMultiplier *= walkSpeedMultiplier;
+        if (weapon != null && weapon.IsAiming) speedMultiplier = Mathf.Min(speedMultiplier, aimSpeedMultiplier);
         if (landingPenaltyRemaining > 0f) speedMultiplier *= landingSpeedMultiplier;
 
         Vector3 desired = (transform.right * moveInput.x + transform.forward * moveInput.y) * moveSpeed * speedMultiplier;

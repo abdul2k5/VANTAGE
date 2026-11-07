@@ -51948,6 +51948,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GunViewmodelAnimator
   weapon: {fileID: 1584037071}
   magazine: {fileID: 1253907781}
+  aimPosition: {x: 0, y: -0.2, z: 0.4}
+  aimFieldOfView: 40
   reloadPositionOffset: {x: -0.05, y: -0.07, z: -0.04}
   reloadTiltDegrees: {x: -22, y: 8, z: 14}
   returnStartsAt: 0.78
@@ -103905,6 +103907,7 @@ MonoBehaviour:
   movingSpreadDegrees: 4.5
   fullSpeedForMaxSpread: 5
   crouchSpreadMultiplier: 0.5
+  aimInSeconds: 0.15
   recoilPitchPattern:
   - 0.9
   - 0.9
@@ -103974,6 +103977,8 @@ MonoBehaviour:
   mouseSensitivity: 2
   gravity: -20
   walkSpeedMultiplier: 0.55
+  aimSpeedMultiplier: 0.5
+  aimSensitivityMultiplier: 0.65
   cameraPivot: {fileID: 811350176}
   crouchHeight: 1
   standEyeHeight: 1.6
@@ -128992,7 +128997,7 @@ MonoBehaviour:
   roomCards:
   - key: 
     abilityName: THE RANGE
-    description: '[WASD] to move, mouse to look, [Left-click] to shoot, [R] to reload. Stand still and your shots land together. Move and they spread.'
+    description: '[WASD] move, [Left-click] shoot, hold [Right-click] aim, [R] reload. Stand still and your shots land together. Move and they spread.'
     tip: Hit all 3 targets to open the door. Dying restarts the run until you reach the Room 5 checkpoint.
     icon: {fileID: 0}
   - key: 

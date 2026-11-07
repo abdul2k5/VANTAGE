@@ -1,10 +1,15 @@
 using UnityEngine;
 
-/// <summary>Plays the reload on the first-person gun, entirely from Weapon.ReloadProgress01. Because the pose is worked out from progress each frame, it pauses when the reload pauses, and an instant Weapon.Reload() puts the gun straight back.</summary>
+/// <summary>Poses the first-person gun for aiming and reloading, entirely from Weapon.AimAmount01 and Weapon.ReloadProgress01. Because the pose is worked out from those each frame, it pauses when the reload pauses, and an instant Weapon.Reload() puts the gun straight back.</summary>
 public class GunViewmodelAnimator : MonoBehaviour
 {
     public Weapon weapon;
     public Transform magazine;
+
+    [Header("Aiming")]
+    [Tooltip("Gun position when fully aimed. The scope is a solid model, so it sits just under the crosshair rather than on it, which would hide the target.")]
+    public Vector3 aimPosition = new Vector3(0f, -0.2f, 0.4f);
+    public float aimFieldOfView = 40f;
 
     [Header("Reload pose")]
     public Vector3 reloadPositionOffset = new Vector3(-0.05f, -0.07f, -0.04f);
@@ -32,11 +37,15 @@ public class GunViewmodelAnimator : MonoBehaviour
     Quaternion baseRotation;
     Vector3 magazineBasePosition;
     Vector3 magazineDownPerMetre;
+    Camera cam;
+    float baseFieldOfView;
 
     void Awake()
     {
         basePosition = transform.localPosition;
         baseRotation = transform.localRotation;
+        cam = GetComponentInParent<Camera>();
+        if (cam != null) baseFieldOfView = cam.fieldOfView;
 
         if (magazine != null)
         {
@@ -64,7 +73,10 @@ public class GunViewmodelAnimator : MonoBehaviour
         float sinceSeated = (progress - weapon.reloadMagInAt) / seatJoltDuration;
         if (sinceSeated > 0f && sinceSeated < 1f) jolt = Mathf.Sin(sinceSeated * Mathf.PI) * seatJoltDistance;
 
-        transform.localPosition = basePosition + reloadPositionOffset * weight + Vector3.up * jolt;
+        float aim = Mathf.SmoothStep(0f, 1f, weapon.AimAmount01);
+        if (cam != null) cam.fieldOfView = Mathf.Lerp(baseFieldOfView, aimFieldOfView, aim);
+
+        transform.localPosition = Vector3.Lerp(basePosition, aimPosition, aim) + reloadPositionOffset * weight + Vector3.up * jolt;
         transform.localRotation = baseRotation * Quaternion.Euler(reloadTiltDegrees * weight);
 
         if (magazine != null) magazine.localPosition = magazineBasePosition + magazineDownPerMetre * MagazineDrop(progress);

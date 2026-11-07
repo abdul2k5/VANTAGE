@@ -2,6 +2,20 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.17: hold right-click to aim with the scope
+
+**Why:** Playtest request. The gun has a scope on it that did nothing, and the drones' eye is a small target at range. The important design decision is what aiming doesn't do. A standing shot is already perfectly accurate, and that's the point of the gunplay: stopping is what makes you accurate. If aiming also tightened spread or recoil, it would become the new requirement and the hip shot would be pointless. So it only makes the target bigger on screen, and it costs mobility while held. It's a choice for a planned long shot, not a straight upgrade.
+
+**What changed:**
+- **Hold right-click:** over 0.15s the view zooms from 60 to 40 degrees and the gun moves to the centre, with the scope just under the crosshair. The scope is a solid model, so centring it on the crosshair would hide the target.
+- **Slower while aiming:** half speed, the same as crouching. It doesn't stack with crouching or walking, because crouched and aimed is the most patient position in the game and shouldn't also be a crawl. Moving while aimed is still loud unless you also hold Alt.
+- **Turning:** 65% sensitivity when fully aimed, so the view moves across the screen at about the usual rate.
+- **Accuracy unchanged:** spread and recoil use the same rules and values. Half speed does mean half the moving spread, the same as any slower movement.
+- **Reloading drops out of aim,** and returns on its own if right-click is still held. While the Recon Dart is being aimed, right-click still adds bounces and doesn't zoom.
+- The Range card now lists the control.
+
+**Verified** in Play mode, frame-stepped, with mouse and keyboard state written directly into the input system, which is closer to real input than earlier tests: aiming reaches 40 degrees and the centre pose within 8 frames, and releasing restores the exact starting pose. Run speed is 5.00 at the hip, and 2.50 aimed, aimed and walking, or aimed and crouched. Right-click alone fired no shots in 40 frames. Adding left-click fired one shot with the usual 0.9 degree kick. Reload, Recon aiming and an unlocked cursor all drop out of aim. The crosshair is clear of the scope in a screenshot. A real mouse hasn't judged the feel of the zoom, turning speed or the kick at 40 degrees, which looks larger when zoomed.
+
 ## Phase 17.16: two medkits, placed where drones can see them
 
 **Why:** Playtest suggestion. Health doesn't refill between rooms, only armor does, so one bad fight early in the second half stayed with the player until they died or reached the end. Medkits give a way back, but free healing would remove the pressure that makes the player use utility first. So each one sits in the open and has to be earned: smoke or dash out to it, or clear the drones first. That keeps them inside the "utility before you peek" idea rather than working against it.
