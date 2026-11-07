@@ -36,7 +36,9 @@ public class CrosshairController : MonoBehaviour
     /// <summary>Half-width of the 200x200 preview box minus a margin. At big size+gap settings the zoom shrinks so the whole crosshair still fits.</summary>
     const float previewFitHalfExtent = 88f;
     /// <summary>On-screen outline thickness in the preview, kept constant whatever the zoom.</summary>
-    const float previewOutlinePixels = 1.5f;
+    const float previewOutlinePixels = 3f;
+    /// <summary>HUD outline thickness in local px (scales with the size setting). Was 1, which was too faint against the dark corridors.</summary>
+    const float hudOutlinePixels = 2f;
 
     readonly Dictionary<RectTransform, Vector2[]> baseBarPositions = new Dictionary<RectTransform, Vector2[]>();
 
@@ -250,9 +252,9 @@ public class CrosshairController : MonoBehaviour
         for (int i = 0; i < roots.Length; i++)
         {
             if (roots[i] == null) continue;
-            // HUD: 1 local px (scales with the size setting like before). Preview: divide out the zoom so it stays thin.
+            // HUD: fixed local px (scales with the size setting). Preview: divide out the zoom so it stays thin.
             bool isPreview = roots == previewStyleRoots;
-            float distance = isPreview ? previewOutlinePixels / Mathf.Max(0.01f, roots[i].localScale.x) : 1f;
+            float distance = isPreview ? previewOutlinePixels / Mathf.Max(0.01f, roots[i].localScale.x) : hudOutlinePixels;
             var images = roots[i].GetComponentsInChildren<Image>(true);
             for (int j = 0; j < images.Length; j++)
             {

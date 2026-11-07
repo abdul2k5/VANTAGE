@@ -2,6 +2,14 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.29: Thicker crosshair outline
+
+**Why:** The 1px black outline was hard to see against the dark night-shift corridors, and the user asked for 2px.
+
+**What changed:** the in-game outline distance changed from 1 to 2 local px. It still scales with the Size setting. The preview outline changed from 1.5 to 3 on-screen px, so it still looks proportionate at 2x zoom.
+
+**Verified:** compiles cleanly. In Play mode the HUD cross bar's Outline reads (2, -2), and at default size the preview's reads (1.5, -1.5) local, which is 3px on screen.
+
 ## Phase 17.28: Crosshair preview scale and outline visibility
 
 **Why:** The user sent a screenshot of the crosshair preview set to dot, 200% size and outline ON. The dot filled most of the preview box, and its outline was invisible. The preview zoomed everything a flat 5.2x, so the 8px dot became 83px and its 1px outline became a 10px black square. That square sat on a near-black box (0.03 grey), which hid it.
