@@ -2,6 +2,17 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.23: Headshots count only on the visible eye
+
+**Why:** The user's full run showed 59% headshots, and asked to tighten the zone. Measured with a grid of test rays against the drone's visible meshes, the headshot area was about 6.7 times the size of the visible eye (radius 0.18m against an eye of 0.07m). Air and body beside the eye counted as headshots. It was also wrong the other way: the body hitbox is a square box round a round body, so its corners sat in front of the eye from the side. From 60 degrees off, every shot on the visible eye scored as a body shot. Shrinking the eye collider alone made side angles worse, and a convex body collider still covered part of the eye socket, so no collider shape fixed both.
+
+**What changed:**
+- The colliders now only decide that a bullet reached a drone. `Weakpoint.IsHitBy` then traces the shot against the eye mesh and the drone's other visible meshes, and it's a headshot only if the eye is the first thing the bullet touches. Body hits are unchanged.
+- The eye collider shrinks from radius 0.18m to 0.09m, just over the eye's 0.07m, on all 15 drones and the reinforcement prefab, so empty air beside the eye no longer catches bullets.
+- Read/Write is enabled on the drone model so the meshes can be read in a build.
+
+**Verified:** With 7,000+ test rays from 24 directions at five heights, 2,672 touched the visible eye. 7 of those didn't score a headshot, and 10 rays that missed the eye did, all grazing its edge (before: 1,011 and 10,887). Each check costs about 0.01ms per shot. In Play mode, firing the real gun scored a headshot kill on the eye centre, a body shot (12.5 damage) 0.12m beside the eye (a headshot before), and a headshot kill on the eye from 50 degrees to the side.
+
 ## Phase 17.22: Volume sliders default to 100%
 
 **Why:** User feedback: the sliders should start at 100%, not 80%. The game was balanced at the old 80% default, so making 100% simply mean full mixer volume would have made the default louder than every playtest so far. Kept all three sliders: Music versus SFX is the split players actually use (music off, game sounds on), Master sets everything at once, and the game has no voice or separate ambience to justify more.

@@ -231,8 +231,9 @@ void UpdateSpread()
             var sentinel = hit.collider.GetComponentInParent<Sentinel>();
             if (sentinel != null)
             {
-                var weakpoint = hit.collider.GetComponent<Weakpoint>();
-                bool headshot = weakpoint != null;
+                // Whichever collider caught the bullet, it's a headshot only if it touches the eye you can see.
+                var weakpoint = sentinel.GetComponentInChildren<Weakpoint>();
+                bool headshot = weakpoint != null && weakpoint.IsHitBy(new Ray(origin, dir), range);
                 float dealt = headshot ? damage * headshotMultiplier : damage * sentinel.bodyDamageMultiplier;
 
                 bool aliveBefore = sentinel.gameObject.activeSelf;
