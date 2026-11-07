@@ -167,7 +167,7 @@ public static class SettingsPanelBuilder
         EditorUtility.SetDirty(rooms);
 
         // ---------------- CROSSHAIR ----------------
-        var crosshair = smc.sizeSlider.transform.parent.parent.parent; // row -> RightColumn -> tab
+        var crosshair = smc.lengthSlider.transform.parent.parent.parent; // row -> RightColumn -> tab
         var columns = GetOrAdd<HorizontalLayoutGroup>(crosshair.gameObject);
         Configure(columns, TextAnchor.UpperLeft, 24f, 0);
         var left = crosshair.Find("LeftColumn");
@@ -182,18 +182,39 @@ public static class SettingsPanelBuilder
         previewBox.GetComponent<Image>().color = new Color(0.36f, 0.38f, 0.37f, 1f);
         EditorUtility.SetDirty(previewBox.GetComponent<Image>());
 
+        var cc = Object.FindFirstObjectByType<CrosshairController>(FindObjectsInactive.Include);
+        Sprite dotSprite = BuildCrosshairRoots(cc, previewBox);
+
+        // Heights: 22 + 64 + 8 + 22 + 58 + 8 + 4 rows x 52, plus 9 gaps of 6 = 444 of the 452 available.
+        // At most 4 rows show at once - DOT hides the 3 line rows and shows Dot Size instead.
         SectionHeader(right.Find("StyleHeader"), font, "STYLE");
-        Size(right.Find("TileRow").gameObject, 472f, 72f);
-        Size(right.Find("Spacer1").gameObject, 472f, 14f);
+        BuildStyleTiles(smc, right.Find("TileRow"), dotSprite);
+        Size(right.Find("Spacer1").gameObject, 472f, 8f);
         SectionHeader(right.Find("ColorHeader"), font, "COLOR");
         Size(right.Find("ChipRow").gameObject, 472f, 58f);
-        Size(right.Find("Spacer2").gameObject, 472f, 14f);
-        SliderRow(smc.sizeSlider, smc.sizeValueText, font, 200f, "Length of the crosshair lines.");
-        SliderRow(smc.gapSlider, smc.gapValueText, font, 200f, "Space between the lines and the centre.");
-        ToggleRow(smc.outlineButton, font, "Dark border around the crosshair so it stays visible on bright walls.");
+        Size(right.Find("Spacer2").gameObject, 472f, 8f);
 
-        string[] shapes = { "Cross: four lines around the centre.", "Dot: a single point.", "Brackets: four corners." };
-        for (int i = 0; i < smc.styleTileOutlines.Length; i++) Hint(smc.styleTileOutlines[i].gameObject, null, "Crosshair shape. " + shapes[Mathf.Min(i, shapes.Length - 1)]);
+        var gapRow = smc.gapSlider.transform.parent;
+        var so0 = new SerializedObject(smc);
+        if (smc.thicknessSlider == null) CloneRow(gapRow, "ThicknessRow", so0, "thicknessSlider", "thicknessValueText");
+        if (smc.dotSizeSlider == null) CloneRow(gapRow, "DotSizeRow", so0, "dotSizeSlider", "dotSizeValueText");
+        so0.ApplyModifiedPropertiesWithoutUndo();
+        smc.lengthSlider.transform.parent.name = "LengthRow";
+
+        PixelRow(smc.lengthSlider, smc.lengthValueText, font, "LENGTH", CrosshairController.MinLength, CrosshairController.MaxLength, "How long each line is, in pixels.");
+        PixelRow(smc.thicknessSlider, smc.thicknessValueText, font, "THICKNESS", CrosshairController.MinThickness, CrosshairController.MaxThickness, "How thick each line is, in pixels. Also sets the centre dot of CROSS + DOT.");
+        PixelRow(smc.gapSlider, smc.gapValueText, font, "GAP", CrosshairController.MinGap, CrosshairController.MaxGap, "Space between the centre and the lines, in pixels. The lines also push out while your shots are spreading.");
+        PixelRow(smc.dotSizeSlider, smc.dotSizeValueText, font, "DOT SIZE", CrosshairController.MinDot, CrosshairController.MaxDot, "Width of the dot, in pixels.");
+        ToggleRow(smc.outlineButton, font, "2px black border around the crosshair so it stays visible on bright walls.");
+
+        int order = right.Find("Spacer2").GetSiblingIndex() + 1;
+        foreach (var s in new[] { smc.lengthSlider, smc.thicknessSlider, smc.gapSlider, smc.dotSizeSlider })
+            s.transform.parent.SetSiblingIndex(order++);
+        smc.outlineButton.transform.parent.SetSiblingIndex(order);
+        // Saved for the default CROSS style; the menu swaps line rows and the dot row per style when it opens.
+        foreach (var s in new[] { smc.lengthSlider, smc.thicknessSlider, smc.gapSlider }) s.transform.parent.gameObject.SetActive(true);
+        smc.dotSizeSlider.transform.parent.gameObject.SetActive(false);
+
         foreach (var ring in smc.colorChipSelectedRings)
         {
             var swatch = ring.transform.parent.Find(ring.name.Replace("ColorRing", "Swatch"));
@@ -276,6 +297,132 @@ public static class SettingsPanelBuilder
         var label = toggle.GetComponentInChildren<Text>(true);
         Stretch(label.rectTransform);
         StyleText(label, font, null, 14, LightText, TextAnchor.MiddleCenter);
+    }
+
+    static void PixelRow(Slider slider, Text value, Font font, string label, float min, float max, string hint)
+    {
+        SliderRow(slider, value, font, 200f, hint);
+        slider.transform.parent.Find("Label").GetComponent<Text>().text = label;
+        slider.wholeNumbers = true;
+        slider.minValue = min;
+        slider.maxValue = max;
+        EditorUtility.SetDirty(slider);
+    }
+
+    /// <summary>Copies an existing slider row (keeps its look and layout) and wires the copy into the given SettingsMenuController fields.</summary>
+    static void CloneRow(Transform template, string name, SerializedObject so, string sliderField, string valueField)
+    {
+        var clone = Object.Instantiate(template.gameObject, template.parent);
+        clone.name = name;
+        var slider = clone.GetComponentInChildren<Slider>(true);
+        slider.onValueChanged = new Slider.SliderEvent();
+        so.FindProperty(sliderField).objectReferenceValue = slider;
+        so.FindProperty(valueField).objectReferenceValue = clone.transform.Find("ValueBox/Value").GetComponent<Text>();
+    }
+
+    // ---------------- CROSSHAIR SHAPES ----------------
+
+    static readonly string[] TileKeys = { "CROSS", "CROSSDOT", "DOT", "T" };
+    static readonly string[] TileHints =
+    {
+        "Cross: four lines around the centre.",
+        "Cross + Dot: four lines with a small square in the middle.",
+        "Dot: a single round point.",
+        "T-Shape: a cross without the top line, so nothing covers what's above your aim.",
+    };
+
+    /// <summary>
+    /// Swaps the old prebuilt crosshair shapes (one object per style, scaled by percentages) for one
+    /// empty root each in the HUD and the preview box; CrosshairController draws the parts into them
+    /// at runtime. Returns the round sprite for the DOT style.
+    /// </summary>
+    static Sprite BuildCrosshairRoots(CrosshairController cc, Transform previewBox)
+    {
+        Transform canvas = cc.transform;
+        Sprite dot = cc.dotSprite;
+        var oldDot = canvas.Find("Crosshair_Dot");
+        if (dot == null && oldDot != null && oldDot.childCount > 0) dot = oldDot.GetChild(0).GetComponent<Image>().sprite;
+
+        var centre = new Vector2(0.5f, 0.5f);
+        var hud = Child(canvas, "Crosshair");
+        var oldCross = canvas.Find("Crosshair_Cross");
+        if (oldCross != null) hud.SetSiblingIndex(oldCross.GetSiblingIndex());
+        Place(hud, centre, centre, centre, Vector2.zero, Vector2.zero);
+        foreach (var n in new[] { "Crosshair_Cross", "Crosshair_Dot", "Crosshair_Brackets" }) DestroyChild(canvas, n);
+
+        var preview = Child(previewBox, "Preview_Crosshair_Live");
+        Place(preview, centre, centre, centre, Vector2.zero, Vector2.zero);
+        foreach (var n in new[] { "Preview_Crosshair_Cross", "Preview_Crosshair_Dot", "Preview_Crosshair_Brackets" }) DestroyChild(previewBox, n);
+
+        var so = new SerializedObject(cc);
+        so.FindProperty("hudRoot").objectReferenceValue = hud;
+        so.FindProperty("previewRoot").objectReferenceValue = preview;
+        so.FindProperty("dotSprite").objectReferenceValue = dot;
+        so.ApplyModifiedPropertiesWithoutUndo();
+        return dot;
+    }
+
+    /// <summary>One 64x64 tile per style, in CrosshairController's style order, each with a small drawn icon.</summary>
+    static void BuildStyleTiles(SettingsMenuController smc, Transform row, Sprite dot)
+    {
+        var template = row.Find("Option_CROSS");
+        DestroyChild(row, "Option_BRACKETS");
+        var outlines = new Outline[TileKeys.Length];
+        var icons = new RectTransform[TileKeys.Length];
+        for (int i = 0; i < TileKeys.Length; i++)
+        {
+            var tile = row.Find("Option_" + TileKeys[i]);
+            if (tile == null)
+            {
+                tile = Object.Instantiate(template.gameObject, row).transform;
+                tile.name = "Option_" + TileKeys[i];
+            }
+            tile.SetSiblingIndex(i);
+            var option = tile.GetComponent<CrosshairOptionButton>();
+            option.styleIndex = i;
+            EditorUtility.SetDirty(option);
+            Size(tile.gameObject, 64f, 64f);
+
+            var icon = (RectTransform)tile.Find("Icon");
+            for (int c = icon.childCount - 1; c >= 0; c--) Object.DestroyImmediate(icon.GetChild(c).gameObject);
+            if (i != CrosshairController.StyleDot)
+            {
+                IconBar(icon, new Vector2(-9f, 0f), new Vector2(10f, 2f), null);
+                IconBar(icon, new Vector2(9f, 0f), new Vector2(10f, 2f), null);
+                IconBar(icon, new Vector2(0f, -9f), new Vector2(2f, 10f), null);
+                if (i != CrosshairController.StyleT) IconBar(icon, new Vector2(0f, 9f), new Vector2(2f, 10f), null);
+            }
+            if (i == CrosshairController.StyleCrossDot) IconBar(icon, Vector2.zero, new Vector2(2f, 2f), null);
+            if (i == CrosshairController.StyleDot) IconBar(icon, Vector2.zero, new Vector2(10f, 10f), dot);
+
+            Hint(tile.gameObject, null, "Crosshair shape. " + TileHints[i]);
+            outlines[i] = tile.GetComponent<Outline>();
+            icons[i] = icon;
+        }
+        Size(row.gameObject, 472f, 64f);
+
+        var so = new SerializedObject(smc);
+        var outlineProp = so.FindProperty("styleTileOutlines");
+        var iconProp = so.FindProperty("styleTileIconRoots");
+        outlineProp.arraySize = iconProp.arraySize = TileKeys.Length;
+        for (int i = 0; i < TileKeys.Length; i++)
+        {
+            outlineProp.GetArrayElementAtIndex(i).objectReferenceValue = outlines[i];
+            iconProp.GetArrayElementAtIndex(i).objectReferenceValue = icons[i];
+        }
+        so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    static void IconBar(RectTransform icon, Vector2 position, Vector2 size, Sprite sprite)
+    {
+        var go = new GameObject("Bar", typeof(RectTransform), typeof(Image));
+        go.transform.SetParent(icon, false);
+        var rt = (RectTransform)go.transform;
+        rt.anchoredPosition = position;
+        rt.sizeDelta = size;
+        var img = go.GetComponent<Image>();
+        img.sprite = sprite;
+        img.raycastTarget = false;
     }
 
     static void StyleRow(RectTransform row, Font font, string hint)

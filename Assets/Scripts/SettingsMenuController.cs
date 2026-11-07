@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 /// <summary>
@@ -61,10 +62,15 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
     /// <summary>Icon bars inside each style tile (the small crosshair-shape preview) - recolored accent/light together with the outline.</summary>
     public RectTransform[] styleTileIconRoots;
     public GameObject[] colorChipSelectedRings;
-    public Slider sizeSlider;
-    public Text sizeValueText;
+    /// <summary>Crosshair sliders, all in px. The line rows hide for the DOT style and the dot row shows only for it.</summary>
+    [FormerlySerializedAs("sizeSlider")] public Slider lengthSlider;
+    [FormerlySerializedAs("sizeValueText")] public Text lengthValueText;
+    public Slider thicknessSlider;
+    public Text thicknessValueText;
     public Slider gapSlider;
     public Text gapValueText;
+    public Slider dotSizeSlider;
+    public Text dotSizeValueText;
     public Button outlineButton;
     public Image outlineButtonImage;
     public Text outlineButtonLabel;
@@ -104,8 +110,10 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
         }
 
         if (sensitivitySlider != null) sensitivitySlider.onValueChanged.AddListener(OnSensitivityChanged);
-        if (sizeSlider != null) sizeSlider.onValueChanged.AddListener(OnSizeChanged);
+        if (lengthSlider != null) lengthSlider.onValueChanged.AddListener(OnLengthChanged);
+        if (thicknessSlider != null) thicknessSlider.onValueChanged.AddListener(OnThicknessChanged);
         if (gapSlider != null) gapSlider.onValueChanged.AddListener(OnGapChanged);
+        if (dotSizeSlider != null) dotSizeSlider.onValueChanged.AddListener(OnDotSizeChanged);
         if (outlineButton != null) outlineButton.onClick.AddListener(OnOutlineToggleClicked);
 
         if (masterSlider != null) masterSlider.onValueChanged.AddListener(OnMasterChanged);
@@ -158,6 +166,7 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
         if (CrosshairController.Instance != null) CrosshairController.Instance.SetCrosshairVisible(false);
 
         RefreshAllControlsFromState();
+        RefreshHighlights(); // right rows for the style straight away, not a frame later
         ShowHint(null);
         ShowTab(currentTab);
     }
@@ -292,16 +301,33 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
         if (sensitivityValueText != null) sensitivityValueText.text = v.ToString("0.0");
     }
 
-    void OnSizeChanged(float v)
+    void OnLengthChanged(float v)
     {
-        if (CrosshairController.Instance != null) CrosshairController.Instance.SetSize(v);
-        if (sizeValueText != null) sizeValueText.text = FormatPercent(v);
+        if (CrosshairController.Instance != null) CrosshairController.Instance.SetLength(v);
+        if (lengthValueText != null) lengthValueText.text = FormatPixels(v);
+    }
+
+    void OnThicknessChanged(float v)
+    {
+        if (CrosshairController.Instance != null) CrosshairController.Instance.SetThickness(v);
+        if (thicknessValueText != null) thicknessValueText.text = FormatPixels(v);
     }
 
     void OnGapChanged(float v)
     {
         if (CrosshairController.Instance != null) CrosshairController.Instance.SetGap(v);
-        if (gapValueText != null) gapValueText.text = FormatPercent(v);
+        if (gapValueText != null) gapValueText.text = FormatPixels(v);
+    }
+
+    void OnDotSizeChanged(float v)
+    {
+        if (CrosshairController.Instance != null) CrosshairController.Instance.SetDotSize(v);
+        if (dotSizeValueText != null) dotSizeValueText.text = FormatPixels(v);
+    }
+
+    static string FormatPixels(float v)
+    {
+        return Mathf.RoundToInt(v).ToString();
     }
 
     void OnOutlineToggleClicked()
@@ -377,12 +403,13 @@ void OnCheckpointsToggleClicked()
             if (sensitivityValueText != null) sensitivityValueText.text = player.mouseSensitivity.ToString("0.0");
         }
 
-        if (CrosshairController.Instance != null)
+        var cc = CrosshairController.Instance;
+        if (cc != null)
         {
-            if (sizeSlider != null) sizeSlider.SetValueWithoutNotify(CrosshairController.Instance.CurrentSize);
-            if (sizeValueText != null) sizeValueText.text = FormatPercent(CrosshairController.Instance.CurrentSize);
-            if (gapSlider != null) gapSlider.SetValueWithoutNotify(CrosshairController.Instance.CurrentGap);
-            if (gapValueText != null) gapValueText.text = FormatPercent(CrosshairController.Instance.CurrentGap);
+            SetPixelSlider(lengthSlider, lengthValueText, cc.CurrentLength);
+            SetPixelSlider(thicknessSlider, thicknessValueText, cc.CurrentThickness);
+            SetPixelSlider(gapSlider, gapValueText, cc.CurrentGap);
+            SetPixelSlider(dotSizeSlider, dotSizeValueText, cc.CurrentDotSize);
             UpdateOutlineLabel();
         }
 
@@ -397,11 +424,30 @@ void OnCheckpointsToggleClicked()
         }
     }
 
+    static void SetPixelSlider(Slider slider, Text value, float v)
+    {
+        if (slider != null) slider.SetValueWithoutNotify(v);
+        if (value != null) value.text = FormatPixels(v);
+    }
+
+    /// <summary>Shows only the rows that do something for this style: lines for the line styles, dot size for DOT.</summary>
+    static void ShowRow(Slider slider, bool show)
+    {
+        if (slider == null) return;
+        var row = slider.transform.parent.gameObject;
+        if (row.activeSelf != show) row.SetActive(show);
+    }
+
     void RefreshHighlights()
     {
         if (CrosshairController.Instance == null) return;
 
         int style = CrosshairController.Instance.CurrentStyle;
+        bool dot = style == CrosshairController.StyleDot;
+        ShowRow(lengthSlider, !dot);
+        ShowRow(thicknessSlider, !dot);
+        ShowRow(gapSlider, !dot);
+        ShowRow(dotSizeSlider, dot);
         if (styleTileOutlines != null)
         {
             for (int i = 0; i < styleTileOutlines.Length; i++)

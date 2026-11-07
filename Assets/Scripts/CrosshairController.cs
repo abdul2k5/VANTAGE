@@ -1,17 +1,35 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>Fixed screen-center crosshair (FPS aim is screen-locked, unlike the old mouse-follow version).</summary>
+/// <summary>
+/// Fixed screen-center crosshair (FPS aim is screen-locked, unlike the old mouse-follow version).
+/// Drawn in code from pixel settings - line length, thickness, gap and dot size - the way other
+/// shooters set crosshairs up, instead of scaling a prebuilt shape by a percentage. The same
+/// drawing goes into the HUD and into the settings-menu preview.
+/// </summary>
 public class CrosshairController : MonoBehaviour
 {
     public static CrosshairController Instance;
 
-    public RectTransform[] styleRoots;
-    [Tooltip("Optional small mirror of styleRoots shown as a live preview inside the settings menu. Same index order as styleRoots. Always visible at the chosen style/color/size/gap - never affected by gameplay spread or crosshairVisible.")]
-    public RectTransform[] previewStyleRoots;
-    [Tooltip("Scale multiplier applied to the active crosshair at full spread (1 = no widening).")]
-    public float maxSpreadScale = 2.2f;
+    public const int StyleCross = 0;
+    public const int StyleCrossDot = 1;
+    public const int StyleDot = 2;
+    public const int StyleT = 3;
+    public const int StyleCount = 4;
+
+    public const float MinLength = 2f, MaxLength = 24f;
+    public const float MinThickness = 1f, MaxThickness = 6f;
+    public const float MinGap = 0f, MaxGap = 20f;
+    public const float MinDot = 2f, MaxDot = 16f;
+
+    [Tooltip("Empty, screen-centred root the HUD crosshair parts are built under at runtime.")]
+    public RectTransform hudRoot;
+    [Tooltip("Empty root inside the settings preview box. Shows the same crosshair, zoomed, never affected by spread or hiding.")]
+    public RectTransform previewRoot;
+    [Tooltip("Round sprite for the DOT style.")]
+    public Sprite dotSprite;
+    [Tooltip("Extra gap in px at full spread, so the lines push outwards when shots will scatter.")]
+    public float spreadExtraGap = 14f;
 
     /// <summary>Index-selected via the settings menu - same pattern as style. Orange (index 0) matches the existing HUD accent color.</summary>
     public static readonly Color[] ColorOptions =
@@ -23,254 +41,203 @@ public class CrosshairController : MonoBehaviour
         new Color(0.3f, 0.85f, 1f),        // cyan
     };
 
-    int currentStyle;
-    int currentColor;
-    bool crosshairVisible = true;
-    float spreadFraction01;
-    float sizeMultiplier = 1f;
-    float gapMultiplier = 1f;
+    /// <summary>Outline thickness in px around every part, when the outline is on.</summary>
+    const float OutlinePx = 2f;
+    /// <summary>Preview shows the crosshair at 2x HUD size, zooming out if it wouldn't fit inside 88px of the 200x200 box's centre.</summary>
+    const float PreviewZoom = 2f;
+    const float PreviewFitHalfExtent = 88f;
+
+    const string Prefix = "VantageXhair.";
+
+    int style;
+    int colorIndex;
+    float length = 16f;
+    float thickness = 2f;
+    float gap = 4f;
+    float dotSize = 6f;
     bool outlineOn;
+    bool crosshairVisible = true;
+    float spread01;
 
-    /// <summary>Preview shows the crosshair at 2x its real HUD size. Was a flat 5.2x, which blew a 200% dot up to an 83px blob and its 1px outline to a 10px black square.</summary>
-    const float previewZoom = 2f;
-    /// <summary>Half-width of the 200x200 preview box minus a margin. At big size+gap settings the zoom shrinks so the whole crosshair still fits.</summary>
-    const float previewFitHalfExtent = 88f;
-    /// <summary>On-screen outline thickness in the preview, kept constant whatever the zoom.</summary>
-    const float previewOutlinePixels = 3f;
-    /// <summary>HUD outline thickness in local px (scales with the size setting). Was 1, which was too faint against the dark corridors.</summary>
-    const float hudOutlinePixels = 2f;
+    /// <summary>One crosshair piece: the coloured fill plus a black copy 2px bigger behind it as the outline. A real backing shape, not a UI Outline effect, so a round dot gets a round outline.</summary>
+    class Part
+    {
+        public Image outline;
+        public Image fill;
+    }
 
-    readonly Dictionary<RectTransform, Vector2[]> baseBarPositions = new Dictionary<RectTransform, Vector2[]>();
+    // Left, right, bottom, top, centre.
+    static readonly string[] PartNames = { "Left", "Right", "Bottom", "Top", "Centre" };
+    Part[] hudParts;
+    Part[] previewParts;
 
     void Awake()
     {
         Instance = this;
-        currentStyle = PlayerPrefs.GetInt("VantageCrosshairStyle", 0);
-        currentColor = PlayerPrefs.GetInt("VantageCrosshairColor", 0);
-        sizeMultiplier = PlayerPrefs.GetFloat("VantageCrosshairSize", 1f);
-        gapMultiplier = PlayerPrefs.GetFloat("VantageCrosshairGap", 1f);
-        outlineOn = PlayerPrefs.GetInt("VantageCrosshairOutline", 0) == 1;
-
-        CaptureBasePositions(styleRoots);
-        CaptureBasePositions(previewStyleRoots);
-
-        ApplyStyle();
+        LoadSettings();
+        hudParts = BuildParts(hudRoot);
+        previewParts = BuildParts(previewRoot);
         ApplyColor();
-        ApplyScale();
-        ApplyGap();
-        ApplyOutline();
+        ApplyAll();
     }
 
-    void CaptureBasePositions(RectTransform[] roots)
+    void LoadSettings()
     {
-        if (roots == null) return;
-        for (int i = 0; i < roots.Length; i++)
-        {
-            if (roots[i] == null || baseBarPositions.ContainsKey(roots[i])) continue;
-            var bars = GetBars(roots[i]);
-            var positions = new Vector2[bars.Length];
-            for (int b = 0; b < bars.Length; b++) positions[b] = bars[b].anchoredPosition;
-            baseBarPositions[roots[i]] = positions;
-        }
+        if (!PlayerPrefs.HasKey(Prefix + "Style")) MigrateOldSettings();
+        style = Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "Style", StyleCross), 0, StyleCount - 1);
+        length = Mathf.Clamp(PlayerPrefs.GetFloat(Prefix + "Length", 16f), MinLength, MaxLength);
+        thickness = Mathf.Clamp(PlayerPrefs.GetFloat(Prefix + "Thickness", 2f), MinThickness, MaxThickness);
+        gap = Mathf.Clamp(PlayerPrefs.GetFloat(Prefix + "Gap", 4f), MinGap, MaxGap);
+        dotSize = Mathf.Clamp(PlayerPrefs.GetFloat(Prefix + "DotSize", 6f), MinDot, MaxDot);
+        colorIndex = Mathf.Clamp(PlayerPrefs.GetInt("VantageCrosshairColor", 0), 0, ColorOptions.Length - 1);
+        outlineOn = PlayerPrefs.GetInt("VantageCrosshairOutline", 0) == 1;
     }
 
-    RectTransform[] GetBars(RectTransform root)
+    /// <summary>
+    /// Converts the old percentage settings (scale of a 16x2 line set 12px out, or an 8px dot) to
+    /// the nearest pixel values, so an existing crosshair keeps its look. Brackets is gone and
+    /// becomes the plain cross.
+    /// </summary>
+    void MigrateOldSettings()
     {
-        var list = new List<RectTransform>();
-        foreach (Transform child in root)
-        {
-            if (child.name == "Bar") list.Add((RectTransform)child);
-        }
-        return list.ToArray();
+        if (!PlayerPrefs.HasKey("VantageCrosshairStyle")) return;
+        int oldStyle = PlayerPrefs.GetInt("VantageCrosshairStyle", 0);
+        float oldSize = PlayerPrefs.GetFloat("VantageCrosshairSize", 1f);
+        float oldGap = PlayerPrefs.GetFloat("VantageCrosshairGap", 1f);
+        PlayerPrefs.SetInt(Prefix + "Style", oldStyle == 1 ? StyleDot : StyleCross);
+        PlayerPrefs.SetFloat(Prefix + "Length", Mathf.Round(Mathf.Clamp(16f * oldSize, MinLength, MaxLength)));
+        PlayerPrefs.SetFloat(Prefix + "Thickness", Mathf.Round(Mathf.Clamp(2f * oldSize, MinThickness, MaxThickness)));
+        PlayerPrefs.SetFloat(Prefix + "Gap", Mathf.Round(Mathf.Clamp((12f * oldGap - 8f) * oldSize, MinGap, MaxGap)));
+        PlayerPrefs.SetFloat(Prefix + "DotSize", Mathf.Round(Mathf.Clamp(8f * oldSize, MinDot, MaxDot)));
     }
 
-    /// <summary>0 = tight/accurate, 1 = max spread. Widens the active crosshair so the player can see why they missed.</summary>
+    Part[] BuildParts(RectTransform root)
+    {
+        if (root == null) return null;
+        var parts = new Part[PartNames.Length];
+        // All outlines first, then all fills, so no outline is ever drawn over a neighbouring line.
+        for (int i = 0; i < parts.Length; i++) parts[i] = new Part { outline = MakeImage(root, PartNames[i] + "Outline") };
+        for (int i = 0; i < parts.Length; i++) parts[i].fill = MakeImage(root, PartNames[i]);
+        return parts;
+    }
+
+    static Image MakeImage(RectTransform root, string name)
+    {
+        var go = new GameObject(name, typeof(RectTransform), typeof(Image));
+        go.transform.SetParent(root, false);
+        var img = go.GetComponent<Image>();
+        img.raycastTarget = false;
+        return img;
+    }
+
+    /// <summary>0 = tight/accurate, 1 = max spread. Pushes the lines outwards so the player can see why they missed.</summary>
     public void SetSpreadFraction(float frac01)
     {
-        spreadFraction01 = Mathf.Clamp01(frac01);
-        ApplyScale();
-    }
-
-    public void SetStyle(int index)
-    {
-        if (styleRoots == null || index < 0 || index >= styleRoots.Length) return;
-        currentStyle = index;
-        PlayerPrefs.SetInt("VantageCrosshairStyle", currentStyle);
-        ApplyStyle();
-        ApplyScale();
+        frac01 = Mathf.Clamp01(frac01);
+        if (Mathf.Approximately(frac01, spread01)) return;
+        spread01 = frac01;
+        ApplyTo(hudParts, spread01 * spreadExtraGap);
     }
 
     public void SetCrosshairVisible(bool visible)
     {
         crosshairVisible = visible;
-        ApplyStyle();
+        if (hudRoot != null) hudRoot.gameObject.SetActive(crosshairVisible);
+    }
+
+    public void SetStyle(int index)
+    {
+        if (index < 0 || index >= StyleCount) return;
+        style = index;
+        PlayerPrefs.SetInt(Prefix + "Style", style);
+        ApplyAll();
     }
 
     public void SetColor(int index)
     {
         if (index < 0 || index >= ColorOptions.Length) return;
-        currentColor = index;
-        PlayerPrefs.SetInt("VantageCrosshairColor", currentColor);
+        colorIndex = index;
+        PlayerPrefs.SetInt("VantageCrosshairColor", colorIndex);
         ApplyColor();
     }
 
-    public void SetSize(float value)
-    {
-        sizeMultiplier = Mathf.Clamp(value, 0.5f, 2f);
-        PlayerPrefs.SetFloat("VantageCrosshairSize", sizeMultiplier);
-        ApplyScale();
-    }
-
-    public void SetGap(float value)
-    {
-        gapMultiplier = Mathf.Clamp(value, 0.4f, 3f);
-        PlayerPrefs.SetFloat("VantageCrosshairGap", gapMultiplier);
-        ApplyGap();
-    }
+    public void SetLength(float px) { length = Mathf.Clamp(px, MinLength, MaxLength); PlayerPrefs.SetFloat(Prefix + "Length", length); ApplyAll(); }
+    public void SetThickness(float px) { thickness = Mathf.Clamp(px, MinThickness, MaxThickness); PlayerPrefs.SetFloat(Prefix + "Thickness", thickness); ApplyAll(); }
+    public void SetGap(float px) { gap = Mathf.Clamp(px, MinGap, MaxGap); PlayerPrefs.SetFloat(Prefix + "Gap", gap); ApplyAll(); }
+    public void SetDotSize(float px) { dotSize = Mathf.Clamp(px, MinDot, MaxDot); PlayerPrefs.SetFloat(Prefix + "DotSize", dotSize); ApplyAll(); }
 
     public void SetOutline(bool on)
     {
         outlineOn = on;
         PlayerPrefs.SetInt("VantageCrosshairOutline", on ? 1 : 0);
-        ApplyOutline();
+        ApplyAll();
     }
 
-    public int CurrentStyle { get { return currentStyle; } }
-    public int CurrentColor { get { return currentColor; } }
-    public float CurrentSize { get { return sizeMultiplier; } }
-    public float CurrentGap { get { return gapMultiplier; } }
+    public int CurrentStyle { get { return style; } }
+    public int CurrentColor { get { return colorIndex; } }
+    public float CurrentLength { get { return length; } }
+    public float CurrentThickness { get { return thickness; } }
+    public float CurrentGap { get { return gap; } }
+    public float CurrentDotSize { get { return dotSize; } }
     public bool CurrentOutline { get { return outlineOn; } }
 
-    void ApplyStyle()
+    void ApplyAll()
     {
-        if (styleRoots == null) return;
-        for (int i = 0; i < styleRoots.Length; i++)
-        {
-            if (styleRoots[i] != null) styleRoots[i].gameObject.SetActive(crosshairVisible && i == currentStyle);
-        }
-        if (previewStyleRoots != null)
-        {
-            for (int i = 0; i < previewStyleRoots.Length; i++)
-            {
-                if (previewStyleRoots[i] != null) previewStyleRoots[i].gameObject.SetActive(i == currentStyle);
-            }
-        }
+        ApplyTo(hudParts, spread01 * spreadExtraGap);
+        ApplyTo(previewParts, 0f);
+        if (hudRoot != null) hudRoot.gameObject.SetActive(crosshairVisible);
+        if (previewRoot != null) previewRoot.localScale = Vector3.one * Mathf.Min(PreviewZoom, PreviewFitHalfExtent / Extent());
     }
 
-    /// <summary>Applies the chosen color to every bar in every style - so the pick sticks no matter which style is active now or later.</summary>
+    /// <summary>How far the crosshair reaches from the centre at rest, outline included.</summary>
+    float Extent()
+    {
+        float reach = style == StyleDot ? dotSize * 0.5f : gap + length;
+        return Mathf.Max(1f, reach + (outlineOn ? OutlinePx : 0f));
+    }
+
+    void ApplyTo(Part[] parts, float extraGap)
+    {
+        if (parts == null) return;
+        bool lines = style != StyleDot;
+        float offset = gap + extraGap + length * 0.5f;
+        Vector2 horizontal = new Vector2(length, thickness);
+        Vector2 vertical = new Vector2(thickness, length);
+        SetPart(parts[0], lines, new Vector2(-offset, 0f), horizontal, null);
+        SetPart(parts[1], lines, new Vector2(offset, 0f), horizontal, null);
+        SetPart(parts[2], lines, new Vector2(0f, -offset), vertical, null);
+        SetPart(parts[3], lines && style != StyleT, new Vector2(0f, offset), vertical, null);
+
+        // DOT is round; the centre dot of CROSS + DOT is a square as thick as the lines, so it matches them.
+        bool round = style == StyleDot;
+        bool centre = round || style == StyleCrossDot;
+        SetPart(parts[4], centre, Vector2.zero, Vector2.one * (round ? dotSize : thickness), round ? dotSprite : null);
+    }
+
+    void SetPart(Part p, bool on, Vector2 position, Vector2 size, Sprite sprite)
+    {
+        p.fill.gameObject.SetActive(on);
+        p.outline.gameObject.SetActive(on && outlineOn);
+        p.fill.rectTransform.anchoredPosition = p.outline.rectTransform.anchoredPosition = position;
+        p.fill.rectTransform.sizeDelta = size;
+        p.outline.rectTransform.sizeDelta = size + Vector2.one * OutlinePx * 2f;
+        p.fill.sprite = p.outline.sprite = sprite;
+    }
+
     void ApplyColor()
     {
-        Color c = ColorOptions[currentColor];
-        ApplyColorTo(styleRoots, c);
-        ApplyColorTo(previewStyleRoots, c);
+        Color c = ColorOptions[colorIndex];
+        ColorParts(hudParts, c);
+        ColorParts(previewParts, c);
     }
 
-    void ApplyColorTo(RectTransform[] roots, Color c)
+    static void ColorParts(Part[] parts, Color c)
     {
-        if (roots == null) return;
-        for (int i = 0; i < roots.Length; i++)
+        if (parts == null) return;
+        for (int i = 0; i < parts.Length; i++)
         {
-            if (roots[i] == null) continue;
-            var images = roots[i].GetComponentsInChildren<Image>(true);
-            for (int j = 0; j < images.Length; j++) images[j].color = c;
-        }
-    }
-
-    /// <summary>Gameplay crosshair scales with size setting * live spread; the preview mirror only ever shows the static size setting.</summary>
-    void ApplyScale()
-    {
-        if (styleRoots != null)
-        {
-            for (int i = 0; i < styleRoots.Length; i++)
-            {
-                if (i != currentStyle || styleRoots[i] == null) continue;
-                float scale = sizeMultiplier * Mathf.Lerp(1f, maxSpreadScale, spreadFraction01);
-                styleRoots[i].localScale = Vector3.one * scale;
-            }
-        }
-        ApplyPreviewScale();
-    }
-
-    void ApplyPreviewScale()
-    {
-        if (previewStyleRoots == null) return;
-        for (int i = 0; i < previewStyleRoots.Length; i++)
-        {
-            if (previewStyleRoots[i] == null) continue;
-            float scale = sizeMultiplier * previewZoom;
-            float extent = UnscaledExtent(previewStyleRoots[i]) * sizeMultiplier;
-            if (extent * previewZoom > previewFitHalfExtent) scale = previewFitHalfExtent / extent;
-            previewStyleRoots[i].localScale = Vector3.one * scale;
-        }
-        ApplyOutlineTo(previewStyleRoots); // outline distance depends on the preview scale
-    }
-
-    /// <summary>Furthest a bar edge reaches from the centre at the current gap, before root scaling.</summary>
-    float UnscaledExtent(RectTransform root)
-    {
-        float extent = 1f;
-        foreach (var bar in GetBars(root))
-        {
-            Vector2 half = bar.sizeDelta * 0.5f;
-            extent = Mathf.Max(extent, Mathf.Abs(bar.anchoredPosition.x) + half.x, Mathf.Abs(bar.anchoredPosition.y) + half.y);
-        }
-        return extent;
-    }
-
-    void ApplyGap()
-    {
-        ApplyGapTo(styleRoots);
-        ApplyGapTo(previewStyleRoots);
-        ApplyPreviewScale(); // a wider gap may need the preview zoomed out to fit
-    }
-
-    void ApplyGapTo(RectTransform[] roots)
-    {
-        if (roots == null) return;
-        for (int i = 0; i < roots.Length; i++)
-        {
-            if (roots[i] == null) continue;
-            Vector2[] basePositions;
-            if (!baseBarPositions.TryGetValue(roots[i], out basePositions)) continue;
-            var bars = GetBars(roots[i]);
-            for (int b = 0; b < bars.Length && b < basePositions.Length; b++)
-            {
-                bars[b].anchoredPosition = basePositions[b] * gapMultiplier;
-            }
-        }
-    }
-
-    void ApplyOutline()
-    {
-        ApplyOutlineTo(styleRoots);
-        ApplyOutlineTo(previewStyleRoots);
-    }
-
-    void ApplyOutlineTo(RectTransform[] roots)
-    {
-        if (roots == null) return;
-        for (int i = 0; i < roots.Length; i++)
-        {
-            if (roots[i] == null) continue;
-            // HUD: fixed local px (scales with the size setting). Preview: divide out the zoom so it stays thin.
-            bool isPreview = roots == previewStyleRoots;
-            float distance = isPreview ? previewOutlinePixels / Mathf.Max(0.01f, roots[i].localScale.x) : hudOutlinePixels;
-            var images = roots[i].GetComponentsInChildren<Image>(true);
-            for (int j = 0; j < images.Length; j++)
-            {
-                var outline = images[j].GetComponent<Outline>();
-                if (outlineOn)
-                {
-                    if (outline == null) outline = images[j].gameObject.AddComponent<Outline>();
-                    outline.effectColor = new Color(0f, 0f, 0f, 0.9f);
-                    outline.effectDistance = new Vector2(distance, -distance);
-                    outline.enabled = true;
-                }
-                else if (outline != null)
-                {
-                    outline.enabled = false;
-                }
-            }
+            parts[i].fill.color = c;
+            parts[i].outline.color = Color.black;
         }
     }
 

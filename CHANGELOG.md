@@ -2,6 +2,30 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.30: Pixel-based crosshair settings and new shapes
+
+**Why:**
+- The user asked whether "200%" and "300%" crosshair settings were normal; they had never seen them in a game. They aren't. Shooters set crosshairs in plain pixel numbers: line length, thickness and gap.
+- Size also scaled the whole shape, gap included, so a 300% gap at 200% size was really 6x. The two sliders fought each other.
+- The user also asked which crosshair shapes were fine and which were weird. Brackets (four corners) is the odd one out: shooters don't use it, it looks like a camera viewfinder, and it boxes in the target.
+
+**What changed:**
+- **Drawn from pixel values:** `CrosshairController` now draws the crosshair in code from Length (2-24px), Thickness (1-6px), Gap (0-20px) and Dot Size (2-16px). The old approach scaled prebuilt shapes by percentages. The same drawing appears in the HUD and in the preview box.
+- **Spread:** moving and spraying now push the lines outwards (up to 14px of extra gap). Before, it scaled the whole shape.
+- **Outline:** each part now has a black copy 2px larger behind it, instead of Unity's UI Outline effect, so a round dot gets a round outline. The thickness stays 2px at any size.
+- **Shapes:** CROSS, CROSS + DOT (the centre square is as thick as the lines), DOT, and T-SHAPE (no top line, so nothing covers what's above your aim). Brackets is removed.
+- **Menu rows:** the Crosshair tab rows are now Length, Thickness, Gap, Dot Size and Outline, with whole-number sliders and plain-number values. The Dot style shows only Dot Size and Outline. The other styles show the three line rows and Outline, so the tab never needs more than 4 rows (444 of 452px tall).
+- **Old settings converted:** the old percentage settings are converted once to the nearest pixel values, saved under new keys:
+  - Length = 16 x size, Thickness = 2 x size, Gap = (12 x gap - 8) x size, Dot = 8 x size.
+  - Brackets becomes Cross.
+- **Builder:** `SettingsPanelBuilder` replaces the old per-style HUD and preview objects with one empty root each. It also rebuilds the four style tiles with drawn icons and adds the Thickness and Dot Size rows, cloned from the Gap row.
+
+**Verified:**
+- The settings layout check reports 0 errors, and both row layouts fit (the line layout ends 8px above the bottom of the column).
+- In Play mode the user's saved settings (Brackets, 200% size, 300% gap) converted to Cross 24/4/20 and Dot 16.
+- Screenshots of Cross, Dot and Cross + Dot show the right rows, round outlines on the dot, and pixel values in the boxes.
+- At full spread the HUD's left line moves from 8 to 22px out while the preview stays at 8.
+
 ## Phase 17.29: Thicker crosshair outline
 
 **Why:** The 1px black outline was hard to see against the dark night-shift corridors, and the user asked for 2px.
