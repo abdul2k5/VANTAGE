@@ -20,7 +20,7 @@ public class Weapon : MonoBehaviour
     public float crouchSpreadMultiplier = 0.5f;
 
     [Header("Aiming - hold right-click. Zooms for small targets, but doesn't change where shots go")]
-    public float aimInSeconds = 0.15f;
+    public float aimInSeconds = 0.2f;
 
     [Header("Recoil - a fixed, learnable spray pattern: the first shot is always true, a held spray climbs")]
     [Tooltip("View kick (degrees up) applied AFTER shot N of a continuous spray - index 0 is the kick after the first shot. Past the end, the last value repeats.")]
@@ -67,6 +67,7 @@ public class Weapon : MonoBehaviour
     PlayerController playerController;
     FollowCamera followCamera;
     AbilityController abilities;
+    GunViewmodelAnimator viewmodel;
     int sprayIndex;
     float lastShotTime = -999f;
 
@@ -95,6 +96,7 @@ public class Weapon : MonoBehaviour
         playerController = GetComponent<PlayerController>();
         abilities = GetComponent<AbilityController>();
         if (cam != null) followCamera = cam.GetComponentInParent<FollowCamera>();
+        if (cam != null) viewmodel = cam.GetComponentInChildren<GunViewmodelAnimator>();
 
     }
 
@@ -167,7 +169,9 @@ public class Weapon : MonoBehaviour
         IsAiming = mouse != null && mouse.rightButton.isPressed && !isReloading && !aimingDart
             && !MainMenuController.IsOpen && Cursor.lockState == CursorLockMode.Locked;
 
-        float rate = aimInSeconds > 0f ? Time.deltaTime / aimInSeconds : 1f;
+        // Real time when paused, so a card or Game Over opening mid-aim doesn't leave the scope view stuck behind it.
+        float dt = Time.timeScale > 0f ? Time.deltaTime : Time.unscaledDeltaTime;
+        float rate = aimInSeconds > 0f ? dt / aimInSeconds : 1f;
         AimAmount01 = Mathf.MoveTowards(AimAmount01, IsAiming ? 1f : 0f, rate);
     }
 
@@ -259,6 +263,8 @@ void UpdateSpread()
 
         // Raycast stays camera-centered for accuracy; the visible tracer starts at the gun's muzzle.
         Vector3 visualOrigin = muzzle != null ? muzzle.position : origin;
+        // Scoped, the muzzle is at the player's eye and the tracer would cover the target. Start it ahead and below, so it reads as a streak rising to the crosshair.
+        if (viewmodel != null && viewmodel.ScopeViewUp) visualOrigin = origin + forward * 2.5f - cam.transform.up * 0.25f;
         if (feedback != null) feedback.PlayShot(visualOrigin, end);
 
         ApplyRecoil();

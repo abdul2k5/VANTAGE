@@ -15,8 +15,8 @@ public class PlayerController : MonoBehaviour
     [Header("Aiming (hold right-click)")]
     [Tooltip("Doesn't stack with crouching or walking - the slowest one applies.")]
     public float aimSpeedMultiplier = 0.5f;
-    [Tooltip("Turning speed when fully aimed. Near 0.65 the view moves about as fast across the screen as it does unzoomed.")]
-    public float aimSensitivityMultiplier = 0.65f;
+    [Tooltip("Turning speed when fully aimed. Near 0.55 the view moves about as fast across the screen as it does unzoomed.")]
+    public float aimSensitivityMultiplier = 0.55f;
 
     [Header("Crouch")]
     public Transform cameraPivot;

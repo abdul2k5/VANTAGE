@@ -2,6 +2,21 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.18: aiming now looks through the scope
+
+**Why:** Playtest reaction to 17.17: "this guns got a scope and this how we zoom in lolll?" The gun came to the centre and the player stared at the back of a solid scope, with the bottom of the view blocked. It worked, but it didn't look like what the gun promises, and a scope that's obviously fake undercuts the whole feature.
+
+**What changed:**
+- **Real scope view:** right-click brings the scope up to the eye and the view then becomes a round opening with black either side and thin reticle lines. The gun is hidden once the view has covered it, so nothing blocks the target. The cost of aiming is now also visible: you give up your side vision, which suits a tool for planned long shots.
+- **HUD stays on top:** health, ammo and the player's own crosshair still draw over the scope, so custom crosshair settings and the spread indicator keep working.
+- **More zoom:** 35 degrees rather than 40, since a full scope view should earn its narrow vision, with turning at 55% to match. Aiming in takes 0.2s, which gives the scope time to come up.
+- **Reticle is amber,** because black lines disappeared against the dark walls.
+- **Tracer:** while scoped it starts ahead and below the eye. From the real muzzle position, it drew a large yellow cone over the target on every shot.
+- **Pausing:** aiming now eases out in real time when the game is paused, so a card or Game Over can't open on top of a stuck scope view.
+- Accuracy rules are still unchanged, for the reason given in 17.17.
+
+**Verified** in Play mode, frame-stepped, with simulated mouse input: fully scoped, the FOV is 35, the view is fully in and the gun hidden. Firing while scoped uses ammo, and screenshots before and after the tracer fix confirm the target stays visible. Reloading drops out of scope with the gun back in view by 8 frames, and it returns after the reload while right-click is still held. With time stopped and the cursor unlocked, as on Game Over, the view clears within 46ms of real time in the stepped test. Releasing restores the exact starting pose. A real mouse hasn't judged the feel of it yet.
+
 ## Phase 17.17: hold right-click to aim with the scope
 
 **Why:** Playtest request. The gun has a scope on it that did nothing, and the drones' eye is a small target at range. The important design decision is what aiming doesn't do. A standing shot is already perfectly accurate, and that's the point of the gunplay: stopping is what makes you accurate. If aiming also tightened spread or recoil, it would become the new requirement and the hip shot would be pointless. So it only makes the target bigger on screen, and it costs mobility while held. It's a choice for a planned long shot, not a straight upgrade.
