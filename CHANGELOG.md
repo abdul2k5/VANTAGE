@@ -2,6 +2,17 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.10: flashed drones stop shooting and stop moving
+
+**Why:** Playtest: "i thought i flashed the drone but apparently it wasnt". Testing showed the drones often were flashed, but kept shooting anyway. A drone already called into a fight kept firing during the blind, and shooting a flashed drone made it fire back. A stationary player took 1 hit when flashing mid-fight, and 3 hits when also shooting a flashed drone. Flash is meant to create the safe window this whole game is built around, so a flashed drone that fires back breaks the "utility before you peek" idea and makes the flash look like it missed.
+
+**What changed:**
+- A flashed drone can't fire for the whole blind, even if it's mid-fight or being shot. If it's still alerted when the blind ends, it goes through its normal reaction delay before firing again.
+- A flashed drone also stops moving, so it reads as stunned. After the plant, this means a flash also stops drones walking to the charge.
+- Smoke is unchanged. It only blocks sight, so drones still fire through it at where they last saw you, as designed in 15.21.
+
+**Verified** in Play mode, with both Flash room drones firing at a stationary player: 8 hits in 3.4s with no flash, and 0 hits when flashed before they noticed, flashed mid-fight, or flashed mid-fight and then shot. They hit the player again 5-6 times in the 3s after the blind ends, and a patrol drone walks its route again.
+
 ## Phase 17.9: dying during Overwatch no longer costs your checkpoint charge
 
 **Why:** Testing found two problems when dying with Overwatch running and then retrying. A checkpoint is meant to put you back exactly as you first arrived, but the saved ult charge was never restored (arriving with 50 came back as 0), because charge changes are ignored while Overwatch runs. Overwatch also kept running into Room 5, with its tint and countdown on screen for about 3.7s more, even though its damage reduction had already been removed. So a retry both took your charge and showed an ultimate that wasn't really protecting you.

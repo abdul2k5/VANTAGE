@@ -257,7 +257,9 @@ void Update()
 
         bool seesPlayer = CanSeePlayer();
         if (seesPlayer) lastKnownPlayerPosition = player.position;
-        bool forcedAlert = forcedAlertRemaining > 0f;
+        // A flashed drone doesn't fire at all, even if it was mid-fight or gets shot - the flash is the safe
+        // window. Smoke is different: it only blocks sight, so a drone in smoke still fires where it last saw you.
+        bool forcedAlert = forcedAlertRemaining > 0f && !IsBlinded;
         bool shouldBeAlert = seesPlayer || forcedAlert;
         bool justSpotted = shouldBeAlert && state != State.Alert;
         state = shouldBeAlert ? State.Alert : State.Patrol;
@@ -293,7 +295,11 @@ void Update()
         else
         {
             fireTimer = 0f;
-            if (isPushing)
+            if (IsBlinded)
+            {
+                agent.isStopped = true;
+            }
+            else if (isPushing)
             {
                 RunPush();
             }
