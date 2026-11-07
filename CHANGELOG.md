@@ -2,6 +2,18 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.13: Weak Point drones no longer charge the ultimate
+
+**Why:** Playtest question: "when i retry from checkpoint whys the overwatch ready already". The Weak Point door needs all 4 drones dead, and each kill gave 25 charge, so every player left Room 2 with a full ultimate before they'd faced a single armed drone. It was then saved as ready at the Room 5 checkpoint, so each retry handed it back, and the Room 6 and 7 orbs did nothing unless it had already been spent. The ultimate should be earned in real fights, and those orbs were meant to help earn it.
+
+**What changed:** killing an unarmed practice drone gives no charge. All other kills still give 25. Across the 8 rooms, the charge available is now:
+- Rooms 3 and 4: 3 kills, so at most 75 at the Room 5 checkpoint.
+- Room 5 onwards: more kills and the two orbs complete it.
+
+The first fill now usually happens during a fight in Room 5 or later rather than in the safe Weak Point room. The ultimate's explanation card still pauses the game, so it can't get the player killed.
+
+**Verified** in Play mode with real shots: the 4 Weak Point kills leave charge at 0 and the door still unlocks. The Room 3 and 4 kills take it to 25, 50 and 75. The Room 5 checkpoint saves 75, and the first Room 5 kill reaches 100 and opens the card with the game paused. After dying at 100, a retry restores 75 with 3 of 4 ring segments lit. The next kill reaches 100 and shows the ready banner, not the card again.
+
 ## Phase 17.12: you can see when a drone is flashed
 
 **Why:** Playtest: "can we add a something to tell if the drone is flashed". Nothing on a drone showed whether a flash had landed, so the player couldn't tell if they had a safe window or how long it would last, and the core "utility before you peek" idea depends on knowing that. The request was inspired by how Valorant shows a flashed character, so only the idea is used here, with an original look built for a drone.

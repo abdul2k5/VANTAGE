@@ -189,7 +189,8 @@ void UpdateSpread()
                 if (aliveBefore && !sentinel.gameObject.activeSelf)
                 {
                     if (RunStats.Instance != null) RunStats.Instance.RecordKill();
-                    if (UltimateController.Instance != null) UltimateController.Instance.AddCharge(UltimateController.Instance.chargePerKill);
+                    // Unarmed practice drones give nothing - the Weak Point door needs all 4 dead, which would fill the ult by Room 3.
+                    if (sentinel.canShoot && UltimateController.Instance != null) UltimateController.Instance.AddCharge(UltimateController.Instance.chargePerKill);
                     if (KillFeedUI.Instance != null) KillFeedUI.Instance.AddKill(headshot);
                 }
 
