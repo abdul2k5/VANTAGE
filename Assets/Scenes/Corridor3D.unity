@@ -28241,9 +28241,8 @@ MonoBehaviour:
   roomManager: {fileID: 1416355654}
   settings: {fileID: 795636953}
   rowTemplate: {fileID: 1060257951}
-  firstRowY: -88
-  rowSpacing: 40
-  rowSize: {x: 460, y: 34}
+  rowSize: {x: 572, y: 34}
+  rowGap: 8
   clearedColor: {r: 0.85, g: 0.85, b: 0.82, a: 1}
   inProgressColor: {r: 0.886, g: 0.647, b: 0.235, a: 1}
   lockedColor: {r: 0.45, g: 0.45, b: 0.43, a: 1}
@@ -41718,6 +41717,7 @@ MonoBehaviour:
   plantSeconds: 4
   moveCancelThreshold: 0.15
   plantKey: 44
+  plantKeyDisplay: 4
   progressRoot: {fileID: 968231467}
   progressFill: {fileID: 1468958383}
   progressLabel: {fileID: 382567106}

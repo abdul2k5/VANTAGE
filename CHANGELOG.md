@@ -2,6 +2,14 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.26: Room Select rows fit the panel
+
+**Why:** Playtest screenshot: rows 7 and 8 hung below the bottom of the settings panel, and the list sat left of centre under the tabs.
+
+**What changed:** The ROOMS tab inherited a VerticalLayoutGroup from the General tab, which overrode the row positions the menu set. Rows took the Restart Room button's 46px height and 12px gaps, and lined up on the left. Rows are now sized through their LayoutElement (34px tall, 572px wide, the header's width, so they're centred), and this tab's gap is 8px. The 17.24 layout check measured the rows before the layout group moved them, so it missed this.
+
+**Verified** in Play mode at 1920x1080 after the layout rebuild: row 8 ends at y 292, 62px inside the panel's bottom edge (230); all rows span x 674-1246, centred on the panel.
+
 ## Phase 17.25: Planted charge stays visible, plant prompt, reinforcement eyes, Overwatch READY card
 
 **Why:** Playtest: after planting, the charge wasn't on the site; standing on the site gave no hint which key plants; post-plant reinforcement drones had purple eyes; and the Overwatch card that pops up when the ultimate first charges didn't say it was ready.

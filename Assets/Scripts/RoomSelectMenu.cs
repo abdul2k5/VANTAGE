@@ -12,9 +12,10 @@ public class RoomSelectMenu : MonoBehaviour
     public RoomManager roomManager;
     public SettingsMenuController settings;
     public Button rowTemplate;
-    public float firstRowY = -88f;
-    public float rowSpacing = 40f;
-    public Vector2 rowSize = new Vector2(460f, 34f);
+    // The tab's VerticalLayoutGroup places the rows, so size comes from each row's LayoutElement,
+    // and the gap is this tab's own spacing (tighter than the other tabs so 8 rows fit).
+    public Vector2 rowSize = new Vector2(572f, 34f);
+    public float rowGap = 8f;
     public Color clearedColor = new Color(0.85f, 0.85f, 0.82f, 1f);
     public Color inProgressColor = new Color(0.886f, 0.647f, 0.235f, 1f);
     public Color lockedColor = new Color(0.45f, 0.45f, 0.43f, 1f);
@@ -33,6 +34,9 @@ public class RoomSelectMenu : MonoBehaviour
     {
         if (roomManager == null || rowTemplate == null) return;
 
+        var group = GetComponent<VerticalLayoutGroup>();
+        if (group != null) group.spacing = rowGap;
+
         int count = roomManager.rooms.Length;
         rows = new Button[count];
         names = new Text[count];
@@ -46,11 +50,11 @@ public class RoomSelectMenu : MonoBehaviour
             int room = i;
             row.onClick.AddListener(() => Pick(room));
 
-            var rt = (RectTransform)row.transform;
-            rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 1f);
-            rt.pivot = new Vector2(0.5f, 0.5f);
-            rt.sizeDelta = rowSize;
-            rt.anchoredPosition = new Vector2(0f, firstRowY - i * rowSpacing);
+            ((RectTransform)row.transform).sizeDelta = rowSize;
+            var layout = row.GetComponent<LayoutElement>();
+            if (layout == null) layout = row.gameObject.AddComponent<LayoutElement>();
+            layout.preferredWidth = rowSize.x;
+            layout.minHeight = layout.preferredHeight = rowSize.y;
 
             var name = row.GetComponentInChildren<Text>(true);
             name.alignment = TextAnchor.MiddleLeft;
