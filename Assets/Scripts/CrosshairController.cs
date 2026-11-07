@@ -31,8 +31,12 @@ public class CrosshairController : MonoBehaviour
     float gapMultiplier = 1f;
     bool outlineOn;
 
-    /// <summary>The real HUD crosshair is sized for a full screen; inside the small settings preview box it'd read as a speck without this. Tuned for the 200x200 preview box (6.8 for the old 260 box, scaled by 200/260; 2.6 before that for the 160x100 box).</summary>
-    const float previewScaleBoost = 5.2f;
+    /// <summary>Preview shows the crosshair at 2x its real HUD size. Was a flat 5.2x, which blew a 200% dot up to an 83px blob and its 1px outline to a 10px black square.</summary>
+    const float previewZoom = 2f;
+    /// <summary>Half-width of the 200x200 preview box minus a margin. At big size+gap settings the zoom shrinks so the whole crosshair still fits.</summary>
+    const float previewFitHalfExtent = 88f;
+    /// <summary>On-screen outline thickness in the preview, kept constant whatever the zoom.</summary>
+    const float previewOutlinePixels = 1.5f;
 
     readonly Dictionary<RectTransform, Vector2[]> baseBarPositions = new Dictionary<RectTransform, Vector2[]>();
 
@@ -182,20 +186,40 @@ public class CrosshairController : MonoBehaviour
                 styleRoots[i].localScale = Vector3.one * scale;
             }
         }
-        if (previewStyleRoots != null)
+        ApplyPreviewScale();
+    }
+
+    void ApplyPreviewScale()
+    {
+        if (previewStyleRoots == null) return;
+        for (int i = 0; i < previewStyleRoots.Length; i++)
         {
-            for (int i = 0; i < previewStyleRoots.Length; i++)
-            {
-                if (previewStyleRoots[i] == null) continue;
-                previewStyleRoots[i].localScale = Vector3.one * sizeMultiplier * previewScaleBoost;
-            }
+            if (previewStyleRoots[i] == null) continue;
+            float scale = sizeMultiplier * previewZoom;
+            float extent = UnscaledExtent(previewStyleRoots[i]) * sizeMultiplier;
+            if (extent * previewZoom > previewFitHalfExtent) scale = previewFitHalfExtent / extent;
+            previewStyleRoots[i].localScale = Vector3.one * scale;
         }
+        ApplyOutlineTo(previewStyleRoots); // outline distance depends on the preview scale
+    }
+
+    /// <summary>Furthest a bar edge reaches from the centre at the current gap, before root scaling.</summary>
+    float UnscaledExtent(RectTransform root)
+    {
+        float extent = 1f;
+        foreach (var bar in GetBars(root))
+        {
+            Vector2 half = bar.sizeDelta * 0.5f;
+            extent = Mathf.Max(extent, Mathf.Abs(bar.anchoredPosition.x) + half.x, Mathf.Abs(bar.anchoredPosition.y) + half.y);
+        }
+        return extent;
     }
 
     void ApplyGap()
     {
         ApplyGapTo(styleRoots);
         ApplyGapTo(previewStyleRoots);
+        ApplyPreviewScale(); // a wider gap may need the preview zoomed out to fit
     }
 
     void ApplyGapTo(RectTransform[] roots)
@@ -226,6 +250,9 @@ public class CrosshairController : MonoBehaviour
         for (int i = 0; i < roots.Length; i++)
         {
             if (roots[i] == null) continue;
+            // HUD: 1 local px (scales with the size setting like before). Preview: divide out the zoom so it stays thin.
+            bool isPreview = roots == previewStyleRoots;
+            float distance = isPreview ? previewOutlinePixels / Mathf.Max(0.01f, roots[i].localScale.x) : 1f;
             var images = roots[i].GetComponentsInChildren<Image>(true);
             for (int j = 0; j < images.Length; j++)
             {
@@ -234,7 +261,7 @@ public class CrosshairController : MonoBehaviour
                 {
                     if (outline == null) outline = images[j].gameObject.AddComponent<Outline>();
                     outline.effectColor = new Color(0f, 0f, 0f, 0.9f);
-                    outline.effectDistance = new Vector2(1f, -1f);
+                    outline.effectDistance = new Vector2(distance, -distance);
                     outline.enabled = true;
                 }
                 else if (outline != null)

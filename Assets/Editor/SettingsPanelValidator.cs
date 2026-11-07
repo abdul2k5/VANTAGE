@@ -59,6 +59,8 @@ public static class SettingsPanelValidator
             totalErrors += tabErrors;
         }
 
+        // Back to the first tab, so validating doesn't leave the scene saved on the last tab.
+        smc.ShowTab(0);
         panel.gameObject.SetActive(wasActive);
         return totalErrors;
     }

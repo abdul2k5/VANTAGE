@@ -2,6 +2,24 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 17.28: Crosshair preview scale and outline visibility
+
+**Why:** The user sent a screenshot of the crosshair preview set to dot, 200% size and outline ON. The dot filled most of the preview box, and its outline was invisible. The preview zoomed everything a flat 5.2x, so the 8px dot became 83px and its 1px outline became a 10px black square. That square sat on a near-black box (0.03 grey), which hid it.
+
+**What changed:**
+- **Zoom:** the preview now shows the crosshair at 2x its real HUD size. If a large size and gap setting would overflow the box, the zoom shrinks so the crosshair still fits within 88px of the centre. Gap changes now recompute the zoom too.
+- **Outline:** the preview divides the outline distance by the zoom, so the outline stays about 1.5px wide on screen. The in-game HUD outline is unchanged.
+- **Preview box:** the background is now mid grey (0.36, 0.38, 0.37) instead of near-black, so both a black outline and a white crosshair show. The builder sets this colour too.
+
+**Verified:** checked the scale in Play mode for six combinations:
+- Cross at 100%: 2x.
+- Cross at 200% size, 300% gap: drops to 1x, and the outer edge lands exactly at the 88px limit.
+- Dot at 200%: 4x, a 32px dot.
+- Brackets at 200% size, 300% gap: 1.26x.
+- Cross at 50% size, 40% gap: 1x.
+
+In screenshots the dot is a normal size with a thin visible black outline, and the largest cross fits inside the box. The settings layout check reports 0 errors.
+
 ## Phase 17.27: Settings menu redesign
 
 **Why:** The user asked how the settings menu could look cleaner, then said to do all of it. The old menu was wide and short, with a row of tabs across the top. Each tab laid out its controls in its own way, amber was used on most elements, and Restart Room sat between Resume and Quit.

@@ -176,7 +176,11 @@ public static class SettingsPanelBuilder
         Size(right.gameObject, 472f, 452f);
         Configure(GetOrAdd<VerticalLayoutGroup>(left.gameObject), TextAnchor.UpperLeft, 0f, 0);
         Configure(GetOrAdd<VerticalLayoutGroup>(right.gameObject), TextAnchor.UpperLeft, 6f, 0);
-        Size(left.Find("PreviewBox").gameObject, 200f, 200f);
+        var previewBox = left.Find("PreviewBox");
+        Size(previewBox.gameObject, 200f, 200f);
+        // Mid-grey, not near-black: the crosshair outline is black, so a dark box hid it entirely.
+        previewBox.GetComponent<Image>().color = new Color(0.36f, 0.38f, 0.37f, 1f);
+        EditorUtility.SetDirty(previewBox.GetComponent<Image>());
 
         SectionHeader(right.Find("StyleHeader"), font, "STYLE");
         Size(right.Find("TileRow").gameObject, 472f, 72f);
