@@ -82,25 +82,30 @@ public class RunDebriefUI : MonoBehaviour
         return whole <= 0 ? "-" : Mathf.RoundToInt(100f * part / whole) + "%";
     }
 
+    /// <summary>"Recon x1, Smoke x2, Flash x1, Dash x2" - abilities by name, not by key, so the line reads without remembering the bindings.</summary>
     string UtilityBreakdown(RunStats stats)
     {
         var ac = RoomManager.Instance != null ? RoomManager.Instance.abilities : null;
         if (ac == null) return stats.TotalAbilityUses.ToString();
 
-        var sb = new StringBuilder(stats.TotalAbilityUses.ToString());
+        var sb = new StringBuilder();
         Ability[] all = { ac.reconDart, ac.smokeWall, ac.flash, ac.dash };
-        bool any = false;
         for (int i = 0; i < all.Length; i++)
         {
             if (all[i] == null) continue;
             int n = stats.AbilityUses(all[i].abilityName);
             if (n == 0) continue;
-            sb.Append(any ? ", " : "  (");
-            sb.Append(all[i].keyLabel + " x" + n);
-            any = true;
+            if (sb.Length > 0) sb.Append(", ");
+            sb.Append(ShortName(all[i].abilityName) + " x" + n);
         }
-        if (any) sb.Append(")");
-        return sb.ToString();
+        return sb.Length > 0 ? sb.ToString() : "none";
+    }
+
+    /// <summary>First word only ("Recon Dart" -> "Recon"), so all four fit on the one line the column has.</summary>
+    static string ShortName(string abilityName)
+    {
+        int space = abilityName.IndexOf(' ');
+        return space > 0 ? abilityName.Substring(0, space) : abilityName;
     }
 
     static int TotalOrbs()

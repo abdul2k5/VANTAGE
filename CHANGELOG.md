@@ -2,6 +2,20 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 18.5: Debrief shows ability names, not keys
+
+**Why:** Lecturer feedback: the "UTILITY USED" line on the win and Game Over screens read "6 (F x1, Q x2, E x1, SHIFT x2)". That only makes sense to someone who remembers which key is which ability.
+
+**What changed:**
+- The line now reads "Recon x1, Smoke x2, Flash x1, Dash x2", using the first word of each ability's name. Abilities that weren't used are left out, and a run with no utility reads "none".
+- The total in front was dropped: the per-ability counts already say it, and without it all four fit on one line.
+- The value column was widened on both screens (300 to 380 on the win screen, 340 to 400 on Game Over) so the line can't wrap. A wrapped line would push every row below it out of step with its label. Measured worst case (double-digit counts on all four) is 350.
+
+**Verified:**
+- Screenshots of both screens before and after: `Screenshots/item5_*`.
+- HUD and settings overlap checks: 0 problems.
+- Retry and win tests: 45 of 45 pass.
+
 ## Phase 18.4: Range targets turn green when hit
 
 **Why:** Lecturer feedback: hitting a practice target gave nothing back except a bullet hole, which is hard to see from the firing line. The player couldn't tell which targets were done, or how many were left, until the door opened.
