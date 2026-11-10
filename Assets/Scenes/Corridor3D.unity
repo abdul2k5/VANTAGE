@@ -7365,6 +7365,7 @@ MonoBehaviour:
   roomManager: {fileID: 1416355654}
   roomIndex: 0
   clearedObjective: All 3 targets down. Door unlocked - head to the exit.
+  progressObjective: Targets hit {0}/{1}
 --- !u!4 &93229547
 Transform:
   m_ObjectHideFlags: 0
@@ -30318,6 +30319,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffe5cd64e848b2a48abbf11517de4d1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RangeTarget
+  face: {fileID: 544637087}
+  hitColor: {r: 0.12, g: 0.78, b: 0.25, a: 1}
+  faceHitColor: {r: 0.55, g: 0.9, b: 0.58, a: 1}
+  hitSound: {fileID: 8300000, guid: f57025eb6f55a334d9d6fa8d3026ec12, type: 3}
+  hitSoundVolume: 0.7
 --- !u!1 &421806023
 GameObject:
   m_ObjectHideFlags: 0
@@ -44871,10 +44877,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 849293798}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 222, y: -48}
+  m_SizeDelta: {x: 103, y: 38}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &640557910
 MonoBehaviour:
@@ -49855,6 +49861,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffe5cd64e848b2a48abbf11517de4d1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RangeTarget
+  face: {fileID: 925880090}
+  hitColor: {r: 0.12, g: 0.78, b: 0.25, a: 1}
+  faceHitColor: {r: 0.55, g: 0.9, b: 0.58, a: 1}
+  hitSound: {fileID: 8300000, guid: f57025eb6f55a334d9d6fa8d3026ec12, type: 3}
+  hitSoundVolume: 0.7
 --- !u!1 &712809170
 GameObject:
   m_ObjectHideFlags: 0
@@ -50623,10 +50634,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1715469544}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 640, y: -8}
+  m_SizeDelta: {x: 1248, y: 30}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &722714020
 MonoBehaviour:
@@ -58160,7 +58171,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -30, y: 30}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 242, y: 58}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &849293799
 MonoBehaviour:
@@ -71637,7 +71648,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -20}
-  m_SizeDelta: {x: 1280, y: 0}
+  m_SizeDelta: {x: 1280, y: 46}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1046320914
 MonoBehaviour:
@@ -85721,10 +85732,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 849293798}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 35, y: -29}
+  m_SizeDelta: {x: 30, y: 38}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1245740274
 MonoBehaviour:
@@ -87506,10 +87517,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 849293798}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 84.5, y: -29}
+  m_SizeDelta: {x: 57, y: 38}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1269473483
 MonoBehaviour:
@@ -116318,7 +116329,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 640, y: -0}
-  m_SizeDelta: {x: 1280, y: 0}
+  m_SizeDelta: {x: 1280, y: 46}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1715469545
 MonoBehaviour:
@@ -120323,6 +120334,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffe5cd64e848b2a48abbf11517de4d1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RangeTarget
+  face: {fileID: 1024343145}
+  hitColor: {r: 0.12, g: 0.78, b: 0.25, a: 1}
+  faceHitColor: {r: 0.55, g: 0.9, b: 0.58, a: 1}
+  hitSound: {fileID: 8300000, guid: f57025eb6f55a334d9d6fa8d3026ec12, type: 3}
+  hitSoundVolume: 0.7
 --- !u!1 &1776208442
 GameObject:
   m_ObjectHideFlags: 0

@@ -2,6 +2,23 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 18.4: Range targets turn green when hit
+
+**Why:** Lecturer feedback: hitting a practice target gave nothing back except a bullet hole, which is hard to see from the firing line. The player couldn't tell which targets were done, or how many were left, until the door opened.
+
+**What changed:**
+- **Colour:** a hit target's bullseye turns from red to green and the plate behind it turns pale green, and both stay that way. The plate is tinted too because the bullseye alone is small from across the room.
+- **Sound:** a short bell (`impactBell_heavy_002`, Kenney Impact Sounds, already credited) plays on the first hit of each target.
+- **Objective line:** reads "Targets hit 0/3" on entry and counts up with each new target, then the existing "All 3 targets down. Door unlocked" line. Hitting the same target again doesn't count twice.
+- **Reset:** going back to the Range through Room Select turns the targets red again and resets the count to 0/3.
+- The tint is a per-target override, so the three targets still share one red material.
+
+**Verified** in Play mode by firing the real weapon at each bullseye:
+- The first shot turned the left target green and the line read "Targets hit 1/3". A second shot at the same target left it at 1/3. The centre and right targets took it to 2/3, then to the door-unlocked line.
+- Resetting the room cleared the tint on the targets and put the line back to "Targets hit 0/3".
+- Screenshots: `Screenshots/item4_*`. The bell was triggered but can't be judged from a test; it needs your ears.
+- Retry and win tests: 45 of 45 pass.
+
 ## Phase 18.3: Objective recall on [Tab]
 
 **Why:** Lecturer feedback: once a room card was dismissed there was no way to read it again. A player who clicked through too fast, or forgot the controls mid-room, only had the one-line objective to go on.

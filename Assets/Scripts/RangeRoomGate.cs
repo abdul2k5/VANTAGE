@@ -12,32 +12,45 @@ public class RangeRoomGate : MonoBehaviour
     public RoomManager roomManager;
     public int roomIndex;
     public string clearedObjective = "All 3 targets down. Door unlocked - head to the exit.";
+    [Tooltip("The objective line while targets remain. {0} = hit so far, {1} = total.")]
+    public string progressObjective = "Targets hit {0}/{1}";
 
     int hitCount;
-    string originalObjective;
 
     void Start()
     {
-        if (roomManager != null && roomIndex >= 0 && roomIndex < roomManager.rooms.Length)
-            originalObjective = roomManager.rooms[roomIndex].objective;
         if (targets == null) return;
         for (int i = 0; i < targets.Length; i++)
         {
             if (targets[i] != null) targets[i].OnHit += HandleHit;
         }
+        ShowObjective(Progress());
     }
 
     void HandleHit()
     {
         hitCount++;
-        if (hitCount < targets.Length) return;
+        if (hitCount < targets.Length)
+        {
+            ShowObjective(Progress());
+            return;
+        }
 
         if (door != null) door.Unlock();
-        if (roomManager != null && roomIndex >= 0 && roomIndex < roomManager.rooms.Length)
-        {
-            roomManager.rooms[roomIndex].objective = clearedObjective;
-            roomManager.RefreshObjectiveText();
-        }
+        ShowObjective(clearedObjective);
+    }
+
+    string Progress()
+    {
+        return string.Format(progressObjective, hitCount, targets != null ? targets.Length : 0);
+    }
+
+    void ShowObjective(string text)
+    {
+        if (roomManager == null || roomIndex < 0 || roomIndex >= roomManager.rooms.Length) return;
+        roomManager.rooms[roomIndex].objective = text;
+        // Only redraw the line if this is the room on screen - this also runs from Start, possibly before the first room is entered.
+        if (roomManager.CurrentRoom == roomIndex) roomManager.RefreshObjectiveText();
     }
 
     /// <summary>Room Select: targets count again, door locked, original objective back.</summary>
@@ -52,7 +65,6 @@ public class RangeRoomGate : MonoBehaviour
             }
         }
         if (door != null) door.Relock();
-        if (roomManager != null && originalObjective != null && roomIndex >= 0 && roomIndex < roomManager.rooms.Length)
-            roomManager.rooms[roomIndex].objective = originalObjective;
+        ShowObjective(Progress());
     }
 }
