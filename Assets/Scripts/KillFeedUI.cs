@@ -40,14 +40,14 @@ public class KillFeedUI : MonoBehaviour
         var txt = go.GetComponent<Text>();
         txt.text = text;
         txt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        txt.fontSize = 16;
+        txt.fontSize = 20;
         txt.fontStyle = FontStyle.Bold;
         txt.alignment = TextAnchor.MiddleRight;
         txt.color = color;
 
         var layout = go.GetComponent<LayoutElement>();
-        layout.minHeight = 22;
-        layout.preferredHeight = 22;
+        layout.minHeight = 28;
+        layout.preferredHeight = 28;
 
         StartCoroutine(FadeAndDestroy(go));
     }

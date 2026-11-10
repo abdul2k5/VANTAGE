@@ -2,6 +2,28 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 18.1: Larger text on the cards and HUD
+
+**Why:** The lecturer watched a playthrough and said the text was too small to read comfortably: the room cards, the ability cards, the objective line, the tooltips and the HUD numbers. The room card was a 520x300 box in the middle of a 1920x1080 screen, with 14-15px body text, when it had most of the screen free. This is the first of nine items from that session (Phase 18).
+
+**What changed** (sizes are at the 1920x1080 the canvas is designed for, and scale with the window):
+- **Room and ability card:** the panel is 1040x620, four times the area. Title 24 to 46px, key 16 to 28, description 15 to 28, tip 14 to 25, "continue" hint 11 to 20. The icon frame is 140px (was 96) and the room number in it is 84px (was 48).
+- **Objective line:** 18 to 26px, and the bar is 1280 wide (was 960) so the longest objective still fits on one line.
+- **Ability tiles:** names 14 to 18px, key letters up to 20, charge pips 13 to 18. The tiles are spaced 150 apart (was 130) so "RECON DART" and "SMOKE WALL" don't run into each other at the new size.
+- **Overwatch:** name 12 to 18px, key 14 to 18, and its description 8 to 14px in a 260x52 box.
+- **Health, armour, ammo:** the bars are 300 wide (was 220) and taller, with numbers at 22 and 18px (were 16 and 12). Ammo is 34px (was 24).
+- **Prompts and banners:** Recon aim hint 15 to 22px, plant prompt 13 to 20, round timer 20 to 28, Overwatch active and ready banners 16 and 14 to 22 and 20, kill feed 16 to 20, ESC hint 12 to 16.
+- **Settings tooltips:** the hover text in the settings footer is 16px (was 13).
+- **Moved to make room:** the "OVERWATCH PROTOCOL READY" banner sits 60px higher, clear of the larger Overwatch description.
+- **Overlap check for the HUD:** new `Vantage > Validate HUD Layout` (`HudLayoutValidator`). It measures every HUD element as if shown and reports anything off screen, any two elements that can be visible together and overlap, and any text taller than its box. The settings menu already had this; the HUD was only ever checked by hand.
+- **Retry and win tests:** `Vantage > Run Retry And Win Tests` (`VantageRunTests`) is the earlier hand-run checks written down as one scripted Play-mode run, so they can be repeated after each change in this phase.
+
+**Verified:**
+- HUD layout check: 0 errors at 1920x1080. Its first run caught the READY banner overlapping the Overwatch description by 1px, which is why the banner moved. Settings layout check: 0 errors.
+- Every card's text measured in the new boxes: the longest description needs 63 of 110px and the longest tip 57 of 100px, so nothing is cut off.
+- Screenshots at 1920x1080, before and after: `Screenshots/item1_*`.
+- Retry and win tests: 45 of 45 checks pass (die mid-round and retry, lose the round and retry, win, Play Again).
+
 ## Phase 17.30: Pixel-based crosshair settings and new shapes
 
 **Why:**

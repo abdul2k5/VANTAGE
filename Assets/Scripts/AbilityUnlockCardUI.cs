@@ -104,7 +104,7 @@ public class AbilityUnlockCardUI : MonoBehaviour
 
         roomNumberText = go.AddComponent<Text>();
         roomNumberText.font = nameText.font;
-        roomNumberText.fontSize = 48;
+        roomNumberText.fontSize = 84;
         roomNumberText.fontStyle = FontStyle.Bold;
         roomNumberText.alignment = TextAnchor.MiddleCenter;
         roomNumberText.color = iconImage.color;
