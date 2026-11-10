@@ -117,6 +117,9 @@ public class AbilityUnlockCardUI : MonoBehaviour
         PollRoomCard();
         PollUltimate();
 
+        var recallKb = Keyboard.current;
+        if (recallKb != null && recallKb.tabKey.wasPressedThisFrame) ReopenRoomCard();
+
         if (showing)
         {
             UpdateDismissHint();
@@ -156,6 +159,20 @@ public class AbilityUnlockCardUI : MonoBehaviour
 
         // Stays true for the whole run, so a checkpoint retry doesn't make the player re-read a card.
         roomCardShown[room] = true;
+        Show(roomCards[room], room + 1);
+    }
+
+    /// <summary>[Tab] or the objective button: shows the current room's card again, for a player who dismissed it
+    /// too fast or forgot what the room wants. Pressed while a card is up, it closes that card instead.</summary>
+    public void ReopenRoomCard()
+    {
+        if (showing) { TryDismiss(); return; }
+        if (rooms == null || roomCards == null) return;
+        // Same conditions as the first showing - never on top of the menu, a fade, settings or Game Over.
+        if (MainMenuController.IsOpen || rooms.IsTransitioning || Time.timeScale == 0f) return;
+
+        int room = rooms.CurrentRoom;
+        if (room < 0 || room >= roomCards.Length) return;
         Show(roomCards[room], room + 1);
     }
 

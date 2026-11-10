@@ -2,6 +2,24 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 18.3: Objective recall on [Tab]
+
+**Why:** Lecturer feedback: once a room card was dismissed there was no way to read it again. A player who clicked through too fast, or forgot the controls mid-room, only had the one-line objective to go on.
+
+**What changed:**
+- **[Tab] re-opens the current room's card**, with the same pause and layout as when it first appeared. Pressing [Tab] again closes it, as do Space and click.
+- **Objective icon:** a clipboard icon sits left of the settings gear with "TAB" under it, matching the gear's "ESC". Clicking it does the same as the key. It hides with the rest of the HUD while the settings menu is open.
+- **The card says so:** the line at the bottom of every card now reads "[SPACE] OR CLICK TO CONTINUE - [TAB] SHOWS THIS CARD AGAIN", so the player learns the key on the first card.
+- It never opens over the main menu, a room fade, the settings menu, Game Over or the win screen (all of which pause the game), the same rule the first showing follows.
+- "ESC" is now centred under the gear. Its text box was 100px wide and would have run under the new icon.
+
+**Verified:**
+- In Play mode a real Tab key event (queued through the input system, not a direct call) opened the Dash card in Room 7 and paused the game; a second one closed it and time resumed.
+- With the settings menu open the card does not open and the icon is hidden; both return on closing the menu.
+- HUD layout check: 0 errors (its first run caught the ESC box overlapping the new icon).
+- Screenshots: `Screenshots/item3_*`.
+- Retry and win tests: 45 of 45 pass.
+
 ## Phase 18.2: Labels and icons on health, armour and ammo
 
 **Why:** Lecturer feedback: the two bars bottom-left and the "12 / 12" bottom-right had no labels. A new player had to work out that the blue bar was armour, the amber bar was health, and the pair of numbers was ammo.
