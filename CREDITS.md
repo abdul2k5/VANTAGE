@@ -23,6 +23,16 @@ All by [Kenney](https://kenney.nl), CC0.
 
 Full per-sound mapping (which file plays for which game event) is in `CHANGELOG.md`, Phase 6d.
 
+### Gunshot (layered from the packs above)
+
+`Assets/Audio/Gunshot/gunshot_punchy_blaster.wav` is not a downloaded sound. It is mixed in the editor by `Assets/Editor/GunshotOptionBuilder.cs` from three of the Kenney clips above, so it is CC0 as well.
+
+| Layer | Source clip | Pack |
+|---|---|---|
+| Body | `laserLarge_000.ogg` | Sci-fi Sounds |
+| Low thump | `impactPlate_heavy_001.ogg` | Impact Sounds |
+| Top (the previous gunshot) | `laserSmall_002.ogg` | Sci-fi Sounds |
+
 ## 3D Models
 
 | Use | Asset | Author | Source | License |

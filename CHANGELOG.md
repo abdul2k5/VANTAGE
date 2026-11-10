@@ -2,6 +2,23 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 18.8: Heavier gunshot
+
+**Why:** Lecturer feedback: the gun sounded weak. The shot was a small laser clip (`laserSmall_002`) with only about 10% of its energy below 200Hz, so it had no thump, and it was quieter than the reload sounds.
+
+**What changed:**
+- **New shot sound:** `Assets/Audio/Gunshot/gunshot_punchy_blaster.wav`, 0.3s. It is three clips already in the project mixed together: the large laser for the body, a heavy plate impact for the low thump, and a little of the old shot on top so it is still recognisably the same gun. About 75% of its energy is below 200Hz.
+- **Three options were built and I picked this one.** The other two were the large laser on its own (too close to the old sound) and a metal crack over an explosion (closest to a real rifle, but it risked sounding like two noises).
+- **Still CC0.** All three source clips are from Kenney packs already credited. `CREDITS.md` now lists the layers.
+- **Kept as a recipe, not just a file:** `Assets/Editor/GunshotOptionBuilder.cs` (menu Vantage > Audio > Rebuild Gunshot Sound) rebuilds the clip from its sources, so the mix can be adjusted later.
+- **Volume:** the new clip peaks about 70% higher than the old one, so the weapon has a `gunshotVolume` setting, at 0.75.
+
+**Verified:**
+- Measured from the waveform: 0.30s long, peak 0.89, 75% of energy below 200Hz (old shot: peak 0.53, 10%).
+- In Play mode the weapon fires the new clip at volume 0.75.
+- How it sounds in a fight was judged by ear from the file, not yet in a full run.
+- Retry and win tests: 45 of 45 pass.
+
 ## Phase 18.7: The Round gets an approach, and reinforcements come in two waves
 
 **Why:** Lecturer feedback: Room 8 opened straight onto the site, so the final room was shorter and easier than the rooms teaching for it, and the four reinforcements arrived from both sides at once as one blur. The room should make the player use everything on the way in, and the hold should have two readable beats.

@@ -36,6 +36,8 @@ public class Weapon : MonoBehaviour
 
     [Header("Audio")]
     public AudioClip gunshotSound;
+    [Tooltip("The layered shot peaks about 70% higher than the old laser clip. This keeps it heavier without drowning the drones.")]
+    [Range(0f, 1f)] public float gunshotVolume = 0.75f;
     [Tooltip("First reload beat: the old magazine comes out.")]
     public AudioClip reloadSound;
     [Tooltip("Second reload beat: the new magazine goes in.")]
@@ -212,7 +214,7 @@ void UpdateSpread()
     public void Fire()
     {
         currentAmmo--;
-        PlaySfx(gunshotSound);
+        PlaySfx(gunshotSound, gunshotVolume);
         if (RoomManager.Instance != null) RoomManager.Instance.CancelEntryGrace();
         if (RunStats.Instance != null) RunStats.Instance.RecordShot();
         Vector3 origin = cam != null ? cam.transform.position : transform.position;
