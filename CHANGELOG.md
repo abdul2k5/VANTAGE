@@ -2,6 +2,41 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 18.7: The Round gets an approach, and reinforcements come in two waves
+
+**Why:** Lecturer feedback: Room 8 opened straight onto the site, so the final room was shorter and easier than the rooms teaching for it, and the four reinforcements arrived from both sides at once as one blur. The room should make the player use everything on the way in, and the hold should have two readable beats.
+
+**What changed:**
+- **Approach before site A**, built in the south half of the room. The site, its two covers, its two drones and the flank crate all moved 2.5m north to make space.
+  1. **Blind corner:** a wall faces the entry with its gap on the west. A drone waits just round the wall's end. It can't be seen from the entry side, only heard.
+  2. **Watched lane:** past a short stub wall, a corridor runs east with a drone at its far end looking down it. The way out is a gap 3m along, in reach of one dash from the stub.
+  3. **Open gap:** from that gap it is 2.7m of bare floor to the nearest site cover, in view of the site's holding drone.
+- **Two new drones** (corner and lane) are copies of the site's holding drone: same damage (20), health, range, fire rate, hover hum and red eye. They hold their posts after the plant and are removed by the blast.
+- **Reinforcements:** still four, now two waves of two from different sides. Wave 1 drops on the west side, wave 2 on the east. Each still gets its red warning light and alarm before it lands, and its hum once down.
+- **Medkit** added in the corner cell, in view of the lane drone. The room now has four drones before the plant where it had two.
+- **Drone damage is unchanged.**
+- The old centre crate stack is gone (the walls replace it). Objective and room card rewritten.
+
+**New timings**, measured in Play mode from the moment of the plant, with no player interference:
+
+| Event | Wave 1 (west) | Wave 2 (east) |
+|---|---|---|
+| Warning lights start | 1.7s and 2.2s | 8.7s and 9.2s |
+| Drones land | 4.0s and 4.5s | 11.0s and 11.5s |
+| Drones reach the charge | 6.9s and 7.1s | 13.9s and 14.3s |
+
+- A drone on the charge needs 4s to disarm it, so an unanswered wave 1 loses the round at about 11s.
+- The charge detonates 21s after the plant (1s "CHARGE PLANTED" beat, then the 20s countdown, unchanged).
+- Landing times are the same as before. Because the site is nearer the north wall, drones now reach the charge about 2.5s after landing; worked out from the old distances it was 2.6 to 3.7s.
+
+**Verified** in Play mode:
+- Sight scan: the entry side is seen by no drone; the corner drone sees only the cell behind the first wall; the lane drone sees the corridor and not the site; the open gap is seen by the site's holding drone.
+- All four reinforcements carried the hum, and a warning light appeared before each.
+- After the blast every drone in the room, the two approach drones included, was removed.
+- Not tested: a real fight through the approach. How hard it plays needs a human run.
+- Screenshots: `Screenshots/item7_*`.
+- Retry and win tests: 45 of 45 pass.
+
 ## Phase 18.6: Dash room needs two crossings
 
 **Why:** Lecturer feedback: Room 7 was over in one dash. Two crates with a lane between them meant one press of [SHIFT] and the door opened, so the room never asked the player to combine Dash with anything learned earlier.

@@ -75,12 +75,19 @@ public static class RoomLayoutBuilder
         var dashOrb = GameObject.Find("UltOrb_Dash");
         if (dashOrb != null) dashOrb.transform.position = new Vector3(155.2f, dashOrb.transform.position.y, 4.7f);
 
-        // The Round (x=200): a central crate stack splits the approach into two lanes, each leading to one of
-        // the existing site covers; a low crate on the west flank gives an off-angle on the patrol. 2.2m, not a
-        // full wall - still hides a standing player from the drones, without filling the view from the entry.
+        // The Round (x=200): an approach in three beats before the site, which sits north of all this (z 2.5).
+        //  1. Blind corner - the first wall has its gap on the west; a drone waits just round its end, hidden
+        //     from the entry side by the wall and from the lane by the stub.
+        //  2. Watched lane - past the stub, a drone at the east end looks down the corridor to the exit gap.
+        //  3. Open gap - from the exit gap it is 2.7m of bare floor to the site covers, under the site drones.
+        // A low crate on the west flank of the site gives an off-angle on the patrol.
         var round = Group(root, "TheRound");
-        Piece(round, "SplitCrates", new Vector3(200f, 1.1f, -4f), new Vector3(2f, 2.2f, 1f), teal);
-        Piece(round, "FlankCrate_W", new Vector3(195f, 0.6f, 2f), new Vector3(1.2f, 1.2f, 1.2f), orange);
+        Wall(round, "Approach_WallA", new Vector3(201.2f, 0f, -5.8f), 9.2f, wall, trim);
+        Piece(round, "Approach_Stub", new Vector3(198.8f, 1.5f, -4.7f), new Vector3(0.4f, 3f, 1.8f), wall);
+        Cap(round, "Approach_Stub_Cap", new Vector3(198.8f, 3.02f, -4.7f), new Vector3(0.5f, 0.06f, 1.9f), trim);
+        Wall(round, "Approach_WallB_W", new Vector3(197.8f, 0f, -2.2f), 7.2f, wall, trim);
+        Wall(round, "Approach_WallB_E", new Vector3(204.7f, 0f, -2.2f), 2.2f, wall, trim);
+        Piece(round, "FlankCrate_W", new Vector3(195f, 0.6f, 4.5f), new Vector3(1.2f, 1.2f, 1.2f), orange);
 
         // The Flash orb sat in the now-safe half of the room; past the corner it's a risk-for-reward pickup.
         var flashOrb = GameObject.Find("UltOrb_Flash");

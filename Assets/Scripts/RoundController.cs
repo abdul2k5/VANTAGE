@@ -34,6 +34,8 @@ public class RoundController : MonoBehaviour
     [Header("Defenders (push toward the site in waves once planted)")]
     public Sentinel[] siteDefenders;
     public float[] waveDelaysSeconds = { 0f, 10f, 20f };
+    [Tooltip("Drones guarding the way in (blind corner, lane). They hold their posts after the plant - only the blast removes them.")]
+    public Sentinel[] approachDrones;
 
     [System.Serializable]
     public class ReinforcementSpawn
@@ -305,6 +307,10 @@ public class RoundController : MonoBehaviour
         if (siteDefenders != null)
         {
             for (int i = 0; i < siteDefenders.Length; i++) if (siteDefenders[i] != null) siteDefenders[i].gameObject.SetActive(false);
+        }
+        if (approachDrones != null)
+        {
+            for (int i = 0; i < approachDrones.Length; i++) if (approachDrones[i] != null) approachDrones[i].gameObject.SetActive(false);
         }
     }
 
