@@ -61,11 +61,19 @@ public static class RoomLayoutBuilder
         var flash = Group(root, "Flash");
         Wall(flash, "Wall", new Vector3(121.65f, 0f, 2.2f), 8.3f, wall, trim);
 
-        // Dash (x=160): two staggered cover blocks with an exposed lane between them. Hide behind one, dash
-        // to the other - the orb sits beside the second as the reward for committing.
+        // Dash (x=160): three walls make two watched lanes, each held by a drone looking down it from the
+        // east end. Lane 1 (z -3.4..-0.6) is crossed through the west gaps - one dash. Between the lanes is
+        // a safe pocket. Lane 2 (z 3.4..6) is crossed from the centre gap straight to the door, with Dash
+        // still cooling down: smoke or flash it. The orb sits at lane 2's west end, a detour in the open.
         var dash = Group(root, "Dash");
-        Piece(dash, "Cover_A", new Vector3(157f, 1.1f, -1.5f), new Vector3(1.8f, 2.2f, 1.2f), teal);
-        Piece(dash, "Cover_B", new Vector3(162.5f, 1.1f, 1.2f), new Vector3(1.8f, 2.2f, 1.2f), teal);
+        Wall(dash, "Wall1_W", new Vector3(155.1f, 0f, -3.6f), 1.8f, wall, trim);
+        Wall(dash, "Wall1_E", new Vector3(161.9f, 0f, -3.6f), 7.8f, wall, trim);
+        Wall(dash, "Wall2_W", new Vector3(155.1f, 0f, -0.4f), 1.8f, wall, trim);
+        Wall(dash, "Wall2_E", new Vector3(161.9f, 0f, -0.4f), 7.8f, wall, trim);
+        Wall(dash, "Wall3_W", new Vector3(156.6f, 0f, 3.2f), 4.8f, wall, trim);
+        Wall(dash, "Wall3_E", new Vector3(163.4f, 0f, 3.2f), 4.8f, wall, trim);
+        var dashOrb = GameObject.Find("UltOrb_Dash");
+        if (dashOrb != null) dashOrb.transform.position = new Vector3(155.2f, dashOrb.transform.position.y, 4.7f);
 
         // The Round (x=200): a central crate stack splits the approach into two lanes, each leading to one of
         // the existing site covers; a low crate on the west flank gives an off-angle on the patrol. 2.2m, not a

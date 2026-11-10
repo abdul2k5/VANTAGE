@@ -2,6 +2,30 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 18.6: Dash room needs two crossings
+
+**Why:** Lecturer feedback: Room 7 was over in one dash. Two crates with a lane between them meant one press of [SHIFT] and the door opened, so the room never asked the player to combine Dash with anything learned earlier.
+
+**What changed:**
+- **Layout:** the two crates are replaced by three walls across the room, which make two lanes. Each lane has a drone standing at its east end looking down it.
+  - Lane 1 is 2.8m across, reached through a gap on the west side. One dash (3.2m) clears it.
+  - Between the lanes is a pocket neither drone can see into. The medkit is here.
+  - Lane 2 is 2.6m across, from a centre gap straight to the exit door.
+- **Dash cooldown 0.6s to 6s.** After dashing lane 1, Dash is still recharging when the player reaches lane 2 (the HUD tile shows it). This applies in Room 8 too: the two dashes there can no longer be chained back to back.
+- **Door:** it now needs Dash and then Smoke or Flash, in either order. Killing both drones still opens it. The objective line says what is still missing ("Dash is recharging - smoke [Q] or flash [E] the second lane").
+- **Drones:** both now hold their lane instead of one patrolling the back wall. Reaction time 0.5s to 0.4s, so running a lane without utility costs a hit. Damage, range and fire rate are unchanged.
+- **Orb:** moved to the west end of lane 2, a detour in the open.
+- The room card tip and objective were rewritten to match.
+
+**Verified** in Play mode:
+- Sight scan over the whole room: lane 1 is seen only by the first drone, lane 2 only by the second, and the entry side and the pocket by neither (one half-metre spot beside the centre gap aside).
+- A dash from the first gap crossed lane 1 with no damage, and the objective changed to the smoke-or-flash line with the door still locked.
+- A Smoke Wall thrown east from the centre gap hid every point of the crossing from the second drone, and the door unlocked.
+- Flash reaches the second drone both thrown straight down the lane and banked off the door wall from inside the pocket (pop 1.3 to 3.1m from the drone, clear line).
+- Not measured: how much damage a player takes running the lanes with no utility. Worked out from speed and reaction time it is about one hit (20) per lane.
+- Screenshots: `Screenshots/item6_*`.
+- Retry and win tests: 45 of 45 pass.
+
 ## Phase 18.5: Debrief shows ability names, not keys
 
 **Why:** Lecturer feedback: the "UTILITY USED" line on the win and Game Over screens read "6 (F x1, Q x2, E x1, SHIFT x2)". That only makes sense to someone who remembers which key is which ability.
