@@ -100,9 +100,11 @@ public static class VantageRunTests
     static IEnumerator Scenario()
     {
         Application.runInBackground = true;
-        int startFrame = Time.frameCount;
 
-        if (MainMenuController.IsOpen) UnityEngine.Object.FindFirstObjectByType<MainMenuController>().StartGame();
+        // Always from a fresh run, whatever the Play session was doing before (the same reload RESTART uses).
+        GameOverController.Instance.RestartFromBeginning();
+        yield return Wait(1.0);
+        int startFrame = Time.frameCount;
         yield return Wait(1.5);
         Check(Time.frameCount > startFrame + 10, "frames are advancing (" + (Time.frameCount - startFrame) + " in 1.5s)");
         Check(Rooms.CurrentRoom == 0 && Time.timeScale == 1f, "run starts in Room 1 with time running");

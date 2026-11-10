@@ -2,6 +2,22 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 18.2: Labels and icons on health, armour and ammo
+
+**Why:** Lecturer feedback: the two bars bottom-left and the "12 / 12" bottom-right had no labels. A new player had to work out that the blue bar was armour, the amber bar was health, and the pair of numbers was ammo.
+
+**What changed:**
+- **HEALTH and ARMOUR:** each bar has a dark tag on its left with a small icon and the word: an amber cross for health, a blue shield for armour, in the same colours as the bars. The bars moved right to make room and are the same size as before.
+- **AMMO:** the ammo box now reads bullet icon, "AMMO", then the count.
+- **Icons:** three new 24x24 white sprites drawn for this (`icon_health`, `icon_armour`, `icon_ammo` in `Assets/Art/Icons/`), tinted in the scene like the ability icons.
+- The tags are children of the bars and the ammo box, so they hide with the HUD when the settings menu opens, with no script changes.
+- `VantageRunTests` now reloads into a fresh run before it starts, so it can be run at any point in a Play session.
+
+**Verified:**
+- HUD layout check: 0 errors at 1920x1080.
+- Screenshots before and after: `Screenshots/item2_*`.
+- Retry and win tests: 45 of 45 pass.
+
 ## Phase 18.1: Larger text on the cards and HUD
 
 **Why:** The lecturer watched a playthrough and said the text was too small to read comfortably: the room cards, the ability cards, the objective line, the tooltips and the HUD numbers. The room card was a 520x300 box in the middle of a 1920x1080 screen, with 14-15px body text, when it had most of the screen free. This is the first of nine items from that session (Phase 18).
