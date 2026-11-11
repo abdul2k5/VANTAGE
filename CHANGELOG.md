@@ -2,6 +2,23 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 18.9: Main menu with a live 3D backdrop
+
+**Why:** Lecturer feedback: the main menu was a flat dark panel with centred text, which said nothing about the game. The menu is the first thing seen at the expo, so it should show the world and the enemy before START is pressed.
+
+**What changed:**
+- **Live backdrop:** a second camera drifts slowly back and forth through the Range (28s per loop, eased so it stops gently at each end) and renders into a texture shown behind the menu. It is the real room, not a video or a picture.
+- **Patrolling Sentinel:** a visuals-only copy of the drone (no AI, no collider, no weakpoint) walks between two points in front of the targets, and stops at each end to turn and look at the camera. Its eye has its own bright red emissive material and a small red light, so the eye is the brightest thing on screen.
+- **Layout:** the title, blurb and START button moved from the centre into a dark column on the left, so the scene fills the right two thirds. The title is amber, bold and 104px with a short amber rule under it. The column is 80% opaque, which keeps the text readable whatever the camera is looking at.
+- **Music:** the menu track already played here and is unchanged.
+- **No cost during play:** the menu holds the game paused, so the backdrop runs on unscaled time. When START is pressed (or on Restart, which skips the menu) the camera, the drone and the texture are all switched off. New script: `MenuBackdrop.cs`.
+
+**Verified:**
+- Before and after screenshots are in `Screenshots/item9_mainmenu_*.png`.
+- In Play mode the menu shows the moving backdrop, and after START the backdrop camera and drone are off.
+- HUD and settings layout checks: 0 errors.
+- Retry and win tests: 45 of 45 pass with the new menu in place.
+
 ## Phase 18.8: Heavier gunshot
 
 **Why:** Lecturer feedback: the gun sounded weak. The shot was a small laser clip (`laserSmall_002`) with only about 10% of its energy below 200Hz, so it had no thump, and it was quieter than the reload sounds.
