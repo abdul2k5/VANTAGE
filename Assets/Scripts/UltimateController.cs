@@ -101,8 +101,12 @@ public class UltimateController : MonoBehaviour
         active = true;
 
         var sentinels = Object.FindObjectsByType<Sentinel>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        // Only the room being fought in. Every room's drones are live in the scene at once, so
+        // revealing them all drew markers for the rooms ahead through the walls.
+        int room = RoomManager.Instance != null ? RoomManager.Instance.CurrentRoom : -1;
         foreach (var s in sentinels)
         {
+            if (room >= 0 && s.OwnerRoomIndex != room) continue;
             s.Reveal(ultimateDuration);
         }
 

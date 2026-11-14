@@ -97,7 +97,14 @@ public class GameOverController : MonoBehaviour
         panel.transform.SetAsLastSibling();
         panel.SetActive(true);
 
-        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX(loseSound);
+        if (AudioManager.Instance != null)
+        {
+            // The music source ignores the listener pause below, so without this the room's track
+            // carried on over the screen. Every way out restarts it: a retry through EnterRoom,
+            // the menu through MainMenuController.
+            AudioManager.Instance.StopMusic();
+            AudioManager.Instance.PlaySFXThroughPause(loseSound);
+        }
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;

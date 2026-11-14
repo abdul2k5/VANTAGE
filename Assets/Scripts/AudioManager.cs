@@ -41,6 +41,7 @@ public class AudioManager : MonoBehaviour
 
     AudioSource musicSource;
     AudioSource sfxSource;
+    AudioSource pausedSfxSource;
 
     public AudioMixerGroup MusicGroup { get { return musicGroup; } }
     public AudioMixerGroup SfxGroup { get { return sfxGroup; } }
@@ -70,6 +71,12 @@ public class AudioManager : MonoBehaviour
         sfxSource.playOnAwake = false;
         sfxSource.outputAudioMixerGroup = sfxGroup;
 
+        // For sounds that belong to a screen which pauses the listener (the Game Over sting).
+        pausedSfxSource = gameObject.AddComponent<AudioSource>();
+        pausedSfxSource.playOnAwake = false;
+        pausedSfxSource.outputAudioMixerGroup = sfxGroup;
+        pausedSfxSource.ignoreListenerPause = true;
+
         PlayMenuMusic();
 
         StartCoroutine(RouteUnassignedAudioSources());
@@ -93,6 +100,13 @@ public class AudioManager : MonoBehaviour
     {
         if (clip == null || sfxSource == null) return;
         sfxSource.PlayOneShot(clip, volumeScale);
+    }
+
+    /// <summary>One-shot that still plays while AudioListener.pause is set - PlaySFX would hold it until the game resumes.</summary>
+    public void PlaySFXThroughPause(AudioClip clip, float volumeScale = 1f)
+    {
+        if (clip == null || pausedSfxSource == null) return;
+        pausedSfxSource.PlayOneShot(clip, volumeScale);
     }
 
     /// <summary>Positional one-shot routed through the SFX mixer group - use instead of AudioSource.PlayClipAtPoint, which has no way to target a mixer group.</summary>
@@ -131,6 +145,12 @@ public class AudioManager : MonoBehaviour
     public void PlayGameplayMusic()
     {
         PlayMusic(gameplayMusic);
+    }
+
+    /// <summary>Silences the music - the Game Over screen, where the room's track (the fight loop in The Round) kept playing over the debrief.</summary>
+    public void StopMusic()
+    {
+        if (musicSource != null) musicSource.Stop();
     }
 
     void PlayMusic(AudioClip clip)

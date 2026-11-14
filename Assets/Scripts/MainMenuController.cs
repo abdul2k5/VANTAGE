@@ -36,6 +36,9 @@ void Awake()
         Cursor.lockState = IsOpen ? CursorLockMode.None : CursorLockMode.Locked;
         Time.timeScale = IsOpen ? 0f : 1f;
         AudioListener.pause = IsOpen;
+        // AudioManager survives the scene reload that brings the player back here, still playing
+        // whatever the run ended on. Null on the very first load, where its own Awake starts the menu track.
+        if (IsOpen && AudioManager.Instance != null) AudioManager.Instance.PlayMenuMusic();
     }
 
     public void OnPointerClickStart(PointerEventData eventData)

@@ -2,6 +2,21 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.1: Overwatch reveals only the current room, and the fight music stops on Mission Failed
+
+**Why:** Found in the designer's own full playthrough (14 Nov). Using Overwatch in the Dash room drew reveal markers for the four drones waiting in The Round, through the wall, which gave away the next room for free. And after dying in The Round, the fight music kept playing over the Mission Failed screen and carried on into the main menu.
+
+**What changed:**
+- **Overwatch reveal:** it now marks only the drones that belong to the room the player is in. Before, it marked every live drone in the level, and all eight rooms' drones are live at once.
+- **Mission Failed screen:** the music stops when the screen opens. A retry or restart starts the right track again when the room loads.
+- **Lose sound:** the screen pauses all game audio the moment it opens, which also held back its own lose sound until the player resumed. The sound now plays on a source that ignores the pause, so it is heard on the screen it belongs to.
+- **Main menu:** returning to the menu now switches to the menu track. The audio manager survives the scene reload, so it had kept playing whatever the run ended on.
+
+**Verified:**
+- In Play mode, Overwatch in the Dash room reveals its two drones and none from The Round.
+- Opening Mission Failed in The Round stops the music and plays the lose sound. Pressing MAIN MENU brings back the menu track.
+- Checked through script calls, not yet by ear. The retry and win regression tests were not re-run.
+
 ## Phase 18.9: Main menu with a live 3D backdrop
 
 **Why:** Lecturer feedback: the main menu was a flat dark panel with centred text, which said nothing about the game. The menu is the first thing seen at the expo, so it should show the world and the enemy before START is pressed.
