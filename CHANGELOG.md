@@ -2,6 +2,21 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.3: Win screen shows a grade and the best time
+
+**Why:** A full run takes two to three minutes, and at the expo people will finish it and hand over the mouse. The win screen listed the numbers but gave no single verdict and nothing to beat, so there was no reason to play again or to try to beat the last person.
+
+**What changed:**
+- **Grade:** the win screen shows S, A, B or C. A run starts at 100 points and loses 15 per checkpoint retry, 1 per 10 damage taken (armour included) and 1 per 6 seconds over four minutes. S is 90 or more, A is 75, B is 55. Survival is the core dynamic, so damage and retries cost more than the clock does.
+- **Best time:** the fastest winning run is saved on the machine. The TIME row shows "NEW BEST (was 3:28)" when it is beaten, and "(best 3:14)" when it is not.
+- The Game Over screen is unchanged. A failed run can still continue from the checkpoint, so it has no grade yet.
+- The scripted regression run does not save a best time, since it finishes far faster than a person can.
+
+**Verified:**
+- Win screen screenshot with every optional row showing: the grade sits between the two columns and touches neither.
+- HUD layout check: 0 errors.
+- The grade thresholds are a first guess and have not been tuned against real runs.
+
 ## Phase 19.2: Dash room gets a third drone and faster reactions
 
 **Why:** The designer's own playthrough (14 Nov): Room 7 felt easier than the rooms before it. The debrief showed Dash used once in the whole run, so the room was cleared by shooting, not by crossing. Killing both drones opened the door, a headshot kills in one hit, and each lane had one drone to look at. Shooting was cheaper than the two crossings the room is there to teach.

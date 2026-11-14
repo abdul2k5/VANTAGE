@@ -15,6 +15,8 @@ public class RunDebriefUI : MonoBehaviour
     public Text splitLabels;
     public Text splitValues;
     public Text tipText;
+    [Tooltip("Optional - the run's grade, win screen only.")]
+    public Text gradeText;
     [Tooltip("Game Over: adds the room the run ended in.")]
     public bool showRoomReached;
 
@@ -36,7 +38,7 @@ public class RunDebriefUI : MonoBehaviour
         {
             Row(labels, values, "ENDED IN", rm.rooms[rm.CurrentRoom].title.ToUpper() + "  (" + (rm.CurrentRoom + 1) + "/" + rm.rooms.Length + ")");
         }
-        Row(labels, values, "TIME", FormatTime(stats.TotalSeconds));
+        Row(labels, values, "TIME", FormatTime(stats.TotalSeconds) + BestTimeNote(stats));
         Row(labels, values, "KILLS", stats.Kills.ToString());
         Row(labels, values, "ACCURACY", Percent(stats.Hits, stats.ShotsFired) + "  (" + stats.Hits + "/" + stats.ShotsFired + ")");
         Row(labels, values, "HEADSHOTS", Percent(stats.HeadshotHits, stats.SentinelHits) + " of drone hits");
@@ -63,6 +65,16 @@ public class RunDebriefUI : MonoBehaviour
         }
 
         if (tipText != null) tipText.text = PickTip(stats);
+        // Only a finished run is graded - on Game Over the run can still continue from the checkpoint.
+        if (gradeText != null) gradeText.text = stats.Finished ? "GRADE\n<size=96><b>" + stats.Grade + "</b></size>" : "";
+    }
+
+    /// <summary>Beside the time on a win: whether it beat the saved best, or what the best is.</summary>
+    static string BestTimeNote(RunStats stats)
+    {
+        if (!stats.Finished) return "";
+        if (stats.NewBest) return stats.PreviousBestSeconds > 0f ? "   <color=#E2A53C>NEW BEST</color>  (was " + FormatTime(stats.PreviousBestSeconds) + ")" : "   <color=#E2A53C>NEW BEST</color>";
+        return RunStats.BestSeconds > 0f ? "   (best " + FormatTime(RunStats.BestSeconds) + ")" : "";
     }
 
     static void Row(StringBuilder labels, StringBuilder values, string label, string value)

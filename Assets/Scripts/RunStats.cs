@@ -98,8 +98,62 @@ public class RunStats : MonoBehaviour
     /// <summary>Keyed by orb name - checkpoint retry respawns orbs, and re-collecting one shouldn't count twice.</summary>
     public void RecordOrb(string orbName) { orbsCollected.Add(orbName); }
 
+    const string BestTimeKey = "VantageBestSeconds";
+    /// <summary>Off while the scripted regression run plays, so its time is never saved as a player's best.</summary>
+    public static bool RecordBestTimes = true;
+
+    /// <summary>Fastest winning run saved on this machine, in seconds. 0 = no win yet.</summary>
+    public static float BestSeconds { get { return PlayerPrefs.GetFloat(BestTimeKey, 0f); } }
+    /// <summary>True once this run has finished faster than the saved best (or is the first win).</summary>
+    public bool NewBest { get; private set; }
+    /// <summary>The best time as it stood before this run finished, so the debrief can show what was beaten.</summary>
+    public float PreviousBestSeconds { get; private set; }
+
     /// <summary>Stops the clock - called on a win. A death doesn't finish the run, since checkpoint retry continues it.</summary>
-    public void Finish() { Finished = true; }
+    public void Finish()
+    {
+        if (Finished) return;
+        Finished = true;
+
+        PreviousBestSeconds = BestSeconds;
+        if (RecordBestTimes && (PreviousBestSeconds <= 0f || TotalSeconds < PreviousBestSeconds))
+        {
+            NewBest = true;
+            PlayerPrefs.SetFloat(BestTimeKey, TotalSeconds);
+            PlayerPrefs.Save();
+        }
+    }
+
+    [Header("Grade - starts at 100 and loses points for retries, damage taken and time over par")]
+    public float pointsPerRetry = 15f;
+    [Tooltip("Points lost per point of damage taken, armour included.")]
+    public float pointsPerDamage = 0.1f;
+    public float parSeconds = 240f;
+    [Tooltip("Seconds over par that cost one point.")]
+    public float secondsPerPoint = 6f;
+
+    public float GradeScore
+    {
+        get
+        {
+            float overPar = Mathf.Max(0f, TotalSeconds - parSeconds);
+            float perSecond = secondsPerPoint > 0f ? 1f / secondsPerPoint : 0f;
+            return 100f - CheckpointRetries * pointsPerRetry - DamageTaken * pointsPerDamage - overPar * perSecond;
+        }
+    }
+
+    /// <summary>S, A, B or C for a finished run. Survival is the game, so damage and retries weigh more than the clock.</summary>
+    public string Grade
+    {
+        get
+        {
+            float score = GradeScore;
+            if (score >= 90f) return "S";
+            if (score >= 75f) return "A";
+            if (score >= 55f) return "B";
+            return "C";
+        }
+    }
 
     void OnDestroy()
     {

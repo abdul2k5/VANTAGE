@@ -38,6 +38,7 @@ public static class VantageRunTests
         if (!EditorApplication.isPlaying) { Debug.LogError("[VantageRunTests] Enter Play mode first."); return; }
         if (Running) return;
         Running = true;
+        RunStats.RecordBestTimes = false; // the scripted win is far faster than any real run
         passed = failed = 0;
         log = new StringBuilder();
         Report = "RUNNING";
@@ -77,6 +78,7 @@ public static class VantageRunTests
     {
         EditorApplication.update -= Tick;
         Running = false;
+        RunStats.RecordBestTimes = true;
         if (note != null) { log.AppendLine(note); failed++; }
         log.AppendLine("RESULT: " + passed + " passed, " + failed + " failed");
         Report = log.ToString();
