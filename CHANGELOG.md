@@ -2,6 +2,27 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.2: Dash room gets a third drone and faster reactions
+
+**Why:** The designer's own playthrough (14 Nov): Room 7 felt easier than the rooms before it. The debrief showed Dash used once in the whole run, so the room was cleared by shooting, not by crossing. Killing both drones opened the door, a headshot kills in one hit, and each lane had one drone to look at. Shooting was cheaper than the two crossings the room is there to teach.
+
+**What changed:**
+- **Third drone:** lane 2 is now watched from both ends. The new drone (`Sentinel_R5_03`) holds the west end and looks east, facing the one at the east end. Peeking out of the centre gap to shoot one of them shows the player's back to the other.
+- **What this asks for:** one Flash popped in the gap blinds both, so Flash is the clean answer. Smoke still works but takes both charges, one wall each way.
+- **Reaction time 0.4s to 0.3s** on all three drones, the fastest outside The Round. Damage, range and fire rate are unchanged.
+- **Door:** killing still opens it, but it now takes all three.
+- **Dash room orb:** moved from the west end of lane 2 (where the new drone stands) to just west of the gap. It is still a detour in the open.
+- **Flash room orb removed.** One orb is left in the run. This matters less than the other changes: a player who kills every drone fills Overwatch from kills alone before Room 7.
+- The room card tip and the door-unlocked line now say the second lane is watched from both ends.
+
+**Verified:**
+- Sight scan of the room: lane 1 is seen only by its drone, lane 2 by both of its drones, the entry side and the pocket by none (two half-metre corner spots aside). The medkit is not in view.
+- Flash popped in the centre gap or in the lane blinds both lane 2 drones. Popped further back inside the pocket it blinds neither.
+- One Smoke Wall thrown east hides the crossing from the east drone only. A second thrown west hides it from both, up to the door.
+- With two drones dead the door stays locked. It opens on the third.
+- Retry and win tests: 45 of 45 pass. HUD layout check: 0 errors.
+- Not yet played by hand.
+
 ## Phase 19.1: Overwatch reveals only the current room, and the fight music stops on Mission Failed
 
 **Why:** Found in the designer's own full playthrough (14 Nov). Using Overwatch in the Dash room drew reveal markers for the four drones waiting in The Round, through the wall, which gave away the next room for free. And after dying in The Round, the fight music kept playing over the Mission Failed screen and carried on into the main menu.

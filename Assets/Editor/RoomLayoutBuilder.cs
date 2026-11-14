@@ -61,10 +61,11 @@ public static class RoomLayoutBuilder
         var flash = Group(root, "Flash");
         Wall(flash, "Wall", new Vector3(121.65f, 0f, 2.2f), 8.3f, wall, trim);
 
-        // Dash (x=160): three walls make two watched lanes, each held by a drone looking down it from the
-        // east end. Lane 1 (z -3.4..-0.6) is crossed through the west gaps - one dash. Between the lanes is
-        // a safe pocket. Lane 2 (z 3.4..6) is crossed from the centre gap straight to the door, with Dash
-        // still cooling down: smoke or flash it. The orb sits at lane 2's west end, a detour in the open.
+        // Dash (x=160): three walls make two watched lanes. Lane 1 (z -3.4..-0.6) is held by a drone looking
+        // down it from the east end and is crossed through the west gaps - one dash. Between the lanes is
+        // a safe pocket. Lane 2 (z 3.4..6) is held from both ends and is crossed from the centre gap straight
+        // to the door, with Dash still cooling down: smoke or flash it. The orb sits west of the gap in
+        // lane 2, a detour in the open towards the west drone.
         var dash = Group(root, "Dash");
         Wall(dash, "Wall1_W", new Vector3(155.1f, 0f, -3.6f), 1.8f, wall, trim);
         Wall(dash, "Wall1_E", new Vector3(161.9f, 0f, -3.6f), 7.8f, wall, trim);
@@ -73,7 +74,7 @@ public static class RoomLayoutBuilder
         Wall(dash, "Wall3_W", new Vector3(156.6f, 0f, 3.2f), 4.8f, wall, trim);
         Wall(dash, "Wall3_E", new Vector3(163.4f, 0f, 3.2f), 4.8f, wall, trim);
         var dashOrb = GameObject.Find("UltOrb_Dash");
-        if (dashOrb != null) dashOrb.transform.position = new Vector3(155.2f, dashOrb.transform.position.y, 4.7f);
+        if (dashOrb != null) dashOrb.transform.position = new Vector3(157.2f, dashOrb.transform.position.y, 4.7f);
 
         // The Round (x=200): an approach in three beats before the site, which sits north of all this (z 2.5).
         //  1. Blind corner - the first wall has its gap on the west; a drone waits just round its end, hidden
@@ -88,10 +89,6 @@ public static class RoomLayoutBuilder
         Wall(round, "Approach_WallB_W", new Vector3(197.8f, 0f, -2.2f), 7.2f, wall, trim);
         Wall(round, "Approach_WallB_E", new Vector3(204.7f, 0f, -2.2f), 2.2f, wall, trim);
         Piece(round, "FlankCrate_W", new Vector3(195f, 0.6f, 4.5f), new Vector3(1.2f, 1.2f, 1.2f), orange);
-
-        // The Flash orb sat in the now-safe half of the room; past the corner it's a risk-for-reward pickup.
-        var flashOrb = GameObject.Find("UltOrb_Flash");
-        if (flashOrb != null) flashOrb.transform.position = new Vector3(124.5f, 0.9f, 3.8f);
 
         EditorSceneManager.MarkSceneDirty(root.gameObject.scene);
     }
