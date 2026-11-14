@@ -2,6 +2,23 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.4: Drones break apart when killed and chirp when they spot you
+
+**Why:** Two gaps in feedback, both around the moment that matters most in a survival game. A killed drone simply vanished, so a kill had a sound and a kill-feed line but nothing to see. And a drone that had seen the player gave no sign of it until its first shot landed, so a death from an unseen angle felt unfair.
+
+**What changed:**
+- **Death effect:** a killed drone throws out a burst of orange sparks, a short flash of light and six pieces of its own shell and red eye, which arc out, bounce once on the floor and shrink away in about a second. The pieces have no colliders, so they cannot block a bullet or a drone's sight. New script: `SentinelDeathEffect.cs`.
+- **Spotted sound:** a drone gives two quick rising beeps from its own position the moment it sees the player, which is before its first shot (0.3 to 1.5 seconds before, by room). It is a 3D sound, so it also says roughly where the drone is.
+  - Only a drone that saw the player itself makes the sound. One called in by a roommate stays quiet, and so do the unarmed practice drones.
+  - A drone will not repeat it within 2 seconds, so peeking in and out does not spam it.
+  - The sound is generated, not sampled: `Assets/Audio/Sentinel/sentinel_spotted.wav`, 0.23 seconds.
+
+**Verified:**
+- Screenshot of a kill in Holding Angle shows the sparks and pieces.
+- In Play mode the alert sound is created at the drone when it first sees the player.
+- Retry and win tests: 45 of 45 pass.
+- Not yet heard by the designer: the alert's volume against the gunshot and the music.
+
 ## Phase 19.3: Win screen shows a grade and the best time
 
 **Why:** A full run takes two to three minutes, and at the expo people will finish it and hand over the mouse. The win screen listed the numbers but gave no single verdict and nothing to beat, so there was no reason to play again or to try to beat the last person.

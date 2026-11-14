@@ -61,6 +61,15 @@ public class Sentinel : MonoBehaviour
     public AudioClip hoverHum;
     public float hoverHumVolume = 0.5f;
     public AudioClip deathSound;
+    [Tooltip("Short alert played at the drone the moment it sees the player, so the player knows they were seen before the first shot lands.")]
+    public AudioClip spottedSound;
+    [Range(0f, 1f)] public float spottedVolume = 0.8f;
+    [Tooltip("A drone that loses and regains sight (a peek, a smoke edge) doesn't repeat the alert more often than this.")]
+    public float spottedSoundCooldown = 2f;
+
+    /// <summary>Centre of the hovering body above the drone's origin, which is on the floor.</summary>
+    const float DeathEffectHeight = 1.42f;
+    float lastSpottedSoundTime = -999f;
 
     enum State { Patrol, Alert }
     State state = State.Patrol;
@@ -282,7 +291,11 @@ void Update()
             {
                 // A fair reaction window - a good peek or a well-timed flash still beats this before the first shot lands.
                 fireTimer = Random.Range(reactionDelayMin, reactionDelayMax);
-                if (seesPlayer) AlertRoommates(player.position);
+                if (seesPlayer)
+                {
+                    AlertRoommates(player.position);
+                    PlaySpottedSound();
+                }
             }
             else
             {
@@ -319,6 +332,32 @@ void Update()
                 RunPatrol();
             }
         }
+    }
+
+    /// <summary>The shell (the biggest mesh's material) and the red eye, so the pieces thrown out read as this drone's.</summary>
+    Material[] DeathPieceMaterials()
+    {
+        Material shell = null, eye = null;
+        float biggest = -1f;
+        var renderers = GetComponentsInChildren<MeshRenderer>();
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            if (renderers[i].GetComponent<Weakpoint>() != null) { eye = renderers[i].sharedMaterial; continue; }
+            Vector3 size = renderers[i].bounds.size;
+            float volume = size.x * size.y * size.z;
+            if (volume > biggest) { biggest = volume; shell = renderers[i].sharedMaterial; }
+        }
+        if (shell == null) return eye != null ? new[] { eye } : null;
+        return eye != null ? new[] { shell, shell, eye } : new[] { shell };
+    }
+
+    /// <summary>Only for a drone that saw the player itself and can shoot back - one called in by a roommate, or an unarmed practice drone, stays quiet.</summary>
+    void PlaySpottedSound()
+    {
+        if (!canShoot || spottedSound == null || AudioManager.Instance == null) return;
+        if (Time.time - lastSpottedSoundTime < spottedSoundCooldown) return;
+        lastSpottedSoundTime = Time.time;
+        AudioManager.Instance.PlaySfxAtPoint(spottedSound, transform.position + Vector3.up * DeathEffectHeight, spottedVolume);
     }
 
     void RunPush()
@@ -523,6 +562,7 @@ void Fire()
             {
                 AudioManager.Instance.PlaySfxAtPoint(deathSound, transform.position);
             }
+            SentinelDeathEffect.Spawn(transform.position + Vector3.up * DeathEffectHeight, DeathPieceMaterials());
             gameObject.SetActive(false);
             if (OnKilled != null) OnKilled(isHeadshot);
             return;

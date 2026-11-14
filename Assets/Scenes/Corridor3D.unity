@@ -6657,6 +6657,9 @@ MonoBehaviour:
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
+  spottedSound: {fileID: 8300000, guid: 98dedf5d82229c1429601716117b631a, type: 3}
+  spottedVolume: 0.8
+  spottedSoundCooldown: 2
   muzzle: {fileID: 1315243740}
   pushArriveDistance: 1.5
 --- !u!195 &82550398
@@ -9318,6 +9321,9 @@ MonoBehaviour:
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
+  spottedSound: {fileID: 8300000, guid: 98dedf5d82229c1429601716117b631a, type: 3}
+  spottedVolume: 0.8
+  spottedSoundCooldown: 2
   muzzle: {fileID: 123409900}
   pushArriveDistance: 1.5
 --- !u!195 &113820432
@@ -11315,6 +11321,9 @@ MonoBehaviour:
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
+  spottedSound: {fileID: 8300000, guid: 98dedf5d82229c1429601716117b631a, type: 3}
+  spottedVolume: 0.8
+  spottedSoundCooldown: 2
   muzzle: {fileID: 454924405}
   pushArriveDistance: 1.5
 --- !u!195 &133064072
@@ -26417,6 +26426,9 @@ MonoBehaviour:
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
+  spottedSound: {fileID: 8300000, guid: 98dedf5d82229c1429601716117b631a, type: 3}
+  spottedVolume: 0.8
+  spottedSoundCooldown: 2
   muzzle: {fileID: 33285049}
   pushArriveDistance: 1.5
 --- !u!4 &358558182
@@ -29371,6 +29383,9 @@ MonoBehaviour:
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
+  spottedSound: {fileID: 8300000, guid: 98dedf5d82229c1429601716117b631a, type: 3}
+  spottedVolume: 0.8
+  spottedSoundCooldown: 2
   muzzle: {fileID: 198936543}
   pushArriveDistance: 1.5
 --- !u!4 &387286632
@@ -43162,6 +43177,9 @@ MonoBehaviour:
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
+  spottedSound: {fileID: 8300000, guid: 98dedf5d82229c1429601716117b631a, type: 3}
+  spottedVolume: 0.8
+  spottedSoundCooldown: 2
   muzzle: {fileID: 1085276114}
   pushArriveDistance: 1.5
 --- !u!195 &570498413
@@ -65738,6 +65756,9 @@ MonoBehaviour:
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
+  spottedSound: {fileID: 8300000, guid: 98dedf5d82229c1429601716117b631a, type: 3}
+  spottedVolume: 0.8
+  spottedSoundCooldown: 2
   muzzle: {fileID: 42533342}
   pushArriveDistance: 1.5
 --- !u!195 &908887826
@@ -65880,6 +65901,9 @@ MonoBehaviour:
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
+  spottedSound: {fileID: 8300000, guid: 98dedf5d82229c1429601716117b631a, type: 3}
+  spottedVolume: 0.8
+  spottedSoundCooldown: 2
   muzzle: {fileID: 52086342}
   pushArriveDistance: 1.5
 --- !u!195 &910291386
@@ -83554,6 +83578,9 @@ MonoBehaviour:
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
+  spottedSound: {fileID: 8300000, guid: 98dedf5d82229c1429601716117b631a, type: 3}
+  spottedVolume: 0.8
+  spottedSoundCooldown: 2
   muzzle: {fileID: 413252807}
   pushArriveDistance: 1.5
 --- !u!195 &1157511793
@@ -84595,6 +84622,9 @@ MonoBehaviour:
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
+  spottedSound: {fileID: 8300000, guid: 98dedf5d82229c1429601716117b631a, type: 3}
+  spottedVolume: 0.8
+  spottedSoundCooldown: 2
   muzzle: {fileID: 515836963}
   pushArriveDistance: 1.5
 --- !u!195 &1174161471
@@ -91403,6 +91433,9 @@ MonoBehaviour:
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
+  spottedSound: {fileID: 8300000, guid: 98dedf5d82229c1429601716117b631a, type: 3}
+  spottedVolume: 0.8
+  spottedSoundCooldown: 2
   muzzle: {fileID: 860219242}
   pushArriveDistance: 1.5
 --- !u!195 &1259265923
@@ -92840,6 +92873,9 @@ MonoBehaviour:
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
+  spottedSound: {fileID: 8300000, guid: 98dedf5d82229c1429601716117b631a, type: 3}
+  spottedVolume: 0.8
+  spottedSoundCooldown: 2
   muzzle: {fileID: 1879494970}
   pushArriveDistance: 1.5
 --- !u!195 &1284871080
@@ -110001,6 +110037,9 @@ MonoBehaviour:
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
+  spottedSound: {fileID: 8300000, guid: 98dedf5d82229c1429601716117b631a, type: 3}
+  spottedVolume: 0.8
+  spottedSoundCooldown: 2
   muzzle: {fileID: 1995141968}
   pushArriveDistance: 1.5
 --- !u!195 &1546845667
@@ -123875,6 +123914,9 @@ MonoBehaviour:
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
+  spottedSound: {fileID: 8300000, guid: 98dedf5d82229c1429601716117b631a, type: 3}
+  spottedVolume: 0.8
+  spottedSoundCooldown: 2
   muzzle: {fileID: 721825863}
   pushArriveDistance: 1.5
 --- !u!195 &1753102725
@@ -147872,6 +147914,9 @@ MonoBehaviour:
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
+  spottedSound: {fileID: 8300000, guid: 98dedf5d82229c1429601716117b631a, type: 3}
+  spottedVolume: 0.8
+  spottedSoundCooldown: 2
   muzzle: {fileID: 1335411533}
   pushArriveDistance: 1.5
 --- !u!195 &2092840388
@@ -148123,6 +148168,9 @@ MonoBehaviour:
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
+  spottedSound: {fileID: 8300000, guid: 98dedf5d82229c1429601716117b631a, type: 3}
+  spottedVolume: 0.8
+  spottedSoundCooldown: 2
   muzzle: {fileID: 712809171}
   pushArriveDistance: 1.5
 --- !u!195 &2095177214
@@ -152282,6 +152330,9 @@ MonoBehaviour:
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
+  spottedSound: {fileID: 8300000, guid: 98dedf5d82229c1429601716117b631a, type: 3}
+  spottedVolume: 0.8
+  spottedSoundCooldown: 2
   muzzle: {fileID: 3100000077}
   pushArriveDistance: 1.5
 --- !u!65 &3100000092
@@ -153389,6 +153440,9 @@ MonoBehaviour:
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
+  spottedSound: {fileID: 8300000, guid: 98dedf5d82229c1429601716117b631a, type: 3}
+  spottedVolume: 0.8
+  spottedSoundCooldown: 2
   muzzle: {fileID: 3200000096}
   pushArriveDistance: 1.5
 --- !u!195 &3200000090

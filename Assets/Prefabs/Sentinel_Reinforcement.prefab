@@ -967,6 +967,9 @@ MonoBehaviour:
   hoverHum: {fileID: 8300000, guid: 0276e960911f35b459d3eaa6f081373f, type: 3}
   hoverHumVolume: 0.5
   deathSound: {fileID: 8300000, guid: 06a5bc6b92f0da1459a7bb27c5199ba0, type: 3}
+  spottedSound: {fileID: 8300000, guid: 98dedf5d82229c1429601716117b631a, type: 3}
+  spottedVolume: 0.8
+  spottedSoundCooldown: 2
   muzzle: {fileID: 585450165066029232}
   pushArriveDistance: 1.5
 --- !u!65 &92606547781210649
