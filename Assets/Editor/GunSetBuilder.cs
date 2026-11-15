@@ -115,11 +115,11 @@ public static class GunSetBuilder
             {
                 displayName = "MARKSMAN", picture = pictures[2],
                 role = "For holding an angle. One shot kills anywhere, but only if you stand still.",
-                maxAmmo = 4, fireRate = 1.1f, automatic = false, damage = 100f, reloadSeconds = 2.2f,
+                maxAmmo = 4, fireRate = 1.1f, automatic = false, damage = 100f, reloadSeconds = 1.5f,
                 standingSpreadDegrees = 0f, movingSpreadDegrees = 9f,
                 recoilPitchPattern = new[] { 2.6f },
                 recoilYawPattern = new[] { 0.3f },
-                gunshotSound = mkShot, gunshotVolume = 0.85f,
+                gunshotSound = mkShot, gunshotVolume = 1f,
             },
         };
         EditorUtility.SetDirty(weapon);

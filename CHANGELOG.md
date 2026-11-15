@@ -2,6 +2,22 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.8: Lower sensitivity floor, and a faster, heavier Marksman
+
+**Why:** Three notes from the designer after playing the gun-choice build (15 Nov). The sensitivity slider stopped at 0.3, which was where the designer already had it and still wanted lower. The Marksman's 2.2 second reload felt too long for a four-round gun. And its shot did not sound heavy, even though it is the gun that kills in one hit.
+
+**What changed:**
+- **Sensitivity** now goes down to 0.1 (was 0.3). The top of the range is unchanged.
+- **Marksman reload** is 1.5 seconds (was 2.2). The rifle's is 1.4 and the SMG's 1.1, so it is still the slowest.
+- **Marksman shot rebuilt.** Measuring the old sound showed why it felt weak: about 90% of its energy was below 120 Hz, which laptop speakers and small headphones barely play, so the part anyone could hear was quieter than the rifle's. The new shot gets its weight from 120 to 1000 Hz (an explosion crunch, and the rifle's laser and a metal hit played slower so they sit lower), with the rumble below 55 Hz cut. It is 0.9 seconds long (was 0.55) and plays at full volume (was 0.85).
+  - Measured: the audible part (above 120 Hz) is now about 40% stronger than the rifle's before volume, and nearly twice as loud once each gun's volume is applied.
+  - The recipe is in `GunshotOptionBuilder.cs`, which can now play a layer slower and cut low rumble. The rifle and SMG sounds are byte-for-byte unchanged.
+
+**Verified:**
+- Play mode: slider at its minimum sets sensitivity to 0.1 and shows "0.1"; the Marksman reloads in 1.5 seconds and uses the new sound. HUD layout check: 0 errors.
+- The sound was checked by measurement only. Nobody has listened to it yet.
+- The 45-test run was not repeated for this change, which touches only gun numbers, one sound file and one slider limit.
+
 ## Phase 19.7: Armour halved to 25 per room
 
 **Why:** Armour refills in every room, and a drone hits for 20. At 50 that was two free hits in each of eight rooms, about 400 points of protection over a run against 100 health. In the designer's 14 Nov run, armour took 190 of the 360 damage received, so more than half of the mistakes cost nothing. In a Survival game being seen should cost something.
