@@ -2,6 +2,23 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.19: Smooth pass on the breach charge, guns, targets, drones and props
+
+**Why:** After the round SMG sight (19.18) the designer asked what else could be made smoother, the breach charge included, and on seeing the list said to do all of it (15 Nov). The game is built almost entirely from Unity's two basic shapes: a hard-cornered cube (758 of them in the scene) and a cylinder with only 20 flat sides. Up close, on the things the player holds or stands next to, both read as blocky.
+
+**What changed:**
+- **Three new shapes the builders can make** (`Assets/Editor/SmoothMeshes.cs`, all saved in `Assets/Art/Models/SmoothParts.asset`): a box with rounded edges and corners, a cylinder with 48 sides and soft rims, and any shape turned on a lathe.
+- **Breach charge:** was a square box on a thin plate with a ball on top. Now a round canister with a domed shoulder, two steel hoops, a steel band the six lights are set into, and a collar the glowing core sits in. The core and lights are the same objects as before, so they light up, flash and go dark exactly as they did. The copy held in the hands while planting is made from the same parts, so it changed with it.
+- **Guns:** every box-shaped part now has rounded edges and every tube is properly round. The Rifle's and Marksman's scopes have hollow hoods with the glass set back inside, and round turret knobs in place of square ones. The Marksman's muzzle brake and the SMG's muzzle band are hollow, so each muzzle has a bore. Each gun gets a round-shouldered shell over the top of its receiver, which is the flat, stepped part of the model the player looks along when aiming.
+- **Range targets:** the eight-sided plate is replaced by a round one with a soft rim and a dark ring round the bullseye. It still turns green on a hit.
+- **Drones:** a steel rim round the eye, so it reads as a lens in a housing. It has no collider and sits behind the front of the eye, so the weak point is as easy to hit as before.
+- **Props:** cover blocks, crates, the Weak Point firing line, counter tops, pillar bases, door frames and door panels, the checkpoint terminal and the medkit case all have rounded edges. Every pipe, lamp, post and stand is now properly round.
+- Run from **Vantage > Smooth Pass**. Colliders, positions and sizes are untouched, so nothing plays differently. It must be run again after either Environment rebuild, because those put plain cubes back.
+
+**Not changed:** walls, floors, ceilings, beams and trim stay square on purpose; rounding them would open gaps where they meet. The drone bodies and the gun bodies under the new shells are imported models and keep their flat faces.
+
+**Verified:** Looked at renders of the charge, a drone, a target, a cover block and a door frame, the three gun pictures, and Play-mode screenshots of the SMG from the hip and aiming. HUD layout check 0 problems. 45-test regression run after the change.
+
 ## Phase 19.18: Round red-dot sight on the SMG
 
 **Why:** The designer aimed the SMG and said the scope was very blocky and should be smoother (15 Nov). The red-dot sight was a square frame made of four flat blocks, and that frame sat right around the crosshair, the one place the player always looks when aiming.

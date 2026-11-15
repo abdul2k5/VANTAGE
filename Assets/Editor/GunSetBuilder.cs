@@ -27,6 +27,8 @@ public static class GunSetBuilder
     const string RingMeshPath = "Assets/Art/Models/GunRing.asset";
     /// <summary>Wall thickness of the ring mesh, as a share of its outer radius.</summary>
     const float RingWall = 0.16f;
+    /// <summary>How far the edges of a gun's box-shaped parts are rounded off, metres. Thin parts get less.</summary>
+    const float EdgeRadius = 0.003f;
 
     [MenuItem("Vantage/Rebuild Guns")]
     public static void Rebuild()
@@ -94,14 +96,16 @@ public static class GunSetBuilder
         Cylinder(smg, "Shroud", new Vector3(0f, 0.037f, 0.56f), 0.041f, 0.13f, polymer);
         for (int groove = 0; groove < 3; groove++)
             Cylinder(smg, "ShroudGroove_" + groove, new Vector3(0f, 0.037f, 0.52f + groove * 0.03f), 0.0425f, 0.006f, steel);
-        Cylinder(smg, "ShroudBand", new Vector3(0f, 0.037f, 0.615f), 0.043f, 0.012f, teal);
+        // The band stands past the end of the shroud, so the muzzle reads as a hollow.
+        Ring(smg, "ShroudBand", new Vector3(0f, 0.037f, 0.622f), 0.043f, 0.022f, teal);
+        ReceiverShell(smg, new Vector3(0f, 0.066f, 0.19f), new Vector3(0.096f, 0.06f, 0.27f), polymer);
         // Red-dot optic: a round tube the target is seen through (a square frame of four blocks looked crude
         // when aiming). Its centre is on the line the eye is brought to when aiming, SmgSightLine above the gun.
         Box(smg, "OpticBase", new Vector3(0f, 0.106f, 0.14f), new Vector3(0.04f, 0.012f, 0.06f), steel);
         Ring(smg, "OpticTube", new Vector3(0f, SmgSightLine, 0.14f), 0.034f, 0.05f, polymer);
         // The coloured rim is on the end facing the player, so it is what frames the view.
         Ring(smg, "OpticRim", new Vector3(0f, SmgSightLine, 0.113f), 0.0352f, 0.005f, teal);
-        Cylinder(smg, "OpticKnob", new Vector3(0.036f, SmgSightLine, 0.14f), 0.007f, 0.016f, steel);
+        SideKnob(smg, "OpticKnob", new Vector3(0.038f, SmgSightLine, 0.14f), 0.008f, 0.012f, steel);
         // Small parts on the receiver, run right through it so they show on both sides.
         Box(smg, "EjectionPort", new Vector3(0f, 0.055f, 0.20f), new Vector3(0.114f, 0.018f, 0.05f), steel);
         Box(smg, "Selector", new Vector3(0f, 0.018f, 0.10f), new Vector3(0.116f, 0.008f, 0.016f), teal);
@@ -125,17 +129,20 @@ public static class GunSetBuilder
         float tubeY = scopeMax.y - tubeRadius;
         Cylinder(mk, "ScopeFrontLens", new Vector3(0f, tubeY, scopeMax.z + 0.001f), tubeRadius * 0.9f, 0.004f, lens);
         Cylinder(mk, "ScopeRearLens", new Vector3(0f, tubeY, scopeMin.z - 0.001f), tubeRadius * 0.9f, 0.004f, lens);
-        Box(mk, "ScopeTurretTop", new Vector3(0f, scopeMax.y - 0.004f, (scopeMin.z + scopeMax.z) * 0.5f), new Vector3(0.024f, 0.02f, 0.03f), red);
-        Box(mk, "ScopeTurretSide", new Vector3(tubeRadius + 0.006f, tubeY, (scopeMin.z + scopeMax.z) * 0.5f), new Vector3(0.02f, 0.024f, 0.03f), polymer);
+        Knob(mk, "ScopeTurretTop", new Vector3(0f, scopeMax.y - 0.004f, (scopeMin.z + scopeMax.z) * 0.5f), 0.014f, 0.02f, red);
+        SideKnob(mk, "ScopeTurretSide", new Vector3(tubeRadius + 0.006f, tubeY, (scopeMin.z + scopeMax.z) * 0.5f), 0.013f, 0.02f, polymer);
+        // A round hood over each end of the scope, so the glass sits back inside a tube.
+        Ring(mk, "ScopeFrontHood", new Vector3(0f, tubeY, scopeMax.z + 0.01f), tubeRadius * 1.2f, 0.05f, polymer);
+        Ring(mk, "ScopeRearHood", new Vector3(0f, tubeY, scopeMin.z - 0.005f), tubeRadius * 1.2f, 0.03f, polymer);
         // A free-float handguard tube with vent slots, then the long bare barrel and its brake.
         Cylinder(mk, "Handguard", new Vector3(0f, 0.04f, 0.61f), 0.036f, 0.34f, polymer);
         for (int vent = 0; vent < 4; vent++)
             Box(mk, "HandguardVent_" + vent, new Vector3(0f, 0.04f, 0.50f + vent * 0.07f), new Vector3(0.076f, 0.01f, 0.04f), steel);
         Cylinder(mk, "HandguardCap", new Vector3(0f, 0.04f, 0.784f), 0.038f, 0.012f, steel);
         Cylinder(mk, "Barrel", new Vector3(0f, 0.027f, 0.86f), 0.013f, 0.30f, steel);
-        Cylinder(mk, "Brake", new Vector3(0f, 0.027f, 1.03f), 0.022f, 0.07f, steel);
+        // The brake is a hollow tube the barrel ends inside, so the muzzle has a bore to look down.
+        Ring(mk, "Brake", new Vector3(0f, 0.027f, 1.03f), 0.022f, 0.07f, steel);
         Cylinder(mk, "BrakeBand", new Vector3(0f, 0.027f, 0.992f), 0.024f, 0.01f, red);
-        Box(mk, "BrakeSlot", new Vector3(0f, 0.027f, 1.035f), new Vector3(0.048f, 0.008f, 0.03f), polymer);
         // Bipod folded back under the barrel: a clamp and two legs.
         Box(mk, "BipodClamp", new Vector3(0f, 0.012f, 0.82f), new Vector3(0.05f, 0.02f, 0.03f), steel);
         Cylinder(mk, "BipodLegL", new Vector3(-0.02f, 0.004f, 0.72f), 0.006f, 0.2f, steel);
@@ -145,6 +152,7 @@ public static class GunSetBuilder
         Box(mk, "BoltHandle", new Vector3(0.062f, 0.058f, 0.27f), new Vector3(0.03f, 0.012f, 0.012f), steel);
         Box(mk, "Selector", new Vector3(0f, 0.02f, 0.09f), new Vector3(0.106f, 0.008f, 0.02f), red);
         Box(mk, "CheekRest", new Vector3(0f, 0.088f, -0.14f), new Vector3(0.05f, 0.026f, 0.13f), polymer);
+        ReceiverShell(mk, new Vector3(0f, 0.069f, 0.255f), new Vector3(0.088f, 0.068f, 0.45f), polymer);
         var mkMuzzle = Point(vm.transform, "Muzzle_Marksman", new Vector3(0f, 0.027f, 1.07f));
         mk.gameObject.SetActive(false);
 
@@ -167,13 +175,14 @@ public static class GunSetBuilder
 
         // Compact optic. Its axis sits where the old scope's did, so aiming brings the same point to the eye.
         Box(kit, "OpticMount", new Vector3(0f, 0.122f, 0.20f), new Vector3(0.026f, 0.018f, 0.09f), steel);
-        Cylinder(kit, "OpticTube", new Vector3(0f, 0.146f, 0.20f), 0.02f, 0.13f, polymer);
-        Cylinder(kit, "OpticFront", new Vector3(0f, 0.146f, 0.285f), 0.026f, 0.04f, polymer);
-        Cylinder(kit, "OpticRear", new Vector3(0f, 0.146f, 0.115f), 0.022f, 0.035f, polymer);
-        Cylinder(kit, "OpticFrontLens", new Vector3(0f, 0.146f, 0.306f), 0.022f, 0.004f, lens);
-        Cylinder(kit, "OpticRearLens", new Vector3(0f, 0.146f, 0.097f), 0.018f, 0.004f, lens);
-        Box(kit, "OpticTurretTop", new Vector3(0f, 0.172f, 0.20f), new Vector3(0.018f, 0.016f, 0.02f), amber);
-        Box(kit, "OpticTurretSide", new Vector3(0.026f, 0.146f, 0.20f), new Vector3(0.016f, 0.018f, 0.02f), polymer);
+        // The two ends are hollow bells with the glass set back inside them, and the turrets are round knobs.
+        Cylinder(kit, "OpticTube", new Vector3(0f, 0.146f, 0.20f), 0.02f, 0.17f, polymer);
+        Ring(kit, "OpticFront", new Vector3(0f, 0.146f, 0.285f), 0.026f, 0.05f, polymer);
+        Ring(kit, "OpticRear", new Vector3(0f, 0.146f, 0.112f), 0.023f, 0.04f, polymer);
+        Cylinder(kit, "OpticFrontLens", new Vector3(0f, 0.146f, 0.298f), 0.0225f, 0.004f, lens);
+        Cylinder(kit, "OpticRearLens", new Vector3(0f, 0.146f, 0.100f), 0.0198f, 0.004f, lens);
+        Knob(kit, "OpticTurretTop", new Vector3(0f, 0.170f, 0.20f), 0.01f, 0.016f, amber);
+        SideKnob(kit, "OpticTurretSide", new Vector3(0.026f, 0.146f, 0.20f), 0.009f, 0.016f, polymer);
 
         // Round ribbed handguard between a delta ring and an end cap. It stops short of the muzzle so a length
         // of bare barrel shows, with the sight tower standing on it.
@@ -195,6 +204,7 @@ public static class GunSetBuilder
         Box(kit, "MagRelease", new Vector3(0f, 0.0f, 0.30f), new Vector3(0.108f, 0.012f, 0.012f), steel);
         Box(kit, "Selector", new Vector3(0f, 0.02f, 0.06f), new Vector3(0.108f, 0.008f, 0.02f), amber);
         Box(kit, "ChargingHandle", new Vector3(0f, 0.098f, 0.005f), new Vector3(0.05f, 0.01f, 0.03f), steel);
+        ReceiverShell(kit, new Vector3(0f, 0.072f, 0.215f), new Vector3(0.092f, 0.064f, 0.40f), polymer);
 
         // Stock: a body on the buffer tube, a butt plate, and the sloped lower edge.
         Cylinder(kit, "BufferTube", new Vector3(0f, 0.05f, -0.10f), 0.016f, 0.2f, steel);
@@ -671,6 +681,32 @@ public static class GunSetBuilder
         Primitive(PrimitiveType.Cylinder, parent, name, localPosition, new Vector3(radius * 2f, length * 0.5f, radius * 2f), Quaternion.Euler(90f, 0f, 0f), material);
     }
 
+    /// <summary>A round knob standing up from a part (its length on Y).</summary>
+    static void Knob(Transform parent, string name, Vector3 localPosition, float radius, float length, Material material)
+    {
+        Primitive(PrimitiveType.Cylinder, parent, name, localPosition, new Vector3(radius * 2f, length * 0.5f, radius * 2f), Quaternion.identity, material);
+    }
+
+    /// <summary>A round knob sticking out of a part's side (its length on X).</summary>
+    static void SideKnob(Transform parent, string name, Vector3 localPosition, float radius, float length, Material material)
+    {
+        Primitive(PrimitiveType.Cylinder, parent, name, localPosition, new Vector3(radius * 2f, length * 0.5f, radius * 2f), Quaternion.Euler(0f, 0f, 90f), material);
+    }
+
+    /// <summary>
+    /// A round-shouldered shell over the top half of the receiver. The model underneath is all flat faces
+    /// and square steps, and its top is what the player looks along; this covers that with one curved piece.
+    /// </summary>
+    static void ReceiverShell(Transform parent, Vector3 localPosition, Vector3 size, Material material)
+    {
+        var go = new GameObject("ReceiverShell", typeof(MeshFilter), typeof(MeshRenderer));
+        go.transform.SetParent(parent, false);
+        go.transform.localPosition = localPosition;
+        go.transform.localScale = size;
+        go.GetComponent<MeshFilter>().sharedMesh = SmoothMeshes.RoundedBox(size, 0.022f);
+        go.GetComponent<Renderer>().sharedMaterial = material;
+    }
+
     /// <summary>A hollow tube lying along the gun, open at both ends - something to look through, which no built-in shape gives.</summary>
     static void Ring(Transform parent, string name, Vector3 localPosition, float outerRadius, float length, Material material)
     {
@@ -686,7 +722,7 @@ public static class GunSetBuilder
     /// The tube's mesh, built once and saved as an asset: outer radius 0.5, length 1 along Z, smooth round
     /// walls inside and out and a flat rim at each end.
     /// </summary>
-    static Mesh RingMesh()
+    public static Mesh RingMesh()
     {
         const int segments = 48;
         float outer = 0.5f, inner = 0.5f * (1f - RingWall), half = 0.5f;
@@ -735,10 +771,12 @@ public static class GunSetBuilder
 
     static void Primitive(PrimitiveType type, Transform parent, string name, Vector3 localPosition, Vector3 localScale, Quaternion localRotation, Material material)
     {
-        var go = GameObject.CreatePrimitive(type);
-        go.name = name;
-        // A viewmodel part must never stop a bullet or a drone's line of sight.
-        Object.DestroyImmediate(go.GetComponent<Collider>());
+        // Smooth stand-ins for Unity's own shapes (19.19): a box with its edges rounded off and a cylinder
+        // with 48 sides, not 20. No collider - a viewmodel part must never stop a bullet or a drone's line of sight.
+        var go = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer));
+        go.GetComponent<MeshFilter>().sharedMesh = type == PrimitiveType.Cube
+            ? SmoothMeshes.RoundedBox(localScale, Mathf.Min(EdgeRadius, 0.3f * Mathf.Min(localScale.x, Mathf.Min(localScale.y, localScale.z))))
+            : SmoothMeshes.Cylinder(true);
         go.transform.SetParent(parent, false);
         go.transform.localPosition = localPosition;
         go.transform.localRotation = localRotation;
