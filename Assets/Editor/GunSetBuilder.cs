@@ -57,17 +57,30 @@ public static class GunSetBuilder
         rifle.localPosition = new Vector3(0f, 0f, 0.30f);
         rifleMuzzle.localPosition = new Vector3(0f, 0.027f, 0.62f);
 
-        // ---- SMG: the rifle shortened, no scope, a long magazine, a foregrip and open sights.
+        // ---- SMG: the rifle shortened, a long magazine, and a red-dot frame in place of the scope.
         var smg = Group(vm.transform, "SmgVisual");
         var smgBody = CopyRifle(rifle, smg, new Vector3(0f, 0f, 0.26f), new Vector3(0.011f, 0.0092f, 0.007f));
         Remove(smgBody, "scope");
         var smgMag = smgBody.Find("magazine");
         smgMag.localScale = new Vector3(1f, 1.7f, 1.35f);
         smgMag.GetComponent<Renderer>().sharedMaterial = teal;
-        Box(smg, "Foregrip", new Vector3(0f, -0.055f, 0.33f), new Vector3(0.03f, 0.08f, 0.034f), teal);
-        Box(smg, "RearSight", new Vector3(0f, 0.082f, 0.10f), new Vector3(0.036f, 0.018f, 0.016f), gunmetal);
-        Box(smg, "FrontSight", new Vector3(0f, 0.066f, 0.37f), new Vector3(0.01f, 0.04f, 0.012f), teal);
-        var smgMuzzle = Point(vm.transform, "Muzzle_Smg", new Vector3(0f, 0.024f, 0.48f));
+        // Phase 19.16, after the designer's reference picture: one rail along the whole top with low flip-up
+        // sights at each end, a slotted handguard, and a fat shroud over the muzzle.
+        Box(smg, "Rail", new Vector3(0f, 0.095f, 0.28f), new Vector3(0.03f, 0.012f, 0.44f), gunmetal);
+        Box(smg, "RearSight", new Vector3(0f, 0.108f, 0.075f), new Vector3(0.034f, 0.014f, 0.014f), gunmetal);
+        Box(smg, "FrontSight", new Vector3(0f, 0.108f, 0.485f), new Vector3(0.034f, 0.014f, 0.014f), gunmetal);
+        Box(smg, "Handguard", new Vector3(0f, 0.045f, 0.405f), new Vector3(0.066f, 0.09f, 0.19f), gunmetal);
+        for (int slot = 0; slot < 3; slot++)
+            Box(smg, "HandguardSlot_" + slot, new Vector3(0f, 0.05f, 0.35f + slot * 0.055f), new Vector3(0.07f, 0.01f, 0.035f), teal);
+        Cylinder(smg, "Shroud", new Vector3(0f, 0.037f, 0.56f), 0.041f, 0.13f, gunmetal);
+        Cylinder(smg, "ShroudBand", new Vector3(0f, 0.037f, 0.615f), 0.043f, 0.012f, teal);
+        // Red-dot optic: an open frame, so the target is seen through it. Its centre is on the line the eye
+        // is brought to when aiming (y 0.125), and the flip-up sights stay under that line.
+        Box(smg, "OpticBase", new Vector3(0f, 0.104f, 0.14f), new Vector3(0.06f, 0.008f, 0.07f), gunmetal);
+        Box(smg, "OpticLeft", new Vector3(-0.027f, 0.127f, 0.14f), new Vector3(0.006f, 0.05f, 0.055f), teal);
+        Box(smg, "OpticRight", new Vector3(0.027f, 0.127f, 0.14f), new Vector3(0.006f, 0.05f, 0.055f), teal);
+        Box(smg, "OpticTop", new Vector3(0f, 0.151f, 0.14f), new Vector3(0.06f, 0.006f, 0.055f), teal);
+        var smgMuzzle = Point(vm.transform, "Muzzle_Smg", new Vector3(0f, 0.037f, 0.63f));
         smg.gameObject.SetActive(false);
 
         // ---- Marksman: the rifle stretched, a bigger scope, a long barrel with a brake, and a folded bipod.
@@ -133,7 +146,7 @@ public static class GunSetBuilder
             new GunProfile
             {
                 displayName = "SMG", picture = pictures[1],
-                role = "For pushing. Fast and steady on the move, but weak per bullet and it has no scope.",
+                role = "For pushing. Fast and steady on the move, but weak per bullet. Red-dot sight.",
                 maxAmmo = 24, fireRate = 0.09f, automatic = true, damage = 12f, reloadSeconds = 1.1f,
                 standingSpreadDegrees = 0.5f, movingSpreadDegrees = 2.5f,
                 recoilPitchPattern = new[] { 0.35f, 0.35f, 0.3f, 0.3f, 0.25f, 0.2f, 0.15f, 0.12f, 0.1f, 0.1f },
@@ -159,8 +172,8 @@ public static class GunSetBuilder
         vm.gunVisuals = new[]
         {
             new GunViewmodelAnimator.GunVisual { root = rifle, magazine = rifleMag, muzzle = rifleMuzzle, aimPosition = new Vector3(0f, -0.104f, 0.2f), aimFieldOfView = 35f, scoped = true },
-            // No scope: the gun comes up to the eye and stays in view, with a milder zoom.
-            new GunViewmodelAnimator.GunVisual { root = smg, magazine = smgMag, muzzle = smgMuzzle, aimPosition = new Vector3(0f, -0.125f, 0.30f), aimFieldOfView = 48f, scoped = false },
+            // Red dot, not a scope: the gun comes up so the eye looks through the optic's frame, and stays in view, with a milder zoom than the scoped two.
+            new GunViewmodelAnimator.GunVisual { root = smg, magazine = smgMag, muzzle = smgMuzzle, aimPosition = new Vector3(0f, -0.125f, 0.30f), aimFieldOfView = 42f, scoped = false },
             new GunViewmodelAnimator.GunVisual { root = mk, magazine = mkBody.Find("magazine"), muzzle = mkMuzzle, aimPosition = new Vector3(0f, -0.124f, 0.18f), aimFieldOfView = 20f, scoped = true },
         };
         EditorUtility.SetDirty(vm);

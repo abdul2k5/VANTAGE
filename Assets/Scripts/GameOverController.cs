@@ -23,7 +23,7 @@ public class GameOverController : MonoBehaviour
     public AudioClip loseSound;
 
     [Tooltip("Headline under the title saying why the run ended, when the caller gives no other cause.")]
-    public string deathCause = "YOU WERE KILLED";
+    public string deathCause = "YOU DIED";
     public string defaultSubMessage = "A drone shot you down. The attempt ends here.";
     public string replaySubMessage = "Replaying a cleared room. Your progress is safe.";
 

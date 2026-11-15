@@ -2,6 +2,42 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.16: The SMG gets a rail, flip-up sights and a red-dot optic
+
+**Why:** The designer sent a reference picture of a compact SMG (full-length top rail, flip-up sights, slotted handguard, fat muzzle shroud, long straight magazine) and asked for the SMG to have a sight like it (15 Nov). Asked which they meant, they chose the restyle plus a red-dot optic, not a full scope: the gun stays in view when aiming, so the SMG keeps its weakness at range against the Rifle.
+
+**What changed:**
+- **Look:** a rail along the whole top with a low flip-up sight at each end, a handguard with three teal slots, and a fat shroud with a teal band over the muzzle (it also hides the model's blade-shaped tip). The foregrip is removed, as the reference has none.
+- **Red-dot optic:** an open teal frame on the rail. When aiming, the gun comes up so the eye looks through the frame at the crosshair. No black scope view.
+- **Zoom when aiming:** field of view 42 (was 48), still milder than the Rifle's 35 and the Marksman's 20.
+- The card's description now ends "Red-dot sight." in place of "it has no scope", and its picture is re-rendered.
+- Damage, fire rate, magazine, reload and spread are unchanged.
+
+**Verified:**
+- Card picture checked by eye. A Play mode screenshot with the SMG held at its aim position shows the frame centred on the screen with the target area visible through it and the flip-up sights below the sight line.
+- All three card descriptions fit their two-line box.
+- Not yet tried by the designer: how the red dot feels in a fight.
+
+## Phase 19.15: Dash door opens on the dash, "YOU DIED", and colour labels clear of their swatches
+
+**Why:** Three notes from the designer (15 Nov).
+- In the Dash room the door stayed shut after the dash and only opened after a flash. That was the design (dash, then smoke or flash the second lane), but the designer read it as the door being broken, and asked for the dash alone to open it.
+- The Mission Failed cause line should read "YOU DIED", not "YOU WERE KILLED".
+- On the Crosshair settings tab the colour names sat on top of the bottom edge of their swatches.
+
+**What changed:**
+- **Dash door:** opens as soon as the player dashes in the room. Killing all three drones still opens it too.
+  - Objective on entry: "Dash [SHIFT] across the first lane to unlock the door".
+  - Objective once open: "Door unlocked - smoke [Q] or flash [E] the second lane, then cross." The second lane is still watched, so the advice stays; it is no longer a condition.
+  - Trade-off: the room no longer forces a second ability before the door opens. A player can dash and then try to run the second lane, and the drones there will punish it.
+- **Cause line:** "YOU DIED".
+- **Colour labels:** each swatch and its selection ring move up 2 units and the label moves down, leaving a 4-unit gap below the ring. The row's height is unchanged, so the sliders below it do not move.
+
+**Verified:**
+- Play mode screenshot of the Crosshair tab: all five labels sit clear below their swatches, including the selected one with its ring.
+- HUD layout check passes. Retry and win tests: 45 of 45 pass, run on the build containing 19.14, 19.15 and 19.16 together (19.14 was committed without them).
+- Not played by hand: the Dash room with the new door rule.
+
 ## Phase 19.14: Bullets no longer stop on the invisible plant zone
 
 **Why:** In The Round the designer shot at drones standing at the planted charge and none of the shots registered; the bullet marks hung in the air in front of the drones (15 Nov). The cause: the gun's raycast stopped on trigger colliders as well as solid ones. The plant site has an invisible trigger box (2.5 m square, 2 m tall) around it for detecting the player. Drones that walk to the charge to disarm it stand inside that box, so every bullet fired from outside stopped on the box's face, left its mark there, and never reached the drone. This has been in the game since the plant site was added; it made the post-plant fight, the hardest part of the game, partly unwinnable by shooting.
