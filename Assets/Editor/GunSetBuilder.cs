@@ -35,6 +35,12 @@ public static class GunSetBuilder
         if (rifle == null || rifleMuzzle == null) { Debug.LogError("GunSetBuilder: RifleVisual or Muzzle missing under " + vm.name); return; }
         rifle.gameObject.SetActive(true);
 
+        // Back to the bare model first: the other two guns are copies of it, and must not inherit the rifle's carbine parts.
+        var rifleMag = rifle.Find("magazine");
+        Remove(rifle, "Kit");
+        Remove(rifleMag, "MagCurve");
+        rifle.Find("scope").gameObject.SetActive(true);
+
         foreach (var name in new[] { "SmgVisual", "MarksmanVisual", "Muzzle_Smg", "Muzzle_Marksman" })
         {
             var old = vm.transform.Find(name);
@@ -76,6 +82,31 @@ public static class GunSetBuilder
         Box(mk, "Bipod", new Vector3(0f, 0.01f, 0.74f), new Vector3(0.05f, 0.012f, 0.2f), gunmetal);
         var mkMuzzle = Point(vm.transform, "Muzzle_Marksman", new Vector3(0f, 0.027f, 1.07f));
         mk.gameObject.SetActive(false);
+
+        // ---- Rifle: dressed as a service carbine, so it no longer reads as a short Marksman. The tall scope
+        // is swapped for a compact optic on a rail, with a handguard, a front sight post, a solid stock on a
+        // buffer tube and a curved magazine. Done last, after the copies above were taken from the bare model.
+        rifle.Find("scope").gameObject.SetActive(false);
+        var kit = Group(rifle, "Kit");
+        // The model is scaled and turned round; undo both so the parts below are placed in the viewmodel's metres like the other guns'.
+        kit.SetPositionAndRotation(vm.transform.position, vm.transform.rotation);
+        kit.localScale = new Vector3(1f / rifle.localScale.x, 1f / rifle.localScale.y, 1f / rifle.localScale.z);
+        var amber = AssetDatabase.LoadAssetAtPath<Material>(AccentFolder + "/Mat_Gun_Accent.mat");
+        Box(kit, "Rail", new Vector3(0f, 0.108f, 0.19f), new Vector3(0.032f, 0.012f, 0.34f), gunmetal);
+        Box(kit, "OpticMount", new Vector3(0f, 0.120f, 0.20f), new Vector3(0.026f, 0.014f, 0.10f), gunmetal);
+        // Its axis sits where the old scope's did, so aiming brings the same point to the eye.
+        Box(kit, "Optic", new Vector3(0f, 0.146f, 0.20f), new Vector3(0.04f, 0.04f, 0.15f), amber);
+        Cylinder(kit, "OpticFront", new Vector3(0f, 0.146f, 0.29f), 0.024f, 0.04f, gunmetal);
+        Cylinder(kit, "OpticRear", new Vector3(0f, 0.146f, 0.11f), 0.018f, 0.04f, gunmetal);
+        // Stops short of the muzzle so a length of bare barrel shows, with the sight post standing on it.
+        Box(kit, "Handguard", new Vector3(0f, 0.042f, 0.535f), new Vector3(0.074f, 0.074f, 0.25f), gunmetal);
+        Box(kit, "HandguardStripe", new Vector3(0f, 0.042f, 0.535f), new Vector3(0.078f, 0.012f, 0.19f), amber);
+        Box(kit, "FrontSight", new Vector3(0f, 0.095f, 0.70f), new Vector3(0.014f, 0.06f, 0.03f), gunmetal);
+        Cylinder(kit, "BufferTube", new Vector3(0f, 0.05f, -0.10f), 0.016f, 0.2f, gunmetal);
+        Box(kit, "Stock", new Vector3(0f, 0.012f, -0.1875f), new Vector3(0.06f, 0.135f, 0.115f), gunmetal);
+        // The lower half of the magazine, swept forward. It hangs off the magazine itself so it drops with it on a reload.
+        Primitive(PrimitiveType.Cube, kit, "MagCurve", new Vector3(0f, -0.185f, 0.235f), new Vector3(0.046f, 0.08f, 0.115f), Quaternion.Euler(-18f, 0f, 0f), amber);
+        kit.Find("MagCurve").SetParent(rifleMag, true);
 
         // ---- Numbers. Index 0 is the rifle exactly as it was before there was a second gun.
         var rifleShot = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/Gunshot/gunshot_punchy_blaster.wav");
@@ -127,7 +158,7 @@ public static class GunSetBuilder
         // Aim positions put each gun's sight line on the player's eye: the scope's axis for the scoped two, the top of the sights for the SMG.
         vm.gunVisuals = new[]
         {
-            new GunViewmodelAnimator.GunVisual { root = rifle, magazine = rifle.Find("magazine"), muzzle = rifleMuzzle, aimPosition = new Vector3(0f, -0.104f, 0.2f), aimFieldOfView = 35f, scoped = true },
+            new GunViewmodelAnimator.GunVisual { root = rifle, magazine = rifleMag, muzzle = rifleMuzzle, aimPosition = new Vector3(0f, -0.104f, 0.2f), aimFieldOfView = 35f, scoped = true },
             // No scope: the gun comes up to the eye and stays in view, with a milder zoom.
             new GunViewmodelAnimator.GunVisual { root = smg, magazine = smgMag, muzzle = smgMuzzle, aimPosition = new Vector3(0f, -0.125f, 0.30f), aimFieldOfView = 48f, scoped = false },
             new GunViewmodelAnimator.GunVisual { root = mk, magazine = mkBody.Find("magazine"), muzzle = mkMuzzle, aimPosition = new Vector3(0f, -0.124f, 0.18f), aimFieldOfView = 20f, scoped = true },

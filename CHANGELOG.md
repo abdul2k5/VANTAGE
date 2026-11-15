@@ -2,6 +2,23 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.12: The Rifle looks like a carbine, not a short Marksman
+
+**Why:** The designer found the Rifle and the Marksman hard to tell apart (15 Nov). Both were the same model with a tall scope on top, in different colours and lengths, so on the Choose Your Weapon screen and in the hand the Rifle read as a small Marksman. The designer asked for the Rifle to look like a military carbine.
+
+**What changed:**
+- The Rifle's tall scope is replaced by a compact optic on a top rail.
+- Added a handguard over the barrel with an amber stripe, a front sight post, a solid stock on a buffer tube, and a forward-curved lower half on the magazine (it drops with the magazine on a reload).
+- The parts are plain blocks and cylinders on the same model, in the same two materials, so the art style is unchanged and nothing new is imported.
+- The Rifle's numbers, sound, scope view and aim position are untouched: the optic's axis is where the old scope's was.
+- The SMG and the Marksman are unchanged. `GunSetBuilder` strips the Rifle back to the bare model before copying it for them, so re-running it never leaks carbine parts onto the other two.
+- The Rifle's card picture is re-rendered from the new model.
+
+**Verified:**
+- The card picture was checked by eye after each rebuild; the SMG and Marksman models were checked to carry none of the new parts.
+- HUD layout check passes. Retry and win tests: 45 of 45 pass.
+- Not yet seen by the designer in first person.
+
 ## Phase 19.11: The Mission Failed screen no longer says "Clean run"
 
 **Why:** The designer died in the Smoke room and the Mission Failed screen said "Clean run. Now do it faster." (15 Nov). The end screen picks one coaching tip from the weakest stat, and that line was the fallback when no stat was weak enough to trigger a tip. It was written for the win screen, but the same code fills the Mission Failed screen, so a death with good accuracy was praised.
