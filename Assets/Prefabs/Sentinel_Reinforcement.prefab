@@ -955,8 +955,8 @@ MonoBehaviour:
   patrolSpeed: 2
   turnSpeed: 8
   waypointArriveDistance: 0.3
-  reactionDelayMin: 0.5
-  reactionDelayMax: 0.7
+  reactionDelayMin: 0.4
+  reactionDelayMax: 0.6
   forcedAlertSeconds: 2.5
   perfectAimDistance: 8
   missChanceNear: 0.03

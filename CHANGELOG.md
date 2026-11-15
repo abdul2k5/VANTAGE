@@ -2,6 +2,24 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.9: Drones react sooner, and the Marksman reloads in 4 seconds
+
+**Why:** The designer played the gun-choice build with the Marksman and the game still felt easy (15 Nov). Two things made it so. The Marksman kills in one hit and came back from a reload quickly, so a missed shot cost little. And the drones gave enough time after spotting the player to line up that one shot before they fired.
+
+**What changed:**
+- **Every armed drone reacts about a fifth sooner.** Reaction time is the wait between a drone seeing the player and its first shot.
+  - Holding Angle: 1.2s (was 1.5s).
+  - Recon, Smoke, Flash: 0.4s (was 0.5s).
+  - Dash: 0.25s (was 0.3s).
+  - The Round, the approach: 0.3s (was 0.35s). Reinforcements: 0.4 to 0.6s (was 0.5 to 0.7s).
+  - The unarmed Weak Point drones are unchanged, and the order of the rooms from slowest to fastest is the same.
+- **Marksman reload is 4 seconds** (was 3, and 2.2 before today). Four rounds, then four seconds with no gun: the one-hit kill is now paid for.
+
+**Verified:**
+- Values read back from the scene and the reinforcement prefab; the Marksman's card shows 4.0 s.
+- Retry and win tests: 45 of 45 pass.
+- Not yet played by hand. The designer is the most practised player, so these numbers suit them; new players at the expo may find Rooms 6 to 8 hard, and the old values are listed above if it needs to go back.
+
 ## Phase 19.8: Lower sensitivity floor, and a slower, heavier Marksman
 
 **Why:** Three notes from the designer after playing the gun-choice build (15 Nov). The sensitivity slider stopped at 0.3, which was where the designer already had it and still wanted lower. The Marksman reloaded too quickly for a gun that kills in one hit, which made it the easy choice. And its shot did not sound heavy, even though it is the gun that kills in one hit.
