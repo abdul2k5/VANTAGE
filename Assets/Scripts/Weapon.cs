@@ -3,13 +3,15 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 
-/// <summary>One gun's numbers. Weapon copies these over its own fields when the gun is drawn, so the rest of the game keeps reading Weapon as before.</summary>
+/// <summary>One gun's numbers. Weapon copies these over its own fields when the gun is picked, so the rest of the game keeps reading Weapon as before.</summary>
 [System.Serializable]
 public class GunProfile
 {
     public string displayName = "RIFLE";
-    [Tooltip("RoomManager room index the gun is first carried in. 0 = from the start.")]
-    public int unlockRoomIndex;
+    [Tooltip("One line on the gun's card on the Choose Your Weapon screen: what it is for.")]
+    public string role = "";
+    [Tooltip("Side-on picture for the gun's card.")]
+    public Sprite picture;
     public int maxAmmo = 12;
     public float fireRate = 0.25f;
     [Tooltip("Off = one shot per click.")]
@@ -26,11 +28,11 @@ public class GunProfile
 
 public class Weapon : MonoBehaviour
 {
-    [Header("Guns - [1] [2] [3] or the mouse wheel. The fields below describe the gun in hand; left empty, they are the only gun")]
+    [Header("Guns - one is picked before the run and carried for all of it. The fields below describe the gun in hand; left empty, they are the only gun")]
     public GunProfile[] guns;
-    [Tooltip("Time to put one gun away and bring the next up. The gun can't fire, aim or reload during it.")]
-    public float switchSeconds = 0.4f;
-    public AudioClip switchSound;
+
+    /// <summary>The gun picked on the Choose Your Weapon screen. Static so PLAY AGAIN and a restart, which reload the scene, keep it.</summary>
+    public static int ChosenGun;
 
     public int maxAmmo = 12;
     public float fireRate = 0.25f;
@@ -103,11 +105,6 @@ public class Weapon : MonoBehaviour
     float lastShotTime = -999f;
 
     int currentGun;
-    int pendingGun = -1;
-    float switchTimer;
-    int[] ammoByGun;
-    bool[] gunAnnounced;
-    int unlockedThroughRoom;
 
     public int CurrentAmmo { get { return currentAmmo; } }
     public int MaxAmmo { get { return maxAmmo; } }
@@ -124,22 +121,6 @@ public class Weapon : MonoBehaviour
 
     public int GunCount { get { return guns != null ? guns.Length : 0; } }
     public int CurrentGunIndex { get { return currentGun; } }
-    public bool IsSwitching { get { return switchTimer > 0f; } }
-    /// <summary>0 = gun up, 1 = gun fully down (the moment the guns are swapped). Read by GunViewmodelAnimator.</summary>
-    public float SwitchLowered01
-    {
-        get
-        {
-            if (switchTimer <= 0f || switchSeconds <= 0f) return 0f;
-            float progress = 1f - switchTimer / switchSeconds;
-            return 1f - Mathf.Abs(1f - 2f * progress);
-        }
-    }
-
-    public bool IsGunUnlocked(int index)
-    {
-        return index >= 0 && index < GunCount && guns[index].unlockRoomIndex <= unlockedThroughRoom;
-    }
 
     /// <summary>Name shown on the HUD for gun index.</summary>
     public string GunName(int index)
@@ -149,18 +130,8 @@ public class Weapon : MonoBehaviour
 
     void Awake()
     {
-        if (GunCount > 0)
-        {
-            ammoByGun = new int[guns.Length];
-            gunAnnounced = new bool[guns.Length];
-            for (int i = 0; i < guns.Length; i++) ammoByGun[i] = guns[i].maxAmmo;
-            currentAmmo = ammoByGun[0];
-            ApplyGun(0);
-        }
-        else
-        {
-            currentAmmo = maxAmmo;
-        }
+        if (GunCount > 0) ApplyGun(Mathf.Clamp(ChosenGun, 0, GunCount - 1));
+        else currentAmmo = maxAmmo;
         feedback = GetComponent<WeaponFeedback>();
         if (feedback == null) feedback = gameObject.AddComponent<WeaponFeedback>();
         audioSource = GetComponent<AudioSource>();
@@ -188,9 +159,6 @@ public class Weapon : MonoBehaviour
         if (MainMenuController.IsOpen || Cursor.lockState != CursorLockMode.Locked) return;
 
         fireTimer -= Time.deltaTime;
-
-        UpdateGunSwitch();
-        if (IsSwitching) return;
 
         if (isReloading)
         {
@@ -242,67 +210,17 @@ public class Weapon : MonoBehaviour
         }
     }
 
-    /// <summary>Number keys pick a gun, the wheel steps through the unlocked ones. The swap itself happens half-way through the switch, with the gun out of sight.</summary>
-    void UpdateGunSwitch()
+    /// <summary>The Choose Your Weapon screen's pick: this gun is carried for the whole run.</summary>
+    public void Equip(int index)
     {
-        if (GunCount > 1 && !HoldingFlash)
-        {
-            var kb = Keyboard.current;
-            var mouse = Mouse.current;
-            int wanted = -1;
-            if (kb != null)
-            {
-                if (kb.digit1Key.wasPressedThisFrame) wanted = 0;
-                else if (kb.digit2Key.wasPressedThisFrame) wanted = 1;
-                else if (kb.digit3Key.wasPressedThisFrame) wanted = 2;
-            }
-            if (wanted < 0 && mouse != null && !IsSwitching)
-            {
-                float wheel = mouse.scroll.ReadValue().y;
-                if (wheel != 0f) wanted = NextUnlockedGun(wheel < 0f ? 1 : -1);
-            }
-            SwitchTo(wanted);
-        }
-
-        if (switchTimer <= 0f) return;
-        switchTimer -= Time.deltaTime;
-        if (pendingGun >= 0 && switchTimer <= switchSeconds * 0.5f)
-        {
-            ApplyGun(pendingGun);
-            pendingGun = -1;
-        }
+        if (index < 0 || index >= GunCount) return;
+        ChosenGun = index;
+        ApplyGun(index);
     }
 
-    int NextUnlockedGun(int step)
-    {
-        for (int i = 1; i < GunCount; i++)
-        {
-            int index = ((currentGun + step * i) % GunCount + GunCount) % GunCount;
-            if (IsGunUnlocked(index)) return index;
-        }
-        return currentGun;
-    }
-
-    /// <summary>Starts putting the gun in hand away for gun index. Ignored if that gun is locked or already the one coming up.</summary>
-    public void SwitchTo(int index)
-    {
-        // The second half of a switch is the new gun coming up - let it arrive before starting another.
-        if (IsSwitching && pendingGun < 0) return;
-        int target = pendingGun >= 0 ? pendingGun : currentGun;
-        if (index == target || !IsGunUnlocked(index)) return;
-
-        // A reload in progress is lost - the new magazine wasn't in yet.
-        isReloading = false;
-        // Changing your mind while the old gun is still going down only changes which one comes up.
-        if (!IsSwitching) switchTimer = switchSeconds;
-        pendingGun = index;
-        PlaySfx(switchSound, reloadVolume);
-    }
-
-    /// <summary>Puts gun index in hand: its numbers replace this component's, and its own magazine comes with it.</summary>
+    /// <summary>Puts gun index in hand with a full magazine: its numbers replace this component's.</summary>
     void ApplyGun(int index)
     {
-        if (ammoByGun != null && currentGun < ammoByGun.Length) ammoByGun[currentGun] = currentAmmo;
         currentGun = index;
         var gun = guns[index];
         maxAmmo = gun.maxAmmo;
@@ -316,32 +234,10 @@ public class Weapon : MonoBehaviour
         if (gun.recoilYawPattern != null && gun.recoilYawPattern.Length > 0) recoilYawPattern = gun.recoilYawPattern;
         if (gun.gunshotSound != null) gunshotSound = gun.gunshotSound;
         gunshotVolume = gun.gunshotVolume;
-        currentAmmo = ammoByGun != null ? ammoByGun[index] : maxAmmo;
+        currentAmmo = maxAmmo;
         isReloading = false;
         fireTimer = 0f;
         sprayIndex = 0;
-    }
-
-    /// <summary>Called on every room entry, like AbilityController.UnlockForRoom: which guns are carried depends only on the room,
-    /// so a checkpoint retry or a replayed room gets it right for free. Announces a gun the first time its room is reached.</summary>
-    public void UnlockForRoom(int roomIndex)
-    {
-        unlockedThroughRoom = roomIndex;
-        if (GunCount == 0) return;
-
-        if (!IsGunUnlocked(currentGun) || (pendingGun >= 0 && !IsGunUnlocked(pendingGun)))
-        {
-            pendingGun = -1;
-            switchTimer = 0f;
-            if (currentGun != 0) ApplyGun(0);
-        }
-
-        for (int i = 1; i < guns.Length; i++)
-        {
-            if (gunAnnounced[i] || !IsGunUnlocked(i)) continue;
-            gunAnnounced[i] = true;
-            if (KillFeedUI.Instance != null) KillFeedUI.Instance.AddMessage("NEW WEAPON: " + guns[i].displayName + "  -  PRESS [" + (i + 1) + "]");
-        }
     }
 
     void UpdateAim()
@@ -349,7 +245,7 @@ public class Weapon : MonoBehaviour
         var mouse = Mouse.current;
         // Right-click adds bounces while the Recon Dart is being aimed, so it can't also zoom.
         bool aimingDart = abilities != null && abilities.reconDart != null && abilities.reconDart.IsAiming;
-        IsAiming = mouse != null && mouse.rightButton.isPressed && !isReloading && !IsSwitching && !aimingDart && !HoldingFlash
+        IsAiming = mouse != null && mouse.rightButton.isPressed && !isReloading && !aimingDart && !HoldingFlash
             && !MainMenuController.IsOpen && Cursor.lockState == CursorLockMode.Locked;
 
         // Real time when paused, so a card or Game Over opening mid-aim doesn't leave the scope view stuck behind it.
@@ -499,7 +395,5 @@ void UpdateSpread()
     {
         isReloading = false;
         currentAmmo = maxAmmo;
-        // Every gun carried, not only the one in hand.
-        if (ammoByGun != null) for (int i = 0; i < ammoByGun.Length; i++) ammoByGun[i] = guns[i].maxAmmo;
     }
 }

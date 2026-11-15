@@ -20,7 +20,7 @@ public class GunViewmodelAnimator : MonoBehaviour
 
     public Weapon weapon;
     public Transform magazine;
-    [Tooltip("Optional. With more than one gun, the entry for the gun in hand overrides Magazine and the aiming fields below.")]
+    [Tooltip("Optional. With more than one gun to pick from, the entry for the gun in hand overrides Magazine and the aiming fields below.")]
     public GunVisual[] gunVisuals;
 
     [Header("Aiming")]
@@ -95,7 +95,7 @@ public class GunViewmodelAnimator : MonoBehaviour
         magazineDownPerMetre = magazine.parent.InverseTransformVector(-transform.up);
     }
 
-    /// <summary>Swaps the model in view. Called while the gun is lowered out of sight, half-way through a switch.</summary>
+    /// <summary>Swaps the model in view to the gun picked for the run.</summary>
     void ShowGun(int index)
     {
         if (index < 0 || index >= gunVisuals.Length) return;
@@ -148,8 +148,7 @@ public class GunViewmodelAnimator : MonoBehaviour
 
         float lowerRate = lowerSeconds > 0f ? Time.deltaTime / lowerSeconds : 1f;
         lowered = Mathf.MoveTowards(lowered, weapon.HoldingFlash ? 1f : 0f, lowerRate);
-        // Switching guns uses the same lowered pose: down, swap out of sight, back up.
-        float low = Mathf.Max(Mathf.SmoothStep(0f, 1f, lowered), Mathf.SmoothStep(0f, 1f, weapon.SwitchLowered01));
+        float low = Mathf.SmoothStep(0f, 1f, lowered);
 
         transform.localPosition = Vector3.Lerp(basePosition, aimPosition, aim) + reloadPositionOffset * weight + loweredPositionOffset * low + Vector3.up * jolt;
         transform.localRotation = baseRotation * Quaternion.Euler(reloadTiltDegrees * weight + loweredTiltDegrees * low);

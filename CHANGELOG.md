@@ -2,6 +2,21 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.6: The gun is chosen before the run, on a Choose Your Weapon screen
+
+**Why:** The designer's direction (15 Nov): the guns should be a choice made right before the game starts, not something collected and swapped along the way. One decision up front is easier for a new player to understand than three guns on three keys, it keeps the number keys and the player's attention free for the abilities during a room, and it gives a reason to play again with a different gun.
+
+**What changed:**
+- **Start now opens Choose Your Weapon.** Three cards, one per gun: a picture, the name, one line on what the gun is for, and its damage, fire rate, magazine, reload time and accuracy on the move. Clicking a card, or pressing 1, 2 or 3, starts the run in the Range with that gun. Esc goes back to the menu.
+- **One gun for the whole run.** Switching guns in play (1/2/3, mouse wheel) and the per-room unlocks from Phase 19.5 are removed. PLAY AGAIN and a restart keep the gun; going back to the main menu lets the player choose again.
+- **The cards cannot disagree with the guns.** The numbers are read from the same values the gun uses, and the pictures are rendered from the in-game models by `Vantage > Rebuild Guns`.
+- **HUD:** the line above the ammo count now shows only the name of the gun in hand.
+
+**Verified:**
+- Screenshot of the screen at 1920x1080; picking the Marksman starts the run with its model, 4 rounds and 100 damage.
+- Retry and win tests: 45 of 45 pass, and the gun picked is still in hand after PLAY AGAIN. HUD layout check: 0 errors.
+- Not yet played by hand: whether a new player reads the cards before clicking, and the balance between the three.
+
 ## Phase 19.5: Three guns - Rifle, SMG and Marksman
 
 **Why:** The designer asked for more guns (14 Nov). One rifle for all eight rooms meant shooting never changed while the abilities kept growing. A choice of gun adds a decision to every room that the player already understands: which tool suits this lane.

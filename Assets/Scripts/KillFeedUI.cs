@@ -26,12 +26,6 @@ public class KillFeedUI : MonoBehaviour
         SpawnEntry(text, color);
     }
 
-    /// <summary>A one-line notice in the same feed - a new gun, for instance.</summary>
-    public void AddMessage(string text)
-    {
-        SpawnEntry(text, headshotColor);
-    }
-
     void SpawnEntry(string text, Color color)
     {
         if (container == null) return;

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// Gates player/weapon input while the start overlay is up. IsOpen defaults to false so
@@ -8,6 +9,9 @@ using UnityEngine.EventSystems;
 public class MainMenuController : MonoBehaviour
 {
     public GameObject menuPanel;
+    [Tooltip("Choose Your Weapon - shown by the Start button, on top of the menu. Built by Vantage > Rebuild Guns.")]
+    public GameObject loadoutPanel;
+    public Weapon weapon;
 
     public static bool IsOpen { get; private set; }
     /// <summary>Set by GameOverController's "RESTART FROM BEGINNING"/"RESTART" buttons before reloading the scene, so Awake() drops straight into Room 1 gameplay instead of showing the title screen again.</summary>
@@ -16,6 +20,7 @@ public class MainMenuController : MonoBehaviour
 
 void Awake()
     {
+        if (loadoutPanel != null) loadoutPanel.SetActive(false);
         if (SkipMainMenuOnNextLoad)
         {
             SkipMainMenuOnNextLoad = false;
@@ -43,7 +48,35 @@ void Awake()
 
     public void OnPointerClickStart(PointerEventData eventData)
     {
+        ShowLoadout();
+    }
+
+    /// <summary>The Start button: the run begins once a gun has been picked. With no loadout screen built, it starts straight away.</summary>
+    public void ShowLoadout()
+    {
+        if (loadoutPanel == null || weapon == null || weapon.GunCount < 2) { StartGame(); return; }
+        if (AudioManager.Instance != null) AudioManager.Instance.PlayUIClick();
+        loadoutPanel.SetActive(true);
+        loadoutPanel.transform.SetAsLastSibling();
+    }
+
+    /// <summary>A card on the Choose Your Weapon screen: that gun is carried for the whole run.</summary>
+    public void ChooseGun(int index)
+    {
+        if (weapon != null) weapon.Equip(index);
+        if (loadoutPanel != null) loadoutPanel.SetActive(false);
         StartGame();
+    }
+
+    void Update()
+    {
+        if (loadoutPanel == null || !loadoutPanel.activeInHierarchy) return;
+        var kb = Keyboard.current;
+        if (kb == null) return;
+        if (kb.digit1Key.wasPressedThisFrame) ChooseGun(0);
+        else if (kb.digit2Key.wasPressedThisFrame) ChooseGun(1);
+        else if (kb.digit3Key.wasPressedThisFrame) ChooseGun(2);
+        else if (kb.escapeKey.wasPressedThisFrame) loadoutPanel.SetActive(false);
     }
 
     public void StartGame()
