@@ -21,6 +21,7 @@ Running log of design decisions and the reasoning behind them, kept for the Game
 
 **Verified:**
 - Play mode: a death shows the new cause line and sentence, and both lines fit their box.
+- Correction after the designer's screenshot: the sentence was drawn over the first stat row ("ENDED IN"). I had checked that the two lines fitted their own box, not where that box sat against the stats; it hangs from its top edge, so making it taller pushed it down into them. The box is moved up so its text ends 14 units above the first stat row, measured in the panel's own coordinates.
 - Measured against the camera: the charge in hand sits in the lower middle of the screen while planting and is below the screen at the start and end.
 - HUD layout check passes. Retry and win tests: 45 of 45 pass.
 - Not yet seen or heard by the designer: the Dash sound, the look of the planting animation, and the disarm wording on screen (only the death was triggered).
