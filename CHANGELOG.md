@@ -2,6 +2,27 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.5: Three guns - Rifle, SMG and Marksman
+
+**Why:** The designer asked for more guns (14 Nov). One rifle for all eight rooms meant shooting never changed while the abilities kept growing. A choice of gun adds a decision to every room that the player already understands: which tool suits this lane.
+
+**What changed:**
+- **Three guns**, switched with 1, 2, 3 or the mouse wheel. A switch takes 0.4 seconds, during which the gun drops out of view and cannot fire or aim. Each gun keeps its own magazine.
+  - **Rifle** (from the start): unchanged. 12 rounds, 25 damage, automatic.
+  - **SMG** (unlocks in Room 3, Holding Angle): 24 rounds, 12 damage, about 11 shots a second, 1.1 second reload. Less accurate standing still than the rifle but far better on the move, and no scope: it aims by raising the gun. The gun for pushing.
+  - **Marksman** (unlocks in Room 5, Smoke): 4 rounds, 100 damage, one shot per click, 1.1 seconds between shots, 2.2 second reload, tighter scope. Kills a drone with one body shot but is very inaccurate while moving. The gun for holding a long angle.
+- **Unlocks follow the rooms**, the same way abilities do. A kill-feed line announces each new gun once ("NEW WEAPON: SMG - PRESS [2]"), and going back to an earlier room through Room Select takes the later guns away again.
+- **HUD:** a line above the ammo count lists the guns carried and their keys, with the one in hand in amber. It is hidden while the player has only the rifle.
+- **Models:** the SMG and Marksman are built from the rifle's own model (shortened or stretched, scope and magazine changed, a few plain blocks added), with teal and red accents so they read apart at a glance. Nothing new was imported. `Vantage > Rebuild Guns` (`GunSetBuilder.cs`) rebuilds all of it.
+- **Sounds:** two new gunshots layered from the same sound pack as the rifle's, a short light one for the SMG and a longer heavy one for the Marksman.
+- **Fix found on the way:** the rifle model had been mounted back to front since Phase 6e, with the stock pointing at the enemy and tracers leaving the butt. It now faces forward, so the rifle looks different in view.
+
+**Verified:**
+- Play mode: switching to each gun shows the right model, ammo, damage and muzzle; each gun's ammo is remembered across a switch.
+- Screenshots of all three guns at the hip, and the SMG raised to aim (screen centre is clear).
+- Retry and win tests: 45 of 45 pass. HUD layout check: 0 errors.
+- Not yet played by hand: the balance. The Marksman's one-shot body kill may make the later rooms easier, and the new gunshots have not been heard against the music.
+
 ## Phase 19.4: Drones break apart when killed and chirp when they spot you
 
 **Why:** Two gaps in feedback, both around the moment that matters most in a survival game. A killed drone simply vanished, so a kill had a sound and a kill-feed line but nothing to see. And a drone that had seen the player gave no sign of it until its first shot landed, so a death from an unseen angle felt unfair.

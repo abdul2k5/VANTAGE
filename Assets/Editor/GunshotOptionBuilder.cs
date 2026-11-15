@@ -39,6 +39,17 @@ public static class GunshotOptionBuilder
             new Layer("Assets/Audio/ImpactSounds/impactPlate_heavy_001.ogg", 0.9f, 0f, 0.22f),
             new Layer("Assets/Audio/SciFiSounds/laserSmall_002.ogg", 0.5f, 0f, 0.18f));
 
+        // Phase 19.5, the other two guns, from the same family of clips so they sound like one armoury.
+        // SMG: short and light - the small laser over a light plate tap, cut off early so 11 a second don't smear.
+        Write("gunshot_smg", 0.14f,
+            new Layer("Assets/Audio/SciFiSounds/laserSmall_002.ogg", 0.9f, 0f, 0.13f),
+            new Layer("Assets/Audio/ImpactSounds/impactPlate_light_001.ogg", 0.6f, 0f, 0.10f));
+        // Marksman: the rifle's big laser and plate with a low explosion under them, left to ring longer.
+        Write("gunshot_marksman", 0.55f,
+            new Layer("Assets/Audio/SciFiSounds/laserLarge_000.ogg", 0.8f, 0f, 0.40f),
+            new Layer("Assets/Audio/ImpactSounds/impactPlate_heavy_001.ogg", 1.0f, 0f, 0.30f),
+            new Layer("Assets/Audio/SciFiSounds/lowFrequency_explosion_000.ogg", 0.9f, 0f, 0.55f));
+
         AssetDatabase.Refresh();
     }
 

@@ -198,6 +198,9 @@ public void EnterRoom(int index, bool movePlayer = true)
             abilities.ResetAllCooldowns();
         }
 
+        var weapon = player != null ? player.GetComponent<Weapon>() : null;
+        if (weapon != null) weapon.UnlockForRoom(currentRoom);
+
         UpdateObjectiveLine();
         UpdateMusic();
         if (currentRoom > furthestRoom)

@@ -3,8 +3,25 @@ using UnityEngine;
 /// <summary>Poses the first-person gun for aiming and reloading, entirely from Weapon.AimAmount01 and Weapon.ReloadProgress01. Because the pose is worked out from those each frame, it pauses when the reload pauses, and an instant Weapon.Reload() puts the gun straight back.</summary>
 public class GunViewmodelAnimator : MonoBehaviour
 {
+    /// <summary>One gun's model and how it is aimed. Listed in the same order as Weapon.guns.</summary>
+    [System.Serializable]
+    public class GunVisual
+    {
+        public Transform root;
+        public Transform magazine;
+        [Tooltip("Where this gun's tracer starts.")]
+        public Transform muzzle;
+        [Tooltip("Gun position when fully aimed.")]
+        public Vector3 aimPosition;
+        public float aimFieldOfView = 35f;
+        [Tooltip("On = the scope view replaces the gun when fully aimed. Off = the gun stays in view, raised to the eye.")]
+        public bool scoped = true;
+    }
+
     public Weapon weapon;
     public Transform magazine;
+    [Tooltip("Optional. With more than one gun, the entry for the gun in hand overrides Magazine and the aiming fields below.")]
+    public GunVisual[] gunVisuals;
 
     [Header("Aiming")]
     [Tooltip("Gun position when fully aimed: the back of the scope up against the player's eye. The gun is hidden once the scope view has covered it.")]
@@ -52,6 +69,8 @@ public class GunViewmodelAnimator : MonoBehaviour
     Renderer[] gunRenderers;
     bool gunHidden;
     float lowered;
+    int shownGun = -1;
+    bool scoped = true;
 
     /// <summary>True once the scope view has fully replaced the gun. Weapon starts its tracer elsewhere then, since the muzzle is right in front of the player's eye.</summary>
     public bool ScopeViewUp { get { return gunHidden; } }
@@ -64,17 +83,49 @@ public class GunViewmodelAnimator : MonoBehaviour
         cam = GetComponentInParent<Camera>();
         if (cam != null) baseFieldOfView = cam.fieldOfView;
 
-        if (magazine != null)
+        CacheMagazine();
+        if (gunVisuals != null && gunVisuals.Length > 0) ShowGun(0);
+    }
+
+    void CacheMagazine()
+    {
+        if (magazine == null) return;
+        magazineBasePosition = magazine.localPosition;
+        // The magazine's parent is the model, which may be scaled (the rifle's is 0.01), so one metre down the gun is worked out in its units.
+        magazineDownPerMetre = magazine.parent.InverseTransformVector(-transform.up);
+    }
+
+    /// <summary>Swaps the model in view. Called while the gun is lowered out of sight, half-way through a switch.</summary>
+    void ShowGun(int index)
+    {
+        if (index < 0 || index >= gunVisuals.Length) return;
+
+        // Leave the outgoing gun as it was found: magazine seated, nothing hidden by the scope view.
+        if (magazine != null && shownGun >= 0) magazine.localPosition = magazineBasePosition;
+        if (gunRenderers != null) for (int i = 0; i < gunRenderers.Length; i++) gunRenderers[i].enabled = true;
+        gunHidden = false;
+
+        shownGun = index;
+        for (int i = 0; i < gunVisuals.Length; i++)
         {
-            magazineBasePosition = magazine.localPosition;
-            // The magazine's parent is the model, scaled to 0.01, so one metre down the gun is 100 of its units.
-            magazineDownPerMetre = magazine.parent.InverseTransformVector(-transform.up);
+            if (gunVisuals[i].root != null) gunVisuals[i].root.gameObject.SetActive(i == index);
         }
+
+        var visual = gunVisuals[index];
+        gunRenderers = visual.root != null ? visual.root.GetComponentsInChildren<Renderer>(true) : new Renderer[0];
+        magazine = visual.magazine;
+        CacheMagazine();
+        aimPosition = visual.aimPosition;
+        aimFieldOfView = visual.aimFieldOfView;
+        scoped = visual.scoped;
+        if (visual.muzzle != null && weapon != null) weapon.muzzle = visual.muzzle;
     }
 
     void LateUpdate()
     {
         if (weapon == null) return;
+
+        if (gunVisuals != null && gunVisuals.Length > 0 && weapon.CurrentGunIndex != shownGun) ShowGun(weapon.CurrentGunIndex);
 
         float progress = weapon.IsReloading ? weapon.ReloadProgress01 : 0f;
 
@@ -92,12 +143,13 @@ public class GunViewmodelAnimator : MonoBehaviour
 
         float aim = Mathf.SmoothStep(0f, 1f, weapon.AimAmount01);
         if (cam != null) cam.fieldOfView = Mathf.Lerp(baseFieldOfView, aimFieldOfView, aim);
-        if (scopeOverlay != null) scopeOverlay.SetAmount(Mathf.InverseLerp(scopeFadeStart, scopeFullAt, aim));
-        SetGunHidden(aim >= scopeFullAt);
+        if (scopeOverlay != null) scopeOverlay.SetAmount(scoped ? Mathf.InverseLerp(scopeFadeStart, scopeFullAt, aim) : 0f);
+        SetGunHidden(scoped && aim >= scopeFullAt);
 
         float lowerRate = lowerSeconds > 0f ? Time.deltaTime / lowerSeconds : 1f;
         lowered = Mathf.MoveTowards(lowered, weapon.HoldingFlash ? 1f : 0f, lowerRate);
-        float low = Mathf.SmoothStep(0f, 1f, lowered);
+        // Switching guns uses the same lowered pose: down, swap out of sight, back up.
+        float low = Mathf.Max(Mathf.SmoothStep(0f, 1f, lowered), Mathf.SmoothStep(0f, 1f, weapon.SwitchLowered01));
 
         transform.localPosition = Vector3.Lerp(basePosition, aimPosition, aim) + reloadPositionOffset * weight + loweredPositionOffset * low + Vector3.up * jolt;
         transform.localRotation = baseRotation * Quaternion.Euler(reloadTiltDegrees * weight + loweredTiltDegrees * low);
