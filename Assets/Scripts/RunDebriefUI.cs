@@ -142,6 +142,9 @@ public class RunDebriefUI : MonoBehaviour
             return "TIP: You left Overwatch orbs behind - each one is worth a kill's worth of ultimate charge.";
         if (stats.DamageTaken >= 200f)
             return "TIP: You took a lot of damage. Crouch behind cover to break line of sight, and walk [Alt] so drones don't hear you coming.";
+        // Praise is only for a run that reached the end - a death with tidy numbers still needs something to try.
+        if (!stats.Finished)
+            return "TIP: The drones won the trade. Break their line of sight first - smoke, flash or cover - then peek one drone at a time.";
         return "Clean run. Now do it faster.";
     }
 }

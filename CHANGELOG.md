@@ -2,6 +2,17 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.11: The Mission Failed screen no longer says "Clean run"
+
+**Why:** The designer died in the Smoke room and the Mission Failed screen said "Clean run. Now do it faster." (15 Nov). The end screen picks one coaching tip from the weakest stat, and that line was the fallback when no stat was weak enough to trigger a tip. It was written for the win screen, but the same code fills the Mission Failed screen, so a death with good accuracy was praised.
+
+**What changed:**
+- "Clean run. Now do it faster." now only appears on a finished run.
+- A death that triggers none of the specific tips gets: "TIP: The drones won the trade. Break their line of sight first - smoke, flash or cover - then peek one drone at a time."
+
+**Verified:**
+- Play mode: the Mission Failed debrief, refreshed on an unfinished run with no weak stat, shows the new tip.
+
 ## Phase 19.10: Drones sidestep while they have you in sight
 
 **Why:** A drone that had seen the player stood still to shoot, so every fight was the same: line up the eye and click. With the Marksman that made the game easy. A target that shifts has to be tracked, and a miss with a four-round, four-second-reload gun now costs something. It also makes the drones read as alive.
