@@ -57,16 +57,27 @@ public static class GunshotOptionBuilder
             new Layer("Assets/Audio/ImpactSounds/impactPlate_heavy_001.ogg", 0.5f, 0f, 0.3f, 0.8f),
             new Layer("Assets/Audio/SciFiSounds/lowFrequency_explosion_000.ogg", 0.3f, 0f, 0.9f));
 
+        // Phase 19.13, not a gunshot but built the same way: the Dash sound. The source is a 5-second thruster
+        // burn, which carried on for seconds after a 0.18-second dash. This is its first 0.4 seconds, faded out,
+        // at the loudness that stretch had in the original.
+        Write("dash_burst", 0.4f, 0f, 0.7f,
+            new Layer("Assets/Audio/SciFiSounds/thrusterFire_001.ogg", 1f, 0f, 0.4f));
+
         AssetDatabase.Refresh();
     }
 
     static void Write(string name, float lengthSeconds, params Layer[] layers)
     {
-        Write(name, lengthSeconds, 0f, layers);
+        Write(name, lengthSeconds, 0f, 0.9f, layers);
     }
 
-    /// <summary>highPassHz above 0 removes everything below it from the mix before it is normalised.</summary>
     static void Write(string name, float lengthSeconds, float highPassHz, params Layer[] layers)
+    {
+        Write(name, lengthSeconds, highPassHz, 0.9f, layers);
+    }
+
+    /// <summary>highPassHz above 0 removes everything below it from the mix before it is normalised to outPeak.</summary>
+    static void Write(string name, float lengthSeconds, float highPassHz, float outPeak, params Layer[] layers)
     {
         int n = Mathf.RoundToInt(lengthSeconds * Rate);
         var mix = new float[n];
@@ -118,7 +129,7 @@ public static class GunshotOptionBuilder
 
         float peak = 0f;
         for (int i = 0; i < n; i++) peak = Mathf.Max(peak, Mathf.Abs(mix[i]));
-        float norm = peak > 0f ? 0.9f / peak : 1f;
+        float norm = peak > 0f ? outPeak / peak : 1f;
 
         string file = OutFolder + "/" + name + ".wav";
         using (var w = new BinaryWriter(File.Create(file)))

@@ -2,6 +2,29 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.13: Shorter Dash sound, a reason on Mission Failed, and a planting animation
+
+**Why:** Three notes from the designer after a run that ended in The Round (15 Nov).
+- The Dash sound went on for far longer than the dash. The clip was a 5-second thruster burn, played in full for a move that lasts 0.18 seconds.
+- The Mission Failed screen said "The attempt ends here." and nothing about why. The Round can be lost two ways, a death or a drone disarming the charge, and the screen should say which.
+- While planting the Breach Charge the gun stayed in the hands, pointing ahead, and could still be fired. Nothing on screen showed the player doing the planting.
+
+**What changed:**
+- **Dash sound:** a new clip, `dash_burst.wav`, is the first 0.4 seconds of the same thruster sound with a fade-out, at the loudness that stretch had before. It is built by `GunshotOptionBuilder` so the recipe is kept.
+- **Mission Failed reason:** a bold line under the title gives the cause, with one sentence below it.
+  - A death: "YOU WERE KILLED" / "A drone shot you down. The attempt ends here."
+  - A disarm: "THE BREACH CHARGE WAS DISARMED" / "A drone reached it. Kill or flash anything that gets to the charge."
+- **Planting animation:**
+  - The gun drops out of view while the plant key is held and comes back when it is released or the plant completes.
+  - A small copy of the charge rises into the lower middle of the screen, is turned as it arms while being pressed down, and sinks away as the real one is set. Its lights come on in step with the real charge's.
+  - The gun cannot fire or aim while planting. This is a rule change: before, the player could shoot without letting go of the plant key. Letting go to shoot restarts the plant, as moving or taking damage already did.
+
+**Verified:**
+- Play mode: a death shows the new cause line and sentence, and both lines fit their box.
+- Measured against the camera: the charge in hand sits in the lower middle of the screen while planting and is below the screen at the start and end.
+- HUD layout check passes. Retry and win tests: 45 of 45 pass.
+- Not yet seen or heard by the designer: the Dash sound, the look of the planting animation, and the disarm wording on screen (only the death was triggered).
+
 ## Phase 19.12: The Rifle looks like a carbine, not a short Marksman
 
 **Why:** The designer found the Rifle and the Marksman hard to tell apart (15 Nov). Both were the same model with a tall scope on top, in different colours and lengths, so on the Choose Your Weapon screen and in the hand the Rifle read as a small Marksman. The designer asked for the Rifle to look like a military carbine.

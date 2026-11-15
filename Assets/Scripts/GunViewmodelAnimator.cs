@@ -38,6 +38,12 @@ public class GunViewmodelAnimator : MonoBehaviour
     public Vector3 loweredTiltDegrees = new Vector3(25f, -12f, 0f);
     public float lowerSeconds = 0.12f;
 
+    [Header("Planting the charge - gun put away, both hands are on the charge")]
+    [Tooltip("Must end with the whole gun below the bottom of the screen.")]
+    public Vector3 stowedPositionOffset = new Vector3(0.05f, -0.65f, -0.1f);
+    public Vector3 stowedTiltDegrees = new Vector3(55f, -20f, 0f);
+    public float stowSeconds = 0.22f;
+
     [Header("Reload pose")]
     public Vector3 reloadPositionOffset = new Vector3(-0.05f, -0.07f, -0.04f);
     public Vector3 reloadTiltDegrees = new Vector3(-22f, 8f, 14f);
@@ -69,6 +75,7 @@ public class GunViewmodelAnimator : MonoBehaviour
     Renderer[] gunRenderers;
     bool gunHidden;
     float lowered;
+    float stowed;
     int shownGun = -1;
     bool scoped = true;
 
@@ -150,8 +157,12 @@ public class GunViewmodelAnimator : MonoBehaviour
         lowered = Mathf.MoveTowards(lowered, weapon.HoldingFlash ? 1f : 0f, lowerRate);
         float low = Mathf.SmoothStep(0f, 1f, lowered);
 
-        transform.localPosition = Vector3.Lerp(basePosition, aimPosition, aim) + reloadPositionOffset * weight + loweredPositionOffset * low + Vector3.up * jolt;
-        transform.localRotation = baseRotation * Quaternion.Euler(reloadTiltDegrees * weight + loweredTiltDegrees * low);
+        float stowRate = stowSeconds > 0f ? Time.deltaTime / stowSeconds : 1f;
+        stowed = Mathf.MoveTowards(stowed, BreachChargeSite.AnyPlantInProgress ? 1f : 0f, stowRate);
+        float stow = Mathf.SmoothStep(0f, 1f, stowed);
+
+        transform.localPosition = Vector3.Lerp(basePosition, aimPosition, aim) + reloadPositionOffset * weight + loweredPositionOffset * low + stowedPositionOffset * stow + Vector3.up * jolt;
+        transform.localRotation = baseRotation * Quaternion.Euler(reloadTiltDegrees * weight + loweredTiltDegrees * low + stowedTiltDegrees * stow);
 
         if (magazine != null) magazine.localPosition = magazineBasePosition + magazineDownPerMetre * MagazineDrop(progress);
     }

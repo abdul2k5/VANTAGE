@@ -553,7 +553,8 @@ MonoBehaviour:
   disarmColor: {r: 1, g: 0.8, b: 0.2, a: 1}
   disarmTickSound: {fileID: 8300000, guid: 7726b014796bc224ba4fe1fe86f0e04d, type: 3}
   disarmedSound: {fileID: 8300000, guid: b9d208ff0aef044429ef785c29269e84, type: 3}
-  disarmedMessage: A drone disarmed the Breach Charge. Kill or flash anything that reaches it.
+  disarmedCause: THE BREACH CHARGE WAS DISARMED
+  disarmedMessage: A drone reached it. Kill or flash anything that gets to the charge.
   plantUtilityRefill: 1
   postPlantObjective: Keep drones off the charge until it blows (+1 of each ability)
   beepSound: {fileID: 8300000, guid: 43aacc608037d1f4cafecad72d3f436d, type: 3}
@@ -12812,7 +12813,7 @@ MonoBehaviour:
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 56
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -47586,6 +47587,11 @@ MonoBehaviour:
   progressLabel: {fileID: 382567106}
   plantCompleteSound: {fileID: 8300000, guid: eba392a5ed35abc498c8adb4f40a6885, type: 3}
   device: {fileID: 1353171468}
+  heldChargeScale: 0.32
+  heldChargeShown: {x: 0, y: -0.3, z: 0.62}
+  heldChargeHidden: {x: 0, y: -0.75, z: 0.62}
+  heldChargePressDown: 0.05
+  heldChargeTwistDegrees: 300
 --- !u!65 &605565687
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -49656,10 +49662,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 849293798}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 222, y: -48}
+  m_SizeDelta: {x: 103, y: 38}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &640557910
 MonoBehaviour:
@@ -55832,10 +55838,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1715469544}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 640, y: -8}
+  m_SizeDelta: {x: 1248, y: 30}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &722714020
 MonoBehaviour:
@@ -58673,6 +58679,9 @@ MonoBehaviour:
   loweredPositionOffset: {x: 0.06, y: -0.2, z: -0.08}
   loweredTiltDegrees: {x: 25, y: -12, z: 0}
   lowerSeconds: 0.12
+  stowedPositionOffset: {x: 0.05, y: -0.65, z: -0.1}
+  stowedTiltDegrees: {x: 55, y: -20, z: 0}
+  stowSeconds: 0.22
   reloadPositionOffset: {x: -0.05, y: -0.07, z: -0.04}
   reloadTiltDegrees: {x: -22, y: 8, z: 14}
   returnStartsAt: 0.78
@@ -63577,7 +63586,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -30, y: 30}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 242, y: 58}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &849293799
 MonoBehaviour:
@@ -78515,7 +78524,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -20}
-  m_SizeDelta: {x: 1280, y: 0}
+  m_SizeDelta: {x: 1280, y: 46}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1046320914
 MonoBehaviour:
@@ -91863,7 +91872,7 @@ MonoBehaviour:
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 44
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -93539,10 +93548,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 849293798}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 35, y: -29}
+  m_SizeDelta: {x: 30, y: 38}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1245740274
 MonoBehaviour:
@@ -95321,10 +95330,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 849293798}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 84.5, y: -29}
+  m_SizeDelta: {x: 57, y: 38}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1269473483
 MonoBehaviour:
@@ -98180,7 +98189,7 @@ MonoBehaviour:
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 44
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -108155,7 +108164,7 @@ MonoBehaviour:
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 44
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -118578,7 +118587,7 @@ MonoBehaviour:
   cooldown: 6
   maxCharges: 2
   icon: {fileID: 21300000, guid: f3e905cc784c2bd4f8302eff9c1f33fb, type: 3}
-  activateSound: {fileID: 8300000, guid: 5f8382ae8a2aacd4db52be8a39e42a14, type: 3}
+  activateSound: {fileID: 8300000, guid: 5d7a4a37d88bbe847986ea0ef7cec99f, type: 3}
   dashSpeed: 18
   dashSeconds: 0.18
   immuneWhileDashing: 1
@@ -126765,7 +126774,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 640, y: -0}
-  m_SizeDelta: {x: 1280, y: 0}
+  m_SizeDelta: {x: 1280, y: 46}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1715469545
 MonoBehaviour:
@@ -129414,8 +129423,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 305}
-  m_SizeDelta: {x: 600, y: 40}
+  m_AnchoredPosition: {x: 0, y: 296}
+  m_SizeDelta: {x: 1000, y: 64}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1755066804
 MonoBehaviour:
@@ -129448,8 +129457,8 @@ MonoBehaviour:
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
+    m_VerticalOverflow: 1
+    m_LineSpacing: 1.15
   m_Text: The attempt ends here.
 --- !u!222 &1755066805
 CanvasRenderer:
@@ -132244,7 +132253,8 @@ MonoBehaviour:
   firstButtonY: -230
   buttonSpacing: 60
   loseSound: {fileID: 8300000, guid: 97c885ec531c94c45b864a4637b2e12f, type: 3}
-  defaultSubMessage: The attempt ends here.
+  deathCause: YOU WERE KILLED
+  defaultSubMessage: A drone shot you down. The attempt ends here.
   replaySubMessage: Replaying a cleared room. Your progress is safe.
 --- !u!4 &1787028541
 Transform:

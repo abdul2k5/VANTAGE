@@ -64,7 +64,8 @@ public class RoundController : MonoBehaviour
     public Color disarmColor = new Color(1f, 0.8f, 0.2f, 1f);
     public AudioClip disarmTickSound;
     public AudioClip disarmedSound;
-    public string disarmedMessage = "A drone disarmed the Breach Charge. Kill or flash anything that reaches it.";
+    public string disarmedCause = "THE BREACH CHARGE WAS DISARMED";
+    public string disarmedMessage = "A drone reached it. Kill or flash anything that gets to the charge.";
 
     [Header("Post-plant")]
     public int plantUtilityRefill = 1;
@@ -297,7 +298,7 @@ public class RoundController : MonoBehaviour
         if (chargeIcon != null) chargeIcon.SetActive(false);
         if (device != null) device.ShowDisarmed();
         PlaySfx(disarmedSound);
-        if (GameOverController.Instance != null) GameOverController.Instance.ShowGameOver(disarmedMessage);
+        if (GameOverController.Instance != null) GameOverController.Instance.ShowGameOver(disarmedMessage, disarmedCause);
     }
 
     /// <summary>The blast takes out every drone still in the room - and stops one finishing the player off behind the win screen.</summary>

@@ -185,7 +185,8 @@ public class Weapon : MonoBehaviour
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
 
         var mouse = Mouse.current;
-        if (HoldingFlash) return;
+        // Planting takes both hands: the gun is put away until the key is let go.
+        if (HoldingFlash || BreachChargeSite.AnyPlantInProgress) return;
 
         bool trigger = mouse != null && (automatic ? mouse.leftButton.isPressed : mouse.leftButton.wasPressedThisFrame);
         if (trigger && !isReloading && fireTimer <= 0f && currentAmmo > 0)
@@ -245,7 +246,7 @@ public class Weapon : MonoBehaviour
         var mouse = Mouse.current;
         // Right-click adds bounces while the Recon Dart is being aimed, so it can't also zoom.
         bool aimingDart = abilities != null && abilities.reconDart != null && abilities.reconDart.IsAiming;
-        IsAiming = mouse != null && mouse.rightButton.isPressed && !isReloading && !aimingDart && !HoldingFlash
+        IsAiming = mouse != null && mouse.rightButton.isPressed && !isReloading && !aimingDart && !HoldingFlash && !BreachChargeSite.AnyPlantInProgress
             && !MainMenuController.IsOpen && Cursor.lockState == CursorLockMode.Locked;
 
         // Real time when paused, so a card or Game Over opening mid-aim doesn't leave the scope view stuck behind it.

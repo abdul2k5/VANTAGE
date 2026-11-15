@@ -22,7 +22,9 @@ public class GameOverController : MonoBehaviour
     public float buttonSpacing = 60f;
     public AudioClip loseSound;
 
-    public string defaultSubMessage = "The attempt ends here.";
+    [Tooltip("Headline under the title saying why the run ended, when the caller gives no other cause.")]
+    public string deathCause = "YOU WERE KILLED";
+    public string defaultSubMessage = "A drone shot you down. The attempt ends here.";
     public string replaySubMessage = "Replaying a cleared room. Your progress is safe.";
 
     // Shown instead of the checkpoint buttons when the player dies replaying a room through Room Select.
@@ -67,7 +69,8 @@ public class GameOverController : MonoBehaviour
         }
     }
 
-    public void ShowGameOver(string subMessage = null)
+    /// <summary>cause is the one-line reason the run ended (a death if left out); subMessage is the sentence under it.</summary>
+    public void ShowGameOver(string subMessage = null, string cause = null)
     {
         if (panel == null) return;
 
@@ -92,7 +95,9 @@ public class GameOverController : MonoBehaviour
         StackVisibleButtons();
 
         if (string.IsNullOrEmpty(subMessage)) subMessage = replaying ? replaySubMessage : defaultSubMessage;
-        if (subText != null) subText.text = subMessage;
+        if (string.IsNullOrEmpty(cause)) cause = deathCause;
+        // The cause is the first thing read after the title: the screen used to say only that the run was over, not why.
+        if (subText != null) subText.text = "<size=26><b><color=#F2F2EE>" + cause + "</color></b></size>\n" + subMessage;
 
         panel.transform.SetAsLastSibling();
         panel.SetActive(true);

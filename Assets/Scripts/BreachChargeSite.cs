@@ -20,7 +20,16 @@ public class BreachChargeSite : MonoBehaviour
     public AudioClip plantCompleteSound;
     public BreachChargeDevice device;
 
+    [Header("Charge in hand while planting - positions are from the camera, metres")]
+    public float heldChargeScale = 0.32f;
+    public Vector3 heldChargeShown = new Vector3(0f, -0.3f, 0.62f);
+    [Tooltip("Below the bottom of the screen.")]
+    public Vector3 heldChargeHidden = new Vector3(0f, -0.75f, 0.62f);
+    public float heldChargePressDown = 0.05f;
+    public float heldChargeTwistDegrees = 300f;
+
     float plantProgress;
+    Transform heldCharge;
     bool planted;
     bool playerInside;
 
@@ -100,6 +109,7 @@ public class BreachChargeSite : MonoBehaviour
         if (progressFill != null) progressFill.fillAmount = frac;
         if (progressLabel != null) progressLabel.text = "PLANTING BREACH CHARGE - " + Mathf.CeilToInt((1f - frac) * plantSeconds) + "s";
         if (device != null && player != null) device.SetDeployProgress(player.position, frac);
+        ShowHeldCharge(frac);
 
         if (plantProgress >= plantSeconds)
         {
@@ -115,8 +125,41 @@ public class BreachChargeSite : MonoBehaviour
         if (progressLabel != null) progressLabel.text = text;
     }
 
+    /// <summary>
+    /// The charge in the player's hands while it is being planted: it comes up from the bottom of the screen
+    /// as the gun goes away, is twisted to arm it while being pressed down, and drops out of view as the real
+    /// one is set. A small copy of the device's own canister, so its lights come on in step with the real one's.
+    /// </summary>
+    void ShowHeldCharge(float frac01)
+    {
+        if (heldCharge == null)
+        {
+            var cam = Camera.main;
+            if (cam == null || device == null || device.canister == null) return;
+            heldCharge = Instantiate(device.canister.gameObject, cam.transform).transform;
+            heldCharge.name = "HeldBreachCharge";
+            heldCharge.localScale = Vector3.one * heldChargeScale;
+            foreach (var r in heldCharge.GetComponentsInChildren<Renderer>(true)) r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        }
+
+        float enter = Mathf.SmoothStep(0f, 1f, frac01 / 0.12f);
+        float exit = Mathf.SmoothStep(0f, 1f, (frac01 - 0.9f) / 0.1f);
+        Vector3 pose = Vector3.Lerp(heldChargeHidden, heldChargeShown, enter * (1f - exit));
+        pose.y -= heldChargePressDown * frac01;
+        heldCharge.localPosition = pose;
+        // Tipped towards the player so the core on top can be seen, and turned as it is armed.
+        heldCharge.localRotation = Quaternion.Euler(-25f, 0f, 0f) * Quaternion.Euler(0f, heldChargeTwistDegrees * frac01, 0f);
+        heldCharge.gameObject.SetActive(true);
+    }
+
+    void HideHeldCharge()
+    {
+        if (heldCharge != null) heldCharge.gameObject.SetActive(false);
+    }
+
     void CancelPlant()
     {
+        HideHeldCharge();
         AnyPlantInProgress = false;
         plantProgress = 0f;
         if (progressRoot != null) progressRoot.SetActive(false);
@@ -125,6 +168,7 @@ public class BreachChargeSite : MonoBehaviour
 
     void Plant()
     {
+        HideHeldCharge();
         AnyPlantInProgress = false;
         planted = true;
         if (progressRoot != null) progressRoot.SetActive(false);
@@ -141,6 +185,7 @@ public class BreachChargeSite : MonoBehaviour
 /// <summary>Used by CheckpointManager on a checkpoint retry - cancels any in-progress plant and clears the planted flag so the site can be planted again.</summary>
     public void ResetState()
     {
+        HideHeldCharge();
         AnyPlantInProgress = false;
         planted = false;
         plantProgress = 0f;
