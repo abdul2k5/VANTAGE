@@ -39,6 +39,9 @@ public static class GunSetBuilder
         var rifleMag = rifle.Find("magazine");
         Remove(rifle, "Kit");
         Remove(rifleMag, "MagCurve");
+        Remove(rifleMag, "MagBase");
+        rifle.GetComponent<Renderer>().sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>(AccentFolder + "/Mat_Gun_Gunmetal.mat");
+        rifleMag.GetComponent<Renderer>().sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>(AccentFolder + "/Mat_Gun_Accent.mat");
         rifle.Find("scope").gameObject.SetActive(true);
 
         foreach (var name in new[] { "SmgVisual", "MarksmanVisual", "Muzzle_Smg", "Muzzle_Marksman" })
@@ -47,9 +50,15 @@ public static class GunSetBuilder
             if (old != null) Object.DestroyImmediate(old.gameObject);
         }
 
-        var gunmetal = AssetDatabase.LoadAssetAtPath<Material>(AccentFolder + "/Mat_Gun_Gunmetal.mat");
+        // Phase 19.17: all three guns made to look less like toys. Real surfaces in place of one grey and one
+        // bright colour: matte black polymer for bodies and furniture, steel for rails, magazines and small
+        // parts, glass on the optics. Each gun keeps its card's colour, but only as a few small marks.
+        var amber = AssetDatabase.LoadAssetAtPath<Material>(AccentFolder + "/Mat_Gun_Accent.mat");
         var teal = Accent("Mat_Gun_Accent_Smg", Teal);
         var red = Accent("Mat_Gun_Accent_Marksman", Red);
+        var polymer = Surface("Mat_Gun_Polymer", new Color(0.085f, 0.09f, 0.10f), 0.05f, 0.32f);
+        var steel = Surface("Mat_Gun_Steel", new Color(0.20f, 0.21f, 0.23f), 0.95f, 0.62f);
+        var lens = Surface("Mat_Gun_Lens", new Color(0.04f, 0.10f, 0.18f), 0.9f, 0.96f);
 
         // The rifle model's barrel is on its -Z end, so unturned it pointed back at the player (stock towards the
         // enemy, tracers leaving the butt plate). Turned round here, and every gun below is a copy of it.
@@ -61,38 +70,74 @@ public static class GunSetBuilder
         var smg = Group(vm.transform, "SmgVisual");
         var smgBody = CopyRifle(rifle, smg, new Vector3(0f, 0f, 0.26f), new Vector3(0.011f, 0.0092f, 0.007f));
         Remove(smgBody, "scope");
+        smgBody.GetComponent<Renderer>().sharedMaterial = polymer;
         var smgMag = smgBody.Find("magazine");
         smgMag.localScale = new Vector3(1f, 1.7f, 1.35f);
-        smgMag.GetComponent<Renderer>().sharedMaterial = teal;
-        // Phase 19.16, after the designer's reference picture: one rail along the whole top with low flip-up
-        // sights at each end, a slotted handguard, and a fat shroud over the muzzle.
-        Box(smg, "Rail", new Vector3(0f, 0.095f, 0.28f), new Vector3(0.03f, 0.012f, 0.44f), gunmetal);
-        Box(smg, "RearSight", new Vector3(0f, 0.108f, 0.075f), new Vector3(0.034f, 0.014f, 0.014f), gunmetal);
-        Box(smg, "FrontSight", new Vector3(0f, 0.108f, 0.485f), new Vector3(0.034f, 0.014f, 0.014f), gunmetal);
-        Box(smg, "Handguard", new Vector3(0f, 0.045f, 0.405f), new Vector3(0.066f, 0.09f, 0.19f), gunmetal);
+        smgMag.GetComponent<Renderer>().sharedMaterial = steel;
+        MagazinePlate(vm.transform, smg, smgMag, teal);
+        // After the designer's reference picture (19.16): one rail along the whole top with low flip-up sights
+        // at each end, a slotted handguard, and a fat shroud over the muzzle.
+        Box(smg, "Rail", new Vector3(0f, 0.095f, 0.28f), new Vector3(0.03f, 0.012f, 0.44f), steel);
+        for (int tooth = 0; tooth < 18; tooth++)
+            Box(smg, "RailTooth_" + tooth, new Vector3(0f, 0.103f, 0.07f + tooth * 0.024f), new Vector3(0.034f, 0.005f, 0.012f), steel);
+        Box(smg, "RearSight", new Vector3(0f, 0.110f, 0.075f), new Vector3(0.034f, 0.012f, 0.014f), steel);
+        Box(smg, "FrontSight", new Vector3(0f, 0.110f, 0.485f), new Vector3(0.034f, 0.012f, 0.014f), steel);
+        Box(smg, "Handguard", new Vector3(0f, 0.045f, 0.405f), new Vector3(0.066f, 0.09f, 0.19f), polymer);
         for (int slot = 0; slot < 3; slot++)
-            Box(smg, "HandguardSlot_" + slot, new Vector3(0f, 0.05f, 0.35f + slot * 0.055f), new Vector3(0.07f, 0.01f, 0.035f), teal);
-        Cylinder(smg, "Shroud", new Vector3(0f, 0.037f, 0.56f), 0.041f, 0.13f, gunmetal);
+            Box(smg, "HandguardSlot_" + slot, new Vector3(0f, 0.05f, 0.35f + slot * 0.055f), new Vector3(0.07f, 0.01f, 0.035f), steel);
+        Cylinder(smg, "Shroud", new Vector3(0f, 0.037f, 0.56f), 0.041f, 0.13f, polymer);
+        for (int groove = 0; groove < 3; groove++)
+            Cylinder(smg, "ShroudGroove_" + groove, new Vector3(0f, 0.037f, 0.52f + groove * 0.03f), 0.0425f, 0.006f, steel);
         Cylinder(smg, "ShroudBand", new Vector3(0f, 0.037f, 0.615f), 0.043f, 0.012f, teal);
         // Red-dot optic: an open frame, so the target is seen through it. Its centre is on the line the eye
         // is brought to when aiming (y 0.125), and the flip-up sights stay under that line.
-        Box(smg, "OpticBase", new Vector3(0f, 0.104f, 0.14f), new Vector3(0.06f, 0.008f, 0.07f), gunmetal);
-        Box(smg, "OpticLeft", new Vector3(-0.027f, 0.127f, 0.14f), new Vector3(0.006f, 0.05f, 0.055f), teal);
-        Box(smg, "OpticRight", new Vector3(0.027f, 0.127f, 0.14f), new Vector3(0.006f, 0.05f, 0.055f), teal);
+        Box(smg, "OpticBase", new Vector3(0f, 0.104f, 0.14f), new Vector3(0.06f, 0.008f, 0.07f), steel);
+        Box(smg, "OpticLeft", new Vector3(-0.027f, 0.127f, 0.14f), new Vector3(0.006f, 0.05f, 0.055f), polymer);
+        Box(smg, "OpticRight", new Vector3(0.027f, 0.127f, 0.14f), new Vector3(0.006f, 0.05f, 0.055f), polymer);
         Box(smg, "OpticTop", new Vector3(0f, 0.151f, 0.14f), new Vector3(0.06f, 0.006f, 0.055f), teal);
+        // Small parts on the receiver, run right through it so they show on both sides.
+        Box(smg, "EjectionPort", new Vector3(0f, 0.055f, 0.20f), new Vector3(0.114f, 0.018f, 0.05f), steel);
+        Box(smg, "Selector", new Vector3(0f, 0.018f, 0.10f), new Vector3(0.116f, 0.008f, 0.016f), teal);
         var smgMuzzle = Point(vm.transform, "Muzzle_Smg", new Vector3(0f, 0.037f, 0.63f));
         smg.gameObject.SetActive(false);
 
         // ---- Marksman: the rifle stretched, a bigger scope, a long barrel with a brake, and a folded bipod.
         var mk = Group(vm.transform, "MarksmanVisual");
         var mkBody = CopyRifle(rifle, mk, new Vector3(0f, 0f, 0.36f), new Vector3(0.01f, 0.01f, 0.0118f));
+        mkBody.GetComponent<Renderer>().sharedMaterial = polymer;
         var mkScope = mkBody.Find("scope");
         mkScope.localScale = new Vector3(1.25f, 1.25f, 1.6f);
-        mkScope.GetComponent<Renderer>().sharedMaterial = red;
-        mkBody.Find("magazine").GetComponent<Renderer>().sharedMaterial = red;
-        Cylinder(mk, "Barrel", new Vector3(0f, 0.027f, 0.86f), 0.011f, 0.30f, gunmetal);
-        Box(mk, "Brake", new Vector3(0f, 0.027f, 1.03f), new Vector3(0.036f, 0.036f, 0.07f), red);
-        Box(mk, "Bipod", new Vector3(0f, 0.01f, 0.74f), new Vector3(0.05f, 0.012f, 0.2f), gunmetal);
+        mkScope.GetComponent<Renderer>().sharedMaterial = polymer;
+        var mkMag = mkBody.Find("magazine");
+        mkMag.GetComponent<Renderer>().sharedMaterial = steel;
+        MagazinePlate(vm.transform, mk, mkMag, red);
+        // Glass at both ends of the scope and a red turret on top, placed from where the scaled scope actually is.
+        Vector3 scopeMin, scopeMax;
+        BoundsIn(vm.transform, mkScope, out scopeMin, out scopeMax);
+        float tubeRadius = (scopeMax.x - scopeMin.x) * 0.5f * 0.52f;
+        float tubeY = scopeMax.y - tubeRadius;
+        Cylinder(mk, "ScopeFrontLens", new Vector3(0f, tubeY, scopeMax.z + 0.001f), tubeRadius * 0.9f, 0.004f, lens);
+        Cylinder(mk, "ScopeRearLens", new Vector3(0f, tubeY, scopeMin.z - 0.001f), tubeRadius * 0.9f, 0.004f, lens);
+        Box(mk, "ScopeTurretTop", new Vector3(0f, scopeMax.y - 0.004f, (scopeMin.z + scopeMax.z) * 0.5f), new Vector3(0.024f, 0.02f, 0.03f), red);
+        Box(mk, "ScopeTurretSide", new Vector3(tubeRadius + 0.006f, tubeY, (scopeMin.z + scopeMax.z) * 0.5f), new Vector3(0.02f, 0.024f, 0.03f), polymer);
+        // A free-float handguard tube with vent slots, then the long bare barrel and its brake.
+        Cylinder(mk, "Handguard", new Vector3(0f, 0.04f, 0.61f), 0.036f, 0.34f, polymer);
+        for (int vent = 0; vent < 4; vent++)
+            Box(mk, "HandguardVent_" + vent, new Vector3(0f, 0.04f, 0.50f + vent * 0.07f), new Vector3(0.076f, 0.01f, 0.04f), steel);
+        Cylinder(mk, "HandguardCap", new Vector3(0f, 0.04f, 0.784f), 0.038f, 0.012f, steel);
+        Cylinder(mk, "Barrel", new Vector3(0f, 0.027f, 0.86f), 0.013f, 0.30f, steel);
+        Cylinder(mk, "Brake", new Vector3(0f, 0.027f, 1.03f), 0.022f, 0.07f, steel);
+        Cylinder(mk, "BrakeBand", new Vector3(0f, 0.027f, 0.992f), 0.024f, 0.01f, red);
+        Box(mk, "BrakeSlot", new Vector3(0f, 0.027f, 1.035f), new Vector3(0.048f, 0.008f, 0.03f), polymer);
+        // Bipod folded back under the barrel: a clamp and two legs.
+        Box(mk, "BipodClamp", new Vector3(0f, 0.012f, 0.82f), new Vector3(0.05f, 0.02f, 0.03f), steel);
+        Cylinder(mk, "BipodLegL", new Vector3(-0.02f, 0.004f, 0.72f), 0.006f, 0.2f, steel);
+        Cylinder(mk, "BipodLegR", new Vector3(0.02f, 0.004f, 0.72f), 0.006f, 0.2f, steel);
+        // Receiver parts and a cheek rest.
+        Box(mk, "EjectionPort", new Vector3(0f, 0.058f, 0.30f), new Vector3(0.104f, 0.02f, 0.08f), steel);
+        Box(mk, "BoltHandle", new Vector3(0.062f, 0.058f, 0.27f), new Vector3(0.03f, 0.012f, 0.012f), steel);
+        Box(mk, "Selector", new Vector3(0f, 0.02f, 0.09f), new Vector3(0.106f, 0.008f, 0.02f), red);
+        Box(mk, "CheekRest", new Vector3(0f, 0.088f, -0.14f), new Vector3(0.05f, 0.026f, 0.13f), polymer);
         var mkMuzzle = Point(vm.transform, "Muzzle_Marksman", new Vector3(0f, 0.027f, 1.07f));
         mk.gameObject.SetActive(false);
 
@@ -104,22 +149,58 @@ public static class GunSetBuilder
         // The model is scaled and turned round; undo both so the parts below are placed in the viewmodel's metres like the other guns'.
         kit.SetPositionAndRotation(vm.transform.position, vm.transform.rotation);
         kit.localScale = new Vector3(1f / rifle.localScale.x, 1f / rifle.localScale.y, 1f / rifle.localScale.z);
-        var amber = AssetDatabase.LoadAssetAtPath<Material>(AccentFolder + "/Mat_Gun_Accent.mat");
-        Box(kit, "Rail", new Vector3(0f, 0.108f, 0.19f), new Vector3(0.032f, 0.012f, 0.34f), gunmetal);
-        Box(kit, "OpticMount", new Vector3(0f, 0.120f, 0.20f), new Vector3(0.026f, 0.014f, 0.10f), gunmetal);
-        // Its axis sits where the old scope's did, so aiming brings the same point to the eye.
-        Box(kit, "Optic", new Vector3(0f, 0.146f, 0.20f), new Vector3(0.04f, 0.04f, 0.15f), amber);
-        Cylinder(kit, "OpticFront", new Vector3(0f, 0.146f, 0.29f), 0.024f, 0.04f, gunmetal);
-        Cylinder(kit, "OpticRear", new Vector3(0f, 0.146f, 0.11f), 0.018f, 0.04f, gunmetal);
-        // Stops short of the muzzle so a length of bare barrel shows, with the sight post standing on it.
-        Box(kit, "Handguard", new Vector3(0f, 0.042f, 0.535f), new Vector3(0.074f, 0.074f, 0.25f), gunmetal);
-        Box(kit, "HandguardStripe", new Vector3(0f, 0.042f, 0.535f), new Vector3(0.078f, 0.012f, 0.19f), amber);
-        Box(kit, "FrontSight", new Vector3(0f, 0.095f, 0.70f), new Vector3(0.014f, 0.06f, 0.03f), gunmetal);
-        Cylinder(kit, "BufferTube", new Vector3(0f, 0.05f, -0.10f), 0.016f, 0.2f, gunmetal);
-        Box(kit, "Stock", new Vector3(0f, 0.012f, -0.1875f), new Vector3(0.06f, 0.135f, 0.115f), gunmetal);
-        // The lower half of the magazine, swept forward. It hangs off the magazine itself so it drops with it on a reload.
-        Primitive(PrimitiveType.Cube, kit, "MagCurve", new Vector3(0f, -0.185f, 0.235f), new Vector3(0.046f, 0.08f, 0.115f), Quaternion.Euler(-18f, 0f, 0f), amber);
+        // Amber is kept to three small marks so the gun still belongs to its amber card.
+        rifle.GetComponent<Renderer>().sharedMaterial = polymer;
+        rifleMag.GetComponent<Renderer>().sharedMaterial = steel;
+
+        // Top rail with its cross-slots.
+        Box(kit, "Rail", new Vector3(0f, 0.106f, 0.19f), new Vector3(0.03f, 0.008f, 0.34f), steel);
+        for (int tooth = 0; tooth < 14; tooth++)
+            Box(kit, "RailTooth_" + tooth, new Vector3(0f, 0.113f, 0.035f + tooth * 0.024f), new Vector3(0.034f, 0.006f, 0.012f), steel);
+
+        // Compact optic. Its axis sits where the old scope's did, so aiming brings the same point to the eye.
+        Box(kit, "OpticMount", new Vector3(0f, 0.122f, 0.20f), new Vector3(0.026f, 0.018f, 0.09f), steel);
+        Cylinder(kit, "OpticTube", new Vector3(0f, 0.146f, 0.20f), 0.02f, 0.13f, polymer);
+        Cylinder(kit, "OpticFront", new Vector3(0f, 0.146f, 0.285f), 0.026f, 0.04f, polymer);
+        Cylinder(kit, "OpticRear", new Vector3(0f, 0.146f, 0.115f), 0.022f, 0.035f, polymer);
+        Cylinder(kit, "OpticFrontLens", new Vector3(0f, 0.146f, 0.306f), 0.022f, 0.004f, lens);
+        Cylinder(kit, "OpticRearLens", new Vector3(0f, 0.146f, 0.097f), 0.018f, 0.004f, lens);
+        Box(kit, "OpticTurretTop", new Vector3(0f, 0.172f, 0.20f), new Vector3(0.018f, 0.016f, 0.02f), amber);
+        Box(kit, "OpticTurretSide", new Vector3(0.026f, 0.146f, 0.20f), new Vector3(0.016f, 0.018f, 0.02f), polymer);
+
+        // Round ribbed handguard between a delta ring and an end cap. It stops short of the muzzle so a length
+        // of bare barrel shows, with the sight tower standing on it.
+        Cylinder(kit, "Handguard", new Vector3(0f, 0.042f, 0.535f), 0.037f, 0.25f, polymer);
+        for (int rib = 0; rib < 7; rib++)
+            Cylinder(kit, "HandguardRib_" + rib, new Vector3(0f, 0.042f, 0.44f + rib * 0.032f), 0.0395f, 0.012f, polymer);
+        Cylinder(kit, "DeltaRing", new Vector3(0f, 0.042f, 0.405f), 0.042f, 0.022f, steel);
+        Cylinder(kit, "HandguardCap", new Vector3(0f, 0.042f, 0.664f), 0.04f, 0.012f, steel);
+
+        // Front sight tower: two legs leaning together, a bridge and a post.
+        Box(kit, "FrontSightBase", new Vector3(0f, 0.07f, 0.70f), new Vector3(0.03f, 0.02f, 0.04f), steel);
+        Primitive(PrimitiveType.Cube, kit, "FrontSightLegA", new Vector3(0f, 0.099f, 0.689f), new Vector3(0.012f, 0.056f, 0.01f), Quaternion.Euler(18f, 0f, 0f), steel);
+        Primitive(PrimitiveType.Cube, kit, "FrontSightLegB", new Vector3(0f, 0.099f, 0.711f), new Vector3(0.012f, 0.056f, 0.01f), Quaternion.Euler(-18f, 0f, 0f), steel);
+        Box(kit, "FrontSightBridge", new Vector3(0f, 0.126f, 0.70f), new Vector3(0.014f, 0.008f, 0.02f), steel);
+        Box(kit, "FrontSightPost", new Vector3(0f, 0.134f, 0.70f), new Vector3(0.004f, 0.012f, 0.004f), steel);
+
+        // Small parts on the receiver. Each runs right through it, so it shows on both sides.
+        Box(kit, "EjectionPort", new Vector3(0f, 0.062f, 0.25f), new Vector3(0.108f, 0.02f, 0.07f), steel);
+        Box(kit, "MagRelease", new Vector3(0f, 0.0f, 0.30f), new Vector3(0.108f, 0.012f, 0.012f), steel);
+        Box(kit, "Selector", new Vector3(0f, 0.02f, 0.06f), new Vector3(0.108f, 0.008f, 0.02f), amber);
+        Box(kit, "ChargingHandle", new Vector3(0f, 0.098f, 0.005f), new Vector3(0.05f, 0.01f, 0.03f), steel);
+
+        // Stock: a body on the buffer tube, a butt plate, and the sloped lower edge.
+        Cylinder(kit, "BufferTube", new Vector3(0f, 0.05f, -0.10f), 0.016f, 0.2f, steel);
+        Box(kit, "StockBody", new Vector3(0f, 0.055f, -0.16f), new Vector3(0.052f, 0.05f, 0.16f), polymer);
+        Box(kit, "StockButt", new Vector3(0f, 0.012f, -0.232f), new Vector3(0.056f, 0.14f, 0.035f), polymer);
+        Primitive(PrimitiveType.Cube, kit, "StockLowerEdge", new Vector3(0f, -0.01f, -0.152f), new Vector3(0.046f, 0.02f, 0.148f), Quaternion.Euler(-32.6f, 0f, 0f), polymer);
+
+        // The lower half of the magazine, swept forward, with an amber base plate. Both hang off the magazine
+        // itself so they drop with it on a reload.
+        Primitive(PrimitiveType.Cube, kit, "MagCurve", new Vector3(0f, -0.185f, 0.235f), new Vector3(0.046f, 0.08f, 0.115f), Quaternion.Euler(-18f, 0f, 0f), steel);
+        Primitive(PrimitiveType.Cube, kit, "MagBase", new Vector3(0f, -0.2287f, 0.2492f), new Vector3(0.05f, 0.012f, 0.12f), Quaternion.Euler(-18f, 0f, 0f), amber);
         kit.Find("MagCurve").SetParent(rifleMag, true);
+        kit.Find("MagBase").SetParent(rifleMag, true);
 
         // ---- Numbers. Index 0 is the rifle exactly as it was before there was a second gun.
         var rifleShot = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/Gunshot/gunshot_punchy_blaster.wav");
@@ -174,7 +255,7 @@ public static class GunSetBuilder
             new GunViewmodelAnimator.GunVisual { root = rifle, magazine = rifleMag, muzzle = rifleMuzzle, aimPosition = new Vector3(0f, -0.104f, 0.2f), aimFieldOfView = 35f, scoped = true },
             // Red dot, not a scope: the gun comes up so the eye looks through the optic's frame, and stays in view, with a milder zoom than the scoped two.
             new GunViewmodelAnimator.GunVisual { root = smg, magazine = smgMag, muzzle = smgMuzzle, aimPosition = new Vector3(0f, -0.125f, 0.30f), aimFieldOfView = 42f, scoped = false },
-            new GunViewmodelAnimator.GunVisual { root = mk, magazine = mkBody.Find("magazine"), muzzle = mkMuzzle, aimPosition = new Vector3(0f, -0.124f, 0.18f), aimFieldOfView = 20f, scoped = true },
+            new GunViewmodelAnimator.GunVisual { root = mk, magazine = mkMag, muzzle = mkMuzzle, aimPosition = new Vector3(0f, -0.124f, 0.18f), aimFieldOfView = 20f, scoped = true },
         };
         EditorUtility.SetDirty(vm);
 
@@ -497,6 +578,48 @@ public static class GunSetBuilder
         if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", color);
         EditorUtility.SetDirty(mat);
         return mat;
+    }
+
+    /// <summary>A plain surface (colour, how metallic, how glossy) saved as its own material, made from the gunmetal one so it keeps the same shader and settings.</summary>
+    static Material Surface(string name, Color color, float metallic, float smoothness)
+    {
+        string path = AccentFolder + "/" + name + ".mat";
+        var mat = AssetDatabase.LoadAssetAtPath<Material>(path);
+        if (mat == null)
+        {
+            AssetDatabase.CopyAsset(AccentFolder + "/Mat_Gun_Gunmetal.mat", path);
+            mat = AssetDatabase.LoadAssetAtPath<Material>(path);
+        }
+        mat.color = color;
+        if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", color);
+        mat.SetFloat("_Metallic", metallic);
+        mat.SetFloat("_Smoothness", smoothness);
+        EditorUtility.SetDirty(mat);
+        return mat;
+    }
+
+    /// <summary>The corners of a part's box, in the viewmodel's metres. The guns are only ever turned half-way round, so the box stays square to the axes.</summary>
+    static void BoundsIn(Transform space, Transform part, out Vector3 min, out Vector3 max)
+    {
+        var b = part.GetComponent<MeshFilter>().sharedMesh.bounds;
+        min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+        max = -min;
+        for (int i = 0; i < 8; i++)
+        {
+            var corner = b.center + Vector3.Scale(b.extents, new Vector3((i & 1) == 0 ? -1 : 1, (i & 2) == 0 ? -1 : 1, (i & 4) == 0 ? -1 : 1));
+            var p = space.InverseTransformPoint(part.TransformPoint(corner));
+            min = Vector3.Min(min, p);
+            max = Vector3.Max(max, p);
+        }
+    }
+
+    /// <summary>A base plate in the gun's colour under its magazine. It hangs off the magazine, so it drops with it on a reload.</summary>
+    static void MagazinePlate(Transform space, Transform group, Transform magazine, Material material)
+    {
+        Vector3 min, max;
+        BoundsIn(space, magazine, out min, out max);
+        Box(group, "MagBase", new Vector3((min.x + max.x) * 0.5f, min.y + 0.008f, (min.z + max.z) * 0.5f), new Vector3(max.x - min.x + 0.004f, 0.012f, max.z - min.z + 0.004f), material);
+        group.Find("MagBase").SetParent(magazine, true);
     }
 
     static Transform Group(Transform parent, string name)

@@ -89,6 +89,7 @@ public class Weapon : MonoBehaviour
 
     int currentAmmo;
     float fireTimer;
+    bool waitForTriggerRelease;
     bool isReloading;
     float reloadTimer;
     int reloadBeatsPlayed;
@@ -156,7 +157,12 @@ public class Weapon : MonoBehaviour
         UpdateSpread();
         UpdateAim();
 
-        if (MainMenuController.IsOpen || Cursor.lockState != CursorLockMode.Locked) return;
+        if (MainMenuController.IsOpen || Cursor.lockState != CursorLockMode.Locked)
+        {
+            // A card, menu or end screen is up. The click that closes it must not also fire the gun.
+            waitForTriggerRelease = true;
+            return;
+        }
 
         fireTimer -= Time.deltaTime;
 
@@ -187,6 +193,13 @@ public class Weapon : MonoBehaviour
         var mouse = Mouse.current;
         // Planting takes both hands: the gun is put away until the key is let go.
         if (HoldingFlash || BreachChargeSite.AnyPlantInProgress) return;
+
+        // Coming back from a card or menu, the gun stays quiet until the mouse button has been let go once.
+        if (waitForTriggerRelease)
+        {
+            if (mouse != null && mouse.leftButton.isPressed) return;
+            waitForTriggerRelease = false;
+        }
 
         bool trigger = mouse != null && (automatic ? mouse.leftButton.isPressed : mouse.leftButton.wasPressedThisFrame);
         if (trigger && !isReloading && fireTimer <= 0f && currentAmmo > 0)

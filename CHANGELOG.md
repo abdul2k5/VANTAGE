@@ -2,6 +2,26 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.17: More realistic guns, and a card click no longer fires the gun
+
+**Why:** Two notes from the designer (15 Nov).
+- The guns looked like toys: one grey and one bright colour each, built from a few plain blocks. The designer wanted them more realistic. Two routes were offered, better surfaces and detail on the current models or importing realistic third-party models; the designer chose to try the first on the Rifle, liked it, and asked for it on all three.
+- Clicking to close a room's pop-up card also fired the gun. The card closes on the click and locks the mouse again, and the gun, seeing a locked mouse and a held button, fired with that same press.
+
+**What changed:**
+- **Surfaces, all three guns:** matte black polymer for the body, handguard and stock; steel for the rail, magazine, barrel and small parts; dark glass on scope lenses. Three new materials: `Mat_Gun_Polymer`, `Mat_Gun_Steel`, `Mat_Gun_Lens`.
+- **Colour:** each gun keeps its card's colour (amber, teal, red) only as a few small marks, such as the magazine's base plate, the fire selector and one part of the optic.
+- **Rifle:** top rail with cross-slots, a tube optic with lenses and turrets, a round ribbed handguard between a steel ring and end cap, a triangular front sight tower, an ejection port, charging handle and magazine release, and a stock with a body, butt plate and sloped lower edge.
+- **SMG:** cross-slots on the rail, steel flip-up sights, grooves on the muzzle shroud, an ejection port, and the red-dot frame in black with a teal top.
+- **Marksman:** black scope with glass at both ends and a red turret, a free-float handguard tube with vent slots, a thicker steel barrel with a round muzzle brake, a folded two-leg bipod, a bolt handle and a cheek rest.
+- The guns' numbers, sounds, aim positions and magazine animation are unchanged. Everything is still built by `GunSetBuilder` from blocks and cylinders on the same CC0 base model, so nothing new is imported and the style stays low-poly.
+- **Card click:** after any card, menu or end screen closes, the gun stays quiet until the left mouse button has been released once. This also covers the Choose Your Weapon card and the buttons on the end screens.
+
+**Verified:**
+- Each gun checked by eye on a three-quarter render and its card picture. Two butt pads I added to the SMG and Marksman sat detached behind the stock on the render and were removed.
+- HUD layout check passes. Retry and win tests: 45 of 45 pass.
+- Not yet checked: the card-click fix needs a real mouse click, so it is for the designer to confirm in play. The SMG and Marksman have not been seen in first person.
+
 ## Phase 19.16: The SMG gets a rail, flip-up sights and a red-dot optic
 
 **Why:** The designer sent a reference picture of a compact SMG (full-length top rail, flip-up sights, slotted handguard, fat muzzle shroud, long straight magazine) and asked for the SMG to have a sight like it (15 Nov). Asked which they meant, they chose the restyle plus a red-dot optic, not a full scope: the gun stays in view when aiming, so the SMG keeps its weakness at range against the Rifle.
