@@ -2,6 +2,19 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.14: Bullets no longer stop on the invisible plant zone
+
+**Why:** In The Round the designer shot at drones standing at the planted charge and none of the shots registered; the bullet marks hung in the air in front of the drones (15 Nov). The cause: the gun's raycast stopped on trigger colliders as well as solid ones. The plant site has an invisible trigger box (2.5 m square, 2 m tall) around it for detecting the player. Drones that walk to the charge to disarm it stand inside that box, so every bullet fired from outside stopped on the box's face, left its mark there, and never reached the drone. This has been in the game since the plant site was added; it made the post-plant fight, the hardest part of the game, partly unwinnable by shooting.
+
+**What changed:**
+- The gun now takes the nearest hit that is solid, or part of a drone (a drone's eye is a trigger and must still count). Other triggers are passed through.
+- The same fix applies to the other invisible zones bullets used to stop on: medkit and ult-orb pickup spheres, and the airlock triggers in the doorways.
+
+**Verified:**
+- Reproduced before the fix: a ray across the plant site stopped on the zone at 4.75 m.
+- After the fix, the same ray reaches the far wall at 11.8 m, and with a drone placed on the site the shot hits the drone.
+- The retry and win tests were not re-run for this change.
+
 ## Phase 19.13: Shorter Dash sound, a reason on Mission Failed, and a planting animation
 
 **Why:** Three notes from the designer after a run that ended in The Round (15 Nov).

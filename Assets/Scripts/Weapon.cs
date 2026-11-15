@@ -298,7 +298,7 @@ void UpdateSpread()
         RaycastHit hit;
         // Bullets pass through Smoke Walls - smoke blocks sight, not shots. Excluded here rather than
         // only in the Inspector because hitMask is "Everything", which would silently include it.
-        bool didHit = Physics.Raycast(origin, dir, out hit, range, hitMask & ~LayerMask.GetMask("Smoke"));
+        bool didHit = FirstSolidHit(origin, dir, range, hitMask & ~LayerMask.GetMask("Smoke"), out hit);
 
         Vector3 end = didHit ? hit.point : origin + dir * range;
 
@@ -349,6 +349,26 @@ void UpdateSpread()
         if (feedback != null) feedback.PlayShot(visualOrigin, end);
 
         ApplyRecoil();
+    }
+
+    /// <summary>
+    /// The nearest thing a bullet actually stops on. Invisible zones (the plant site, pickups, airlock triggers)
+    /// are skipped: a plain raycast stopped on them, so drones standing at the planted charge could not be hit
+    /// and the bullet mark hung in the air at the zone's edge. A drone's eye is a trigger too and still counts.
+    /// </summary>
+    static bool FirstSolidHit(Vector3 origin, Vector3 dir, float range, int mask, out RaycastHit best)
+    {
+        best = new RaycastHit();
+        bool found = false;
+        var hits = Physics.RaycastAll(origin, dir, range, mask, QueryTriggerInteraction.Collide);
+        for (int i = 0; i < hits.Length; i++)
+        {
+            if (hits[i].collider.isTrigger && hits[i].collider.GetComponentInParent<Sentinel>() == null) continue;
+            if (found && hits[i].distance >= best.distance) continue;
+            best = hits[i];
+            found = true;
+        }
+        return found;
     }
 
     /// <summary>
