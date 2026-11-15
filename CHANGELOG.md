@@ -2,6 +2,18 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.18: Round red-dot sight on the SMG
+
+**Why:** The designer aimed the SMG and said the scope was very blocky and should be smoother (15 Nov). The red-dot sight was a square frame made of four flat blocks, and that frame sat right around the crosshair, the one place the player always looks when aiming.
+
+**What changed:**
+- **Round sight:** the square frame is replaced by a round tube the player looks through, with a teal rim on the end facing the player. Unity has no built-in hollow shape, so the builder now makes one (`Assets/Art/Models/GunRing.asset`, 48 sides, shaded smooth) and can reuse it for any gun part.
+- **Bigger and clearer view:** the tube is wider than the old frame (34 mm radius, was 27 mm half-width), the sight line is raised from 0.125 to 0.145 so less of the gun's top shows inside it, and the gun sits 1 cm closer when aiming (0.29, was 0.30).
+- **Flip-up sights folded flat** so they no longer stick up into the view through the sight.
+- A small adjustment knob on the right of the tube.
+
+**Verified:** Looked at a Play-mode screenshot from the aiming position: the sight is a clean circle around the centre of the screen and the target is visible through it. A closer aiming distance (0.24) was tried and rejected because the camera cut into the gun body. HUD layout check 0 problems. 45-test regression run after the change.
+
 ## Phase 19.17: More realistic guns, and a card click no longer fires the gun
 
 **Why:** Two notes from the designer (15 Nov).

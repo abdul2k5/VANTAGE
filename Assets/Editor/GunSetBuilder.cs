@@ -22,6 +22,11 @@ public static class GunSetBuilder
     static readonly Color Amber = new Color(0.886f, 0.647f, 0.235f);
     static readonly Color Teal = new Color(0.24f, 0.78f, 0.70f);
     static readonly Color Red = new Color(0.80f, 0.22f, 0.18f);
+    /// <summary>Height of the SMG's sight line above its origin, metres: the centre of its optic, and where the eye is put when aiming.</summary>
+    const float SmgSightLine = 0.145f;
+    const string RingMeshPath = "Assets/Art/Models/GunRing.asset";
+    /// <summary>Wall thickness of the ring mesh, as a share of its outer radius.</summary>
+    const float RingWall = 0.16f;
 
     [MenuItem("Vantage/Rebuild Guns")]
     public static void Rebuild()
@@ -80,8 +85,9 @@ public static class GunSetBuilder
         Box(smg, "Rail", new Vector3(0f, 0.095f, 0.28f), new Vector3(0.03f, 0.012f, 0.44f), steel);
         for (int tooth = 0; tooth < 18; tooth++)
             Box(smg, "RailTooth_" + tooth, new Vector3(0f, 0.103f, 0.07f + tooth * 0.024f), new Vector3(0.034f, 0.005f, 0.012f), steel);
-        Box(smg, "RearSight", new Vector3(0f, 0.110f, 0.075f), new Vector3(0.034f, 0.012f, 0.014f), steel);
-        Box(smg, "FrontSight", new Vector3(0f, 0.110f, 0.485f), new Vector3(0.034f, 0.012f, 0.014f), steel);
+        // Folded flat, so they stay out of the view through the optic.
+        Box(smg, "RearSight", new Vector3(0f, 0.107f, 0.065f), new Vector3(0.034f, 0.004f, 0.03f), steel);
+        Box(smg, "FrontSight", new Vector3(0f, 0.107f, 0.485f), new Vector3(0.034f, 0.004f, 0.03f), steel);
         Box(smg, "Handguard", new Vector3(0f, 0.045f, 0.405f), new Vector3(0.066f, 0.09f, 0.19f), polymer);
         for (int slot = 0; slot < 3; slot++)
             Box(smg, "HandguardSlot_" + slot, new Vector3(0f, 0.05f, 0.35f + slot * 0.055f), new Vector3(0.07f, 0.01f, 0.035f), steel);
@@ -89,12 +95,13 @@ public static class GunSetBuilder
         for (int groove = 0; groove < 3; groove++)
             Cylinder(smg, "ShroudGroove_" + groove, new Vector3(0f, 0.037f, 0.52f + groove * 0.03f), 0.0425f, 0.006f, steel);
         Cylinder(smg, "ShroudBand", new Vector3(0f, 0.037f, 0.615f), 0.043f, 0.012f, teal);
-        // Red-dot optic: an open frame, so the target is seen through it. Its centre is on the line the eye
-        // is brought to when aiming (y 0.125), and the flip-up sights stay under that line.
-        Box(smg, "OpticBase", new Vector3(0f, 0.104f, 0.14f), new Vector3(0.06f, 0.008f, 0.07f), steel);
-        Box(smg, "OpticLeft", new Vector3(-0.027f, 0.127f, 0.14f), new Vector3(0.006f, 0.05f, 0.055f), polymer);
-        Box(smg, "OpticRight", new Vector3(0.027f, 0.127f, 0.14f), new Vector3(0.006f, 0.05f, 0.055f), polymer);
-        Box(smg, "OpticTop", new Vector3(0f, 0.151f, 0.14f), new Vector3(0.06f, 0.006f, 0.055f), teal);
+        // Red-dot optic: a round tube the target is seen through (a square frame of four blocks looked crude
+        // when aiming). Its centre is on the line the eye is brought to when aiming, SmgSightLine above the gun.
+        Box(smg, "OpticBase", new Vector3(0f, 0.106f, 0.14f), new Vector3(0.04f, 0.012f, 0.06f), steel);
+        Ring(smg, "OpticTube", new Vector3(0f, SmgSightLine, 0.14f), 0.034f, 0.05f, polymer);
+        // The coloured rim is on the end facing the player, so it is what frames the view.
+        Ring(smg, "OpticRim", new Vector3(0f, SmgSightLine, 0.113f), 0.0352f, 0.005f, teal);
+        Cylinder(smg, "OpticKnob", new Vector3(0.036f, SmgSightLine, 0.14f), 0.007f, 0.016f, steel);
         // Small parts on the receiver, run right through it so they show on both sides.
         Box(smg, "EjectionPort", new Vector3(0f, 0.055f, 0.20f), new Vector3(0.114f, 0.018f, 0.05f), steel);
         Box(smg, "Selector", new Vector3(0f, 0.018f, 0.10f), new Vector3(0.116f, 0.008f, 0.016f), teal);
@@ -254,7 +261,7 @@ public static class GunSetBuilder
         {
             new GunViewmodelAnimator.GunVisual { root = rifle, magazine = rifleMag, muzzle = rifleMuzzle, aimPosition = new Vector3(0f, -0.104f, 0.2f), aimFieldOfView = 35f, scoped = true },
             // Red dot, not a scope: the gun comes up so the eye looks through the optic's frame, and stays in view, with a milder zoom than the scoped two.
-            new GunViewmodelAnimator.GunVisual { root = smg, magazine = smgMag, muzzle = smgMuzzle, aimPosition = new Vector3(0f, -0.125f, 0.30f), aimFieldOfView = 42f, scoped = false },
+            new GunViewmodelAnimator.GunVisual { root = smg, magazine = smgMag, muzzle = smgMuzzle, aimPosition = new Vector3(0f, -SmgSightLine, 0.29f), aimFieldOfView = 42f, scoped = false },
             new GunViewmodelAnimator.GunVisual { root = mk, magazine = mkMag, muzzle = mkMuzzle, aimPosition = new Vector3(0f, -0.124f, 0.18f), aimFieldOfView = 20f, scoped = true },
         };
         EditorUtility.SetDirty(vm);
@@ -662,6 +669,68 @@ public static class GunSetBuilder
     {
         // Unity's cylinder is 2 units tall along Y.
         Primitive(PrimitiveType.Cylinder, parent, name, localPosition, new Vector3(radius * 2f, length * 0.5f, radius * 2f), Quaternion.Euler(90f, 0f, 0f), material);
+    }
+
+    /// <summary>A hollow tube lying along the gun, open at both ends - something to look through, which no built-in shape gives.</summary>
+    static void Ring(Transform parent, string name, Vector3 localPosition, float outerRadius, float length, Material material)
+    {
+        var go = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer));
+        go.transform.SetParent(parent, false);
+        go.transform.localPosition = localPosition;
+        go.transform.localScale = new Vector3(outerRadius * 2f, outerRadius * 2f, length);
+        go.GetComponent<MeshFilter>().sharedMesh = RingMesh();
+        go.GetComponent<Renderer>().sharedMaterial = material;
+    }
+
+    /// <summary>
+    /// The tube's mesh, built once and saved as an asset: outer radius 0.5, length 1 along Z, smooth round
+    /// walls inside and out and a flat rim at each end.
+    /// </summary>
+    static Mesh RingMesh()
+    {
+        const int segments = 48;
+        float outer = 0.5f, inner = 0.5f * (1f - RingWall), half = 0.5f;
+        var verts = new System.Collections.Generic.List<Vector3>();
+        var normals = new System.Collections.Generic.List<Vector3>();
+        var tris = new System.Collections.Generic.List<int>();
+
+        // Four bands of quads, each with its own vertices so the walls shade smooth and the rims stay flat.
+        // 0 outer wall, 1 inner wall, 2 front rim, 3 back rim. Every band is a strip of (a, b) pairs.
+        for (int band = 0; band < 4; band++)
+        {
+            int start = verts.Count;
+            for (int i = 0; i <= segments; i++)
+            {
+                float angle = i * Mathf.PI * 2f / segments;
+                var dir = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f);
+                Vector3 a, b, n;
+                if (band == 0) { a = dir * outer + Vector3.back * half; b = dir * outer + Vector3.forward * half; n = dir; }
+                else if (band == 1) { a = dir * inner + Vector3.forward * half; b = dir * inner + Vector3.back * half; n = -dir; }
+                else if (band == 2) { a = dir * outer + Vector3.forward * half; b = dir * inner + Vector3.forward * half; n = Vector3.forward; }
+                else { a = dir * inner + Vector3.back * half; b = dir * outer + Vector3.back * half; n = Vector3.back; }
+                verts.Add(a); verts.Add(b);
+                normals.Add(n); normals.Add(n);
+            }
+            for (int i = 0; i < segments; i++)
+            {
+                int a0 = start + i * 2, b0 = a0 + 1, a1 = a0 + 2, b1 = a0 + 3;
+                tris.Add(a0); tris.Add(a1); tris.Add(b0);
+                tris.Add(a1); tris.Add(b1); tris.Add(b0);
+            }
+        }
+
+        var mesh = AssetDatabase.LoadAssetAtPath<Mesh>(RingMeshPath);
+        bool isNew = mesh == null;
+        if (isNew) mesh = new Mesh();
+        mesh.Clear();
+        mesh.name = "GunRing";
+        mesh.SetVertices(verts);
+        mesh.SetNormals(normals);
+        mesh.SetTriangles(tris, 0);
+        mesh.RecalculateBounds();
+        if (isNew) AssetDatabase.CreateAsset(mesh, RingMeshPath);
+        else EditorUtility.SetDirty(mesh);
+        return mesh;
     }
 
     static void Primitive(PrimitiveType type, Transform parent, string name, Vector3 localPosition, Vector3 localScale, Quaternion localRotation, Material material)
