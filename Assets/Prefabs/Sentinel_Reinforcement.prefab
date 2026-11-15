@@ -957,6 +957,9 @@ MonoBehaviour:
   waypointArriveDistance: 0.3
   reactionDelayMin: 0.4
   reactionDelayMax: 0.6
+  sidestepDistance: 0.7
+  sidestepSpeed: 1.5
+  sidestepClearance: 0.45
   forcedAlertSeconds: 2.5
   perfectAimDistance: 8
   missChanceNear: 0.03

@@ -34,6 +34,13 @@ public class Sentinel : MonoBehaviour
     public float reactionDelayMin = 0.3f;
     public float reactionDelayMax = 0.5f;
 
+    [Header("Sidestep - shifts from side to side while it has the player in sight, so it isn't a fixed target")]
+    [Tooltip("How far it strays from its post, metres. 0 = stands still. Kept under a metre so it stays in the lane it was placed to watch.")]
+    public float sidestepDistance = 0f;
+    public float sidestepSpeed = 1.5f;
+    [Tooltip("Room it needs around its body to step - stops it sliding into a wall, a crate or another drone.")]
+    public float sidestepClearance = 0.45f;
+
     [Header("Damage reaction / alert sharing")]
     [Tooltip("How long a Sentinel stays forcibly Alert - turning toward and firing at the player's last known position even with no line of sight - after taking damage or being alerted by another Sentinel in the same room.")]
     public float forcedAlertSeconds = 2.5f;
@@ -92,6 +99,10 @@ public class Sentinel : MonoBehaviour
 
     bool isPushing;
     Vector3 pushTarget;
+    /// <summary>The post it sidesteps around: where it stood when the fight began. Kept until it is back there, so repeated fights can't walk it away.</summary>
+    Vector3 sidestepAnchor;
+    bool hasSidestepAnchor;
+    int sidestepSign = 1;
     NavMeshAgent agent;
     WeaponFeedback feedback;
     AudioSource hoverAudioSource;
@@ -190,6 +201,7 @@ public class Sentinel : MonoBehaviour
     public void PushTowards(Vector3 point)
     {
         isPushing = true;
+        hasSidestepAnchor = false;
         pushTarget = point;
         agent.SetDestination(point);
     }
@@ -286,6 +298,8 @@ void Update()
             // Line of sight wins when available (the real player position); a forced alert with
             // no current sight falls back to wherever the trigger (damage/roommate call) pointed.
             FaceTowards(seesPlayer ? player.position : lastKnownPlayerPosition);
+            // Only with the player in sight - a drone firing blind into smoke or cover stays where it is, it doesn't come looking.
+            if (seesPlayer && canShoot) Sidestep();
 
             if (justSpotted)
             {
@@ -310,6 +324,8 @@ void Update()
         else
         {
             fireTimer = 0f;
+            // Only a drone holding a post goes back to it - one that walks on has no post to return to.
+            if (isPushing || behaviorMode == BehaviorMode.Patrol) hasSidestepAnchor = false;
             if (IsBlinded)
             {
                 agent.isStopped = true;
@@ -378,7 +394,69 @@ void Update()
     void RunHold()
     {
         agent.isStopped = true;
+        ReturnToPost();
         if (holdPoint != null) FaceTowards(holdPoint.position);
+    }
+
+    /// <summary>
+    /// One frame of the side-to-side shuffle, across the line to the player. It turns round at sidestepDistance
+    /// from its post, and at anything in the way, so it can't leave the lane it was placed to watch.
+    /// </summary>
+    void Sidestep()
+    {
+        if (sidestepDistance <= 0f || !agent.isOnNavMesh) return;
+        if (!hasSidestepAnchor)
+        {
+            sidestepAnchor = transform.position;
+            hasSidestepAnchor = true;
+            sidestepSign = Random.value < 0.5f ? -1 : 1;
+        }
+
+        Vector3 toPlayer = player.position - transform.position;
+        toPlayer.y = 0f;
+        if (toPlayer.sqrMagnitude < 0.01f) return;
+        Vector3 across = Vector3.Cross(Vector3.up, toPlayer.normalized);
+
+        Vector3 step = across * (sidestepSign * sidestepSpeed * Time.deltaTime);
+        Vector3 next = transform.position + step;
+        Vector3 fromPost = next - sidestepAnchor;
+        fromPost.y = 0f;
+        if (fromPost.magnitude > sidestepDistance || !SidestepClear(next))
+        {
+            sidestepSign = -sidestepSign;
+            return;
+        }
+
+        Vector3 before = transform.position;
+        agent.Move(step);
+        // The edge of the walkable floor stops it without saying so.
+        if ((transform.position - before).sqrMagnitude < step.sqrMagnitude * 0.25f) sidestepSign = -sidestepSign;
+    }
+
+    bool SidestepClear(Vector3 position)
+    {
+        if (Physics.CheckSphere(position + Vector3.up * 1f, sidestepClearance, blockingMask, QueryTriggerInteraction.Ignore)) return false;
+
+        var all = Object.FindObjectsByType<Sentinel>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        for (int i = 0; i < all.Length; i++)
+        {
+            if (all[i] == this) continue;
+            Vector3 gap = all[i].transform.position - position;
+            gap.y = 0f;
+            if (gap.sqrMagnitude < 1.2f * 1.2f) return false;
+        }
+        return true;
+    }
+
+    /// <summary>After a fight, a holding drone drifts back to where it was posted.</summary>
+    void ReturnToPost()
+    {
+        if (!hasSidestepAnchor || !agent.isOnNavMesh) return;
+        Vector3 back = sidestepAnchor - transform.position;
+        back.y = 0f;
+        float distance = back.magnitude;
+        if (distance < 0.02f) { hasSidestepAnchor = false; return; }
+        agent.Move(back.normalized * Mathf.Min(distance, sidestepSpeed * Time.deltaTime));
     }
 
     void RunPatrol()
@@ -581,6 +659,7 @@ void Fire()
         blindRemaining = 0f;
         revealRemaining = 0f;
         isPushing = false;
+        hasSidestepAnchor = false;
         fireTimer = 0f;
         forcedAlertRemaining = 0f;
         investigateRemaining = 0f;

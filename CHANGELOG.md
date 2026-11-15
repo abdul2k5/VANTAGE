@@ -2,6 +2,25 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.10: Drones sidestep while they have you in sight
+
+**Why:** A drone that had seen the player stood still to shoot, so every fight was the same: line up the eye and click. With the Marksman that made the game easy. A target that shifts has to be tracked, and a miss with a four-round, four-second-reload gun now costs something. It also makes the drones read as alive.
+
+**What changed:**
+- **Sidestep:** while a drone can see the player, it shuffles from side to side across the line of fire at 1.5 m/s, up to 0.7 m either side of its post. It turns round at that limit and at any wall, crate or other drone. When the fight ends, a drone holding a post drifts back to it.
+- It only moves with the player in sight. A drone firing blind into smoke or at cover stays where it is, so it cannot come round a corner looking for the player.
+- **Where it is on:** the Smoke and Flash rooms, three of the four drones on the approach in The Round, and the reinforcements after the plant.
+- **Where it is off, and why:**
+  - Range, Weak Point, Holding Angle and Recon: the early rooms teach aiming, so their targets stay still.
+  - The Dash room: its lesson is two exactly watched lanes with a safe pocket between them. Measured from every position a sidestep could reach, one lane drone gained sight into the pocket even at 0.3 m, so all three stay on their posts.
+  - The blind-corner drone in The Round: stepping out roughly doubled the floor it could see, which would remove the corner it is there to teach.
+
+**Verified:**
+- Sightlines: for each drone with it on, floor visible from the post was compared with floor visible from anywhere within 0.7 m. None gained sight of an entry point, a medkit or an ult orb; the extra floor seen is 1% to 7% of the room.
+- Play mode, Smoke room: both drones move while they see the player and stay within 0.7 m; the holding drone was back on its post after the player left.
+- Retry and win tests: 45 of 45 pass.
+- Not yet played by hand: how hard a sidestepping drone is to hit with each gun.
+
 ## Phase 19.9: Drones react sooner, and the Marksman reloads in 4 seconds
 
 **Why:** The designer played the gun-choice build with the Marksman and the game still felt easy (15 Nov). Two things made it so. The Marksman kills in one hit and came back from a reload quickly, so a missed shot cost little. And the drones gave enough time after spotting the player to line up that one shot before they fired.
