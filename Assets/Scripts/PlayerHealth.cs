@@ -3,8 +3,8 @@ using UnityEngine;
 public class PlayerHealth : MonoBehaviour
 {
     public float maxHealth = 100f;
-    [Tooltip("Armor: takes damage before health does. Doesn't recover mid-room - RoomManager refills it on every room entry, the same per-room budget as ability charges.")]
-    public float maxShield = 50f;
+    [Tooltip("Armor: takes damage before health does. 25 is one drone hit (20) and a little of the next - one forgiven mistake per room. Doesn't recover mid-room - RoomManager refills it on every room entry, the same per-room budget as ability charges.")]
+    public float maxShield = 25f;
 
     float currentHealth;
     float currentShield;

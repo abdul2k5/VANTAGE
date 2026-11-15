@@ -2,6 +2,18 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.7: Armour halved to 25 per room
+
+**Why:** Armour refills in every room, and a drone hits for 20. At 50 that was two free hits in each of eight rooms, about 400 points of protection over a run against 100 health. In the designer's 14 Nov run, armour took 190 of the 360 damage received, so more than half of the mistakes cost nothing. In a Survival game being seen should cost something.
+
+**What changed:**
+- Armour is 25 (was 50). It still refills on entering each room. That is one hit forgiven per room, with 5 points off the second.
+- Health, medkits (+50, three in the run) and the checkpoint are unchanged, so the second half can still be recovered.
+
+**Verified:**
+- Play mode: the armour bar starts at 25 of 25. Retry and win tests: 45 of 45 pass.
+- Not yet tested with a new player. The designer is the most practised player the game has, so if first-time players cannot get past Rooms 5 and 6, this goes back to 50.
+
 ## Phase 19.6: The gun is chosen before the run, on a Choose Your Weapon screen
 
 **Why:** The designer's direction (15 Nov): the guns should be a choice made right before the game starts, not something collected and swapped along the way. One decision up front is easier for a new player to understand than three guns on three keys, it keeps the number keys and the player's attention free for the abilities during a room, and it gives a reason to play again with a different gun.
