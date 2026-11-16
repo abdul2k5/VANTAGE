@@ -2,6 +2,19 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.22: Orders on the menu, and an ending line that reflects the run
+
+**Why:** After reading the Week 7 lecture (Systematic Storytelling: Interactive Narrative) the designer asked for a small in-game story touch and a narrative section in the Game Notes (16 Nov). The game had a premise on the menu but never said what the player was there to do, and the win screen said the same sentence to everyone, however they had played.
+
+**What changed:**
+- **Main menu:** the blurb gains a third line, "YOUR ORDERS  Clear eight rooms, plant the breach charge at the site, and hold it until it blows." The premise now states the goal before the run starts. The text box is 40 taller to hold it; it still ends above the START button.
+- **Win screen** (`RunDebriefUI.PickOutcome`): the line under BREACH SUCCESSFUL is chosen from how the run was played. No damage taken: "...and not one Sentinel landed a shot on you." A checkpoint retry: "...on attempt N. The Sentinels took the rest." Twelve or more ability uses: "...by the book: utility first, then the peek." Five or fewer: "...the loud way, with the gun doing the talking." Otherwise the old sentence. They are checked in that order. In the lecture's terms this is a cumulative choice: what happens is fixed, but the ending remembers how the player got there.
+- The line's text box on the win screen is wider (600 to 1000) so the longest version stays on one line.
+
+**Not done, on purpose:** no branching story or alternative endings. The lecture's own comparison has non-linear stories as expensive and bug-prone, the build freezes on 17 Nov, and a tutorial needs every player to meet every lesson.
+
+**Verified:** Play-mode screenshots of the menu and the win screen at 1920x1080. Each of the ending lines was produced by setting the run's numbers and reading the result. HUD layout check and 45-test regression run after the change.
+
 ## Phase 19.21: Credits screen after the win results
 
 **Why:** The designer asked for a credits screen after the run information when the player finishes the game, with their name on it, and for `CREDITS.md` to be looked at (16 Nov). Until now the only credit was a file in the repository, which nobody playing the build would see, and the Stinger Drone model is CC-BY, so its author has to be credited where the work is shown.

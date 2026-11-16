@@ -19,6 +19,8 @@ public class RunDebriefUI : MonoBehaviour
     public Text gradeText;
     [Tooltip("Game Over: adds the room the run ended in.")]
     public bool showRoomReached;
+    [Tooltip("Optional - win screen only. The line under the title, which says how this run was won.")]
+    public Text outcomeText;
 
     void OnEnable()
     {
@@ -65,6 +67,7 @@ public class RunDebriefUI : MonoBehaviour
         }
 
         if (tipText != null) tipText.text = PickTip(stats);
+        if (outcomeText != null && stats.Finished) outcomeText.text = PickOutcome(stats);
         // Only a finished run is graded - on Game Over the run can still continue from the checkpoint.
         if (gradeText != null) gradeText.text = stats.Finished ? "GRADE\n<size=96><b>" + stats.Grade + "</b></size>" : "";
     }
@@ -123,6 +126,26 @@ public class RunDebriefUI : MonoBehaviour
     static int TotalOrbs()
     {
         return Object.FindObjectsByType<UltOrbPickup>(FindObjectsInactive.Include, FindObjectsSortMode.None).Length;
+    }
+
+    /// <summary>
+    /// The story's last line. What happens never changes - the charge always goes off - but how the player
+    /// got there does, and the ending says so: untouched, on a later attempt, led by utility or led by the gun.
+    /// </summary>
+    static string PickOutcome(RunStats stats)
+    {
+        const string won = "The charge detonated. Site secured";
+
+        if (stats.DamageTaken <= 0f)
+            return won + ", and not one Sentinel landed a shot on you.";
+        if (stats.CheckpointRetries > 0)
+            return won + " on attempt " + (stats.CheckpointRetries + 1) + ". The Sentinels took the rest.";
+        if (stats.TotalAbilityUses >= 12)
+            return won + " by the book: utility first, then the peek.";
+        // Rooms 4 to 7 each need their ability once, so this is a run that used little beyond that.
+        if (stats.TotalAbilityUses <= 5)
+            return won + " the loud way, with the gun doing the talking.";
+        return won + ".";
     }
 
     /// <summary>

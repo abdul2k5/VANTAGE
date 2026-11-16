@@ -5639,7 +5639,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 104, y: 62}
-  m_SizeDelta: {x: 540, y: 110}
+  m_SizeDelta: {x: 540, y: 150}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &64581444
 MonoBehaviour:
@@ -5676,7 +5676,9 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'The facility''s Sentinel units never got shut off.
 
-    Every clearance run is a live-fire drill against whatever''s still patrolling.'
+    Every clearance run is a live-fire drill against whatever''s still patrolling.
+
+    <color=#E2A53C>YOUR ORDERS</color>  Clear eight rooms, plant the breach charge at the site, and hold it until it blows.'
 --- !u!222 &64581445
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -79153,6 +79155,7 @@ MonoBehaviour:
   tipText: {fileID: 832251072}
   gradeText: {fileID: 356175834}
   showRoomReached: 0
+  outcomeText: {fileID: 1958685238}
 --- !u!1 &990430140
 GameObject:
   m_ObjectHideFlags: 0
@@ -92015,6 +92018,7 @@ MonoBehaviour:
   tipText: {fileID: 179541111}
   gradeText: {fileID: 0}
   showRoomReached: 1
+  outcomeText: {fileID: 0}
 --- !u!1 &1147032410
 GameObject:
   m_ObjectHideFlags: 0
@@ -155010,7 +155014,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 305}
-  m_SizeDelta: {x: 600, y: 40}
+  m_SizeDelta: {x: 1000, y: 40}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1958685238
 MonoBehaviour:
