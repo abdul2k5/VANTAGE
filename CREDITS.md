@@ -1,4 +1,10 @@
-# Vantage — Third-Party Asset Credits
+# Vantage — Credits
+
+Vantage was designed and built by **Abdul Hadi Ghani** (game design, programming, level design, interface and sound mixing) for COMP3218 Coursework 1, University of Southampton, 2026.
+
+The same credits are shown in the game: finish The Round, then press CONTINUE on the results screen. That screen is written in `Assets/Scripts/WinCreditsUI.cs`, so a change to the assets below needs making there too.
+
+## Third-party assets
 
 Most assets below are CC0 (public domain) - no attribution is legally required, but the creators are credited here anyway. The Sentinel drone model is CC-BY and its attribution (below) is required, not optional.
 
@@ -6,7 +12,7 @@ Most assets below are CC0 (public domain) - no attribution is legally required, 
 
 | Use | File | Title | Artist | License |
 |---|---|---|---|---|
-| Menu | `Assets/Audio/Music/TremLoadingloopl.wav` | Loading Screen Loop | Brandon Morris | CC0 |
+| Menu, and the win screen after the jingle | `Assets/Audio/Music/TremLoadingloopl.wav` | Loading Screen Loop | Brandon Morris | CC0 |
 | Gameplay (Range through Dash) | `Assets/Audio/Music/darkcity_1.mp3` | Dark City | cinameng | CC0 |
 | The Round | `Assets/Audio/Music/fight_looped.wav` | Fast Fight / Battle Music Looped | Ville Nousiainen | CC0 |
 
@@ -23,9 +29,9 @@ All by [Kenney](https://kenney.nl), CC0.
 
 Full per-sound mapping (which file plays for which game event) is in `CHANGELOG.md`, Phase 6d.
 
-### Gunshot (layered from the packs above)
+### Gunshots and the Dash sound (layered from the packs above)
 
-`Assets/Audio/Gunshot/gunshot_punchy_blaster.wav` is not a downloaded sound. It is mixed in the editor by `Assets/Editor/GunshotOptionBuilder.cs` from three of the Kenney clips above, so it is CC0 as well.
+The four clips in `Assets/Audio/Gunshot/` are not downloaded sounds. They are mixed in the editor by `Assets/Editor/GunshotOptionBuilder.cs` from the Kenney clips above, so they are CC0 as well. The Rifle's shot (`gunshot_punchy_blaster.wav`) is made from these three layers:
 
 | Layer | Source clip | Pack |
 |---|---|---|
@@ -33,11 +39,19 @@ Full per-sound mapping (which file plays for which game event) is in `CHANGELOG.
 | Low thump | `impactPlate_heavy_001.ogg` | Impact Sounds |
 | Top (the previous gunshot) | `laserSmall_002.ogg` | Sci-fi Sounds |
 
+| Clip | Made from |
+|---|---|
+| `gunshot_smg.wav` (SMG) | `laserSmall_002.ogg` (Sci-fi Sounds), `impactPlate_light_001.ogg` (Impact Sounds) |
+| `gunshot_marksman.wav` (Marksman) | `explosionCrunch_000.ogg`, `laserLarge_000.ogg`, `impactMetal_002.ogg`, `lowFrequency_explosion_000.ogg` (Sci-fi Sounds), `impactPlate_heavy_001.ogg` (Impact Sounds) |
+| `dash_burst.wav` (Dash) | the first 0.4 seconds of `thrusterFire_001.ogg` (Sci-fi Sounds) |
+
+`Assets/Audio/Sentinel/sentinel_spotted.wav` (the drone's alert tone) is generated in the editor, not sampled from anything.
+
 ## 3D Models
 
 | Use | Asset | Author | Source | License |
 |---|---|---|---|---|
-| Player rifle viewmodel + Sentinel-held weapon, Range targets, Range cover crates | [Blaster Kit](https://kenney.nl/assets/blaster-kit) | Kenney | kenney.nl | CC0 |
+| All three player guns (the SMG and Marksman are built from the rifle's model) + Sentinel-held weapon, Range targets, Range cover crates | [Blaster Kit](https://kenney.nl/assets/blaster-kit) | Kenney | kenney.nl | CC0 |
 | Sentinel drone visuals | [Stinger Drone](https://poly.pizza/m/6CUQX98vha4) | Aaron Clifford | Poly Pizza | [CC-BY 3.0](https://creativecommons.org/licenses/by/3.0/) |
 
 > Stinger Drone by Aaron Clifford [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/6CUQX98vha4)

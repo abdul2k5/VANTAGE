@@ -2,6 +2,19 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.21: Credits screen after the win results
+
+**Why:** The designer asked for a credits screen after the run information when the player finishes the game, with their name on it, and for `CREDITS.md` to be looked at (16 Nov). Until now the only credit was a file in the repository, which nobody playing the build would see, and the Stinger Drone model is CC-BY, so its author has to be credited where the work is shown.
+
+**What changed:**
+- **Win screen is now two pages** (`Assets/Scripts/WinCreditsUI.cs`, on `RoundWinPanel`). The results page is as before but ends in one button, CONTINUE. That opens the credits: the game's name, "A game by Abdul Hadi Ghani" with the roles and the module, then the music, sound and model credits, and the drone's CC-BY attribution in full. PLAY AGAIN and MAIN MENU moved to the credits page, with BACK TO RESULTS under them. Every win opens on the results page.
+- The page is built when the win screen first opens, from copies of that screen's own text and buttons, so it matches them. The name, roles and module line can be changed on the component in the Inspector.
+- **`CREDITS.md`:** now opens with the author credit and says where the in-game credits live. It also listed only the Rifle's gunshot as editor-mixed; the SMG shot, Marksman shot and Dash sound are now listed with the clips they are made from, and the generated drone alert tone is noted. The menu track's row says it also plays on the win screen (19.20), and the Blaster Kit row says all three guns come from it.
+
+**Not included:** the Kenney Topdown Shooter sprites in `Assets/Art/Kenney/` are left over from the 2D prototype and nothing in the game uses them, so they are not credited on screen.
+
+**Verified:** Play-mode screenshots of both pages at 1920x1080; the credits block ends above the buttons. CONTINUE and BACK TO RESULTS switch pages. HUD layout check and 45-test regression run after the change (the run presses PLAY AGAIN, which still restarts the game).
+
 ## Phase 19.20: Win screen tip fits the gun, and the fight music ends with the fight
 
 **Why:** Two things the designer found on the win screen after a Marksman run (16 Nov). The tip said "Most hits were body shots. The red eye takes 2.5x damage - aim at head height", but the Marksman kills a drone with one shot anywhere, so the advice was useless for that gun. And The Round's fight loop kept playing under the debrief, so the end screen sounded like the fight was still on.

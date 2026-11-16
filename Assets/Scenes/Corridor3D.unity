@@ -39498,7 +39498,7 @@ MonoBehaviour:
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 44
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -52754,10 +52754,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 849293798}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 222, y: -48}
+  m_SizeDelta: {x: 103, y: 38}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &640557910
 MonoBehaviour:
@@ -59455,10 +59455,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1715469544}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 640, y: -8}
+  m_SizeDelta: {x: 1248, y: 30}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &722714020
 MonoBehaviour:
@@ -67632,7 +67632,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -30, y: 30}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 242, y: 58}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &849293799
 MonoBehaviour:
@@ -84279,7 +84279,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -20}
-  m_SizeDelta: {x: 1280, y: 0}
+  m_SizeDelta: {x: 1280, y: 46}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1046320914
 MonoBehaviour:
@@ -94397,6 +94397,7 @@ GameObject:
   - component: {fileID: 1177063182}
   - component: {fileID: 1177063184}
   - component: {fileID: 1177063183}
+  - component: {fileID: 1177063185}
   m_Layer: 0
   m_Name: RoundWinPanel
   m_TagString: Untagged
@@ -94466,6 +94467,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1177063181}
   m_CullTransparentMesh: 1
+--- !u!114 &1177063185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1177063181}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a384f573aedb8a4bbd1bd7a25372cfb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WinCreditsUI
+  titleText: {fileID: 2099741874}
+  subText: {fileID: 1958685238}
+  debrief: {fileID: 989314987}
+  playAgainButton: {fileID: 706410819}
+  mainMenuButton: {fileID: 2088880170}
+  gameTitle: VANTAGE
+  authorName: Abdul Hadi Ghani
+  authorRoles: Game design, programming, level design, interface and sound mixing
+  madeFor: COMP3218 Coursework 1, University of Southampton, 2026
+  backButtonY: -280
 --- !u!1 &1180000291
 GameObject:
   m_ObjectHideFlags: 0
@@ -98087,7 +98110,7 @@ MonoBehaviour:
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 44
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -100516,10 +100539,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 849293798}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 35, y: -29}
+  m_SizeDelta: {x: 30, y: 38}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1245740274
 MonoBehaviour:
@@ -102648,10 +102671,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 849293798}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 84.5, y: -29}
+  m_SizeDelta: {x: 57, y: 38}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1269473483
 MonoBehaviour:
@@ -136371,7 +136394,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 640, y: -0}
-  m_SizeDelta: {x: 1280, y: 0}
+  m_SizeDelta: {x: 1280, y: 46}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1715469545
 MonoBehaviour:
@@ -152158,7 +152181,7 @@ MonoBehaviour:
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 56
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -157728,7 +157751,7 @@ MonoBehaviour:
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 44
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
