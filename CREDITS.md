@@ -1,6 +1,6 @@
 # Vantage — Credits
 
-Vantage was designed and built by **Abdul Hadi Ghani** (game design, programming, level design, interface and sound mixing) for COMP3218 Coursework 1, University of Southampton, 2026.
+Vantage was designed and built by **Abdul Hadi Ghani** (game design, programming, level design, interface and sound mixing) for COMP3218 Game Design and Development (Coursework 1), University of Southampton Malaysia, 2026.
 
 The same credits are shown in the game: finish The Round, then press CONTINUE on the results screen. That screen is written in `Assets/Scripts/WinCreditsUI.cs`, so a change to the assets below needs making there too.
 

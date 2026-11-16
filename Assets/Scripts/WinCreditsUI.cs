@@ -20,8 +20,12 @@ public class WinCreditsUI : MonoBehaviour
     public string gameTitle = "VANTAGE";
     public string authorName = "Abdul Hadi Ghani";
     public string authorRoles = "Game design, programming, level design, interface and sound mixing";
-    public string madeFor = "COMP3218 Coursework 1, University of Southampton, 2026";
-    public float backButtonY = -280f;
+    public string madeFor = "COMP3218 Game Design and Development, University of Southampton Malaysia, 2026";
+    [Tooltip("Height of the BACK TO RESULTS button, under MAIN MENU.")]
+    public float backButtonY = -423f;
+    [Tooltip("Top edge of the credits block, and its size. It must end above PLAY AGAIN.")]
+    public float creditsTopY = 346f;
+    public Vector2 creditsSize = new Vector2(1485f, 540f);
 
     const string Heading = "#E2A53C";
     const string Dim = "#9EA699";
@@ -52,8 +56,8 @@ public class WinCreditsUI : MonoBehaviour
             var rt = creditsText.rectTransform;
             // Hung from its top edge, so the block starts under the title and ends above the buttons.
             rt.pivot = new Vector2(0.5f, 1f);
-            rt.anchoredPosition = new Vector2(0f, 290f);
-            rt.sizeDelta = new Vector2(1100f, 400f);
+            rt.anchoredPosition = new Vector2(0f, creditsTopY);
+            rt.sizeDelta = creditsSize;
             creditsText.supportRichText = true;
             creditsText.alignment = TextAnchor.UpperCenter;
             creditsText.horizontalOverflow = HorizontalWrapMode.Wrap;
@@ -99,7 +103,7 @@ public class WinCreditsUI : MonoBehaviour
     {
         return
             "<color=" + Dim + ">A game by</color>\n" +
-            "<size=28><b>" + authorName + "</b></size>\n" +
+            "<size=" + Mathf.RoundToInt(creditsText.fontSize * 1.75f) + "><b>" + authorName + "</b></size>\n" +
             authorRoles + "\n" +
             "<color=" + Dim + ">" + madeFor + "</color>\n" +
             "\n" +

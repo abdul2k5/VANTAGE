@@ -69,7 +69,8 @@ public class RunDebriefUI : MonoBehaviour
         if (tipText != null) tipText.text = PickTip(stats);
         if (outcomeText != null && stats.Finished) outcomeText.text = PickOutcome(stats);
         // Only a finished run is graded - on Game Over the run can still continue from the checkpoint.
-        if (gradeText != null) gradeText.text = stats.Finished ? "GRADE\n<size=96><b>" + stats.Grade + "</b></size>" : "";
+        // The letter is sized from the label's own font, so it grows with the rest of the screen.
+        if (gradeText != null) gradeText.text = stats.Finished ? "GRADE\n<size=" + Mathf.RoundToInt(gradeText.fontSize * 5.3f) + "><b>" + stats.Grade + "</b></size>" : "";
     }
 
     /// <summary>Beside the time on a win: whether it beat the saved best, or what the best is.</summary>
@@ -185,6 +186,9 @@ public class RunDebriefUI : MonoBehaviour
         // Praise is only for a run that reached the end - a death with tidy numbers still needs something to try.
         if (!stats.Finished)
             return "TIP: The drones won the trade. Break their line of sight first - smoke, flash or cover - then peek one drone at a time.";
+        // Nothing to fix, so give a target instead: the time to beat.
+        if (stats.NewBest) return "Clean run, and your fastest yet. " + FormatTime(stats.TotalSeconds) + " is the time to beat.";
+        if (RunStats.BestSeconds > 0f) return "Clean run. Your best is " + FormatTime(RunStats.BestSeconds) + " - beat it.";
         return "Clean run. Now do it faster.";
     }
 }

@@ -2,6 +2,19 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.23: Bigger win screen and credits; the clean-run tip names a time to beat
+
+**Why:** On seeing the win screen and the new credits page the designer said the text was small with "loads of space" round it, and asked why a clean run was still told "Now do it faster" (16 Nov). Both pages sat in the middle third of a 1920x1080 screen at 15 to 18 point. The tip is what a finished run gets when there is nothing to fix, but it gave no time to aim at, so it read as a complaint.
+
+**What changed:**
+- **Both win pages are 35% bigger.** Every text, button and gap on `RoundWinPanel` was scaled by 1.35 (positions, box sizes and font sizes together, so nothing is stretched or blurred) and the block moved down 45 so the title keeps a margin at the top. Body text went from 18 to 24 point, the title from 48 to 65, buttons from 320x46 to 432x62.
+- The grade letter and the author's name were fixed sizes written into the code; they are now sized from their label's font, so they grew with the rest. The credits block's position and size are fields on `WinCreditsUI` in place of numbers in the code.
+- **Clean-run tip** (`RunDebriefUI.PickTip`): a new best now reads "Clean run, and your fastest yet. 2:41 is the time to beat." Otherwise it reads "Clean run. Your best is 2:50 - beat it." The old sentence is kept only for a machine with no saved best.
+
+- **Credits line:** the coursework brief gives the module as Game Design and Development at the University of Southampton Malaysia, so the credits and `CREDITS.md` now say that (they said "University of Southampton").
+
+**Verified:** Play-mode screenshots of both pages at 1920x1080: nothing overlaps, the credits block ends above PLAY AGAIN and BACK TO RESULTS ends above the bottom edge. Both new tip sentences were produced by setting the run's numbers. HUD layout check and 45-test regression run after the change.
+
 ## Phase 19.22: Orders on the menu, and an ending line that reflects the run
 
 **Why:** After reading the Week 7 lecture (Systematic Storytelling: Interactive Narrative) the designer asked for a small in-game story touch and a narrative section in the Game Notes (16 Nov). The game had a premise on the menu but never said what the player was there to do, and the win screen said the same sentence to everyone, however they had played.
