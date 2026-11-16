@@ -420,6 +420,8 @@ public class RoundController : MonoBehaviour
             if (chargeIcon != null) chargeIcon.SetActive(false);
             if (device != null) device.Detonate();
             ClearDrones();
+            // The fight is over the moment the charge goes off, so its music ends on the blast.
+            if (AudioManager.Instance != null) AudioManager.Instance.StopMusic();
             PlaySfx(detonationSound);
             yield return StartCoroutine(PlayDetonationFx());
             ShowWin();
@@ -501,8 +503,19 @@ public class RoundController : MonoBehaviour
         // Freeze the world behind the debrief - a surviving drone could otherwise still shoot the player
         // and open Game Over on top of the win screen. Both buttons reset timeScale on their reload.
         Time.timeScale = 0f;
+        StartCoroutine(PlayDebriefMusic());
     }
 
+    /// <summary>
+    /// The win screen used to keep The Round's fight loop going under the debrief. The win jingle now plays
+    /// on its own, then the calm menu track comes in - which also carries straight on if MAIN MENU is pressed.
+    /// </summary>
+    IEnumerator PlayDebriefMusic()
+    {
+        // Real time: the game is frozen (timeScale 0) while the win screen is up.
+        yield return new WaitForSecondsRealtime(winSound != null ? winSound.length : 0f);
+        if (winPanel != null && winPanel.activeSelf && AudioManager.Instance != null) AudioManager.Instance.PlayMenuMusic();
+    }
 
 
     void OnDestroy()

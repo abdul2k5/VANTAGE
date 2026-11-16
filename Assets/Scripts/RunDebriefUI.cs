@@ -125,6 +125,23 @@ public class RunDebriefUI : MonoBehaviour
         return Object.FindObjectsByType<UltOrbPickup>(FindObjectsInactive.Include, FindObjectsSortMode.None).Length;
     }
 
+    /// <summary>
+    /// Whether aiming for the eye kills a drone in fewer shots with the gun in hand. False for the Marksman,
+    /// which kills with one shot anywhere - telling that player to aim for the head is advice they cannot use.
+    /// </summary>
+    static bool HeadshotsSaveShots()
+    {
+        var weapon = Object.FindFirstObjectByType<Weapon>(FindObjectsInactive.Include);
+        if (weapon == null || weapon.damage <= 0f) return true;
+
+        float health = 0f;
+        var drones = Object.FindObjectsByType<Sentinel>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < drones.Length; i++) health = Mathf.Max(health, drones[i].maxHealth);
+        if (health <= 0f) return true;
+
+        return Mathf.CeilToInt(health / (weapon.damage * weapon.headshotMultiplier)) < Mathf.CeilToInt(health / weapon.damage);
+    }
+
     /// <summary>The single most useful thing to work on, checked in order of how much it would help.</summary>
     string PickTip(RunStats stats)
     {
@@ -132,7 +149,7 @@ public class RunDebriefUI : MonoBehaviour
 
         if (stats.ShotsFired >= 15 && stats.Hits < stats.ShotsFired * 0.35f)
             return "TIP: Under 35% of your shots landed. Stop moving before you shoot, and tap or burst - holding fire makes the gun climb.";
-        if (stats.SentinelHits >= 8 && stats.HeadshotHits < stats.SentinelHits * 0.3f)
+        if (stats.SentinelHits >= 8 && stats.HeadshotHits < stats.SentinelHits * 0.3f && HeadshotsSaveShots())
             return "TIP: Most hits were body shots. The red eye takes 2.5x damage - aim at head height before you peek.";
         if (room >= 4 && stats.TotalAbilityUses < room - 2)
             return "TIP: You saved most of your utility. Every room refills it - smoke, flash or dart before you peek.";

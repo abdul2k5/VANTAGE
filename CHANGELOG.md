@@ -2,6 +2,16 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.20: Win screen tip fits the gun, and the fight music ends with the fight
+
+**Why:** Two things the designer found on the win screen after a Marksman run (16 Nov). The tip said "Most hits were body shots. The red eye takes 2.5x damage - aim at head height", but the Marksman kills a drone with one shot anywhere, so the advice was useless for that gun. And The Round's fight loop kept playing under the debrief, so the end screen sounded like the fight was still on.
+
+**What changed:**
+- **Tip** (`RunDebriefUI.cs`): the body-shot tip is now given only when a hit on the eye would kill a drone in fewer shots than a body hit with the gun in hand. That is true for the Rifle (1 shot against 2) and the SMG (2 against 5), and false for the Marksman (1 against 1). A Marksman player gets the next tip that applies to their run.
+- **Music** (`RoundController.cs`): the fight loop stops on the blast when the charge detonates. The win jingle plays on its own, then the calm menu track comes in under the debrief. Pressing MAIN MENU carries that track straight on; PLAY AGAIN goes back to the gameplay track as before.
+
+**Verified:** Not yet run. Unity's editor link was down for this session, so the change was not compiled or tested from here; the 45-test regression run is still to do.
+
 ## Phase 19.19: Smooth pass on the breach charge, guns, targets, drones and props
 
 **Why:** After the round SMG sight (19.18) the designer asked what else could be made smoother, the breach charge included, and on seeing the list said to do all of it (15 Nov). The game is built almost entirely from Unity's two basic shapes: a hard-cornered cube (758 of them in the scene) and a cylinder with only 20 flat sides. Up close, on the things the player holds or stands next to, both read as blocky.
