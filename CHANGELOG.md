@@ -10,7 +10,7 @@ Running log of design decisions and the reasoning behind them, kept for the Game
 - **Tip** (`RunDebriefUI.cs`): the body-shot tip is now given only when a hit on the eye would kill a drone in fewer shots than a body hit with the gun in hand. That is true for the Rifle (1 shot against 2) and the SMG (2 against 5), and false for the Marksman (1 against 1). A Marksman player gets the next tip that applies to their run.
 - **Music** (`RoundController.cs`): the fight loop stops on the blast when the charge detonates. The win jingle plays on its own, then the calm menu track comes in under the debrief. Pressing MAIN MENU carries that track straight on; PLAY AGAIN goes back to the gameplay track as before.
 
-**Verified:** Not yet run. Unity's editor link was down for this session, so the change was not compiled or tested from here; the 45-test regression run is still to do.
+**Verified:** Compiles with no errors. The tip check returns true for the Rifle and SMG and false for the Marksman. In Play mode, with the fight loop playing, opening the win screen left the music silent for the jingle and then the menu track was playing. 45-test regression run: 45 passed, 0 failed. Not checked by ear in a full played run.
 
 ## Phase 19.19: Smooth pass on the breach charge, guns, targets, drones and props
 
