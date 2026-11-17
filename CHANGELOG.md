@@ -2,6 +2,16 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.24: An app icon for the exe
+
+**Why:** Before handing in, the designer asked for a logo on the exe (17 Nov). It showed the default Unity icon, which says nothing about the game in the build folder or on the taskbar.
+
+**What changed:**
+- `Assets/Art/Icon/VantageIcon.png` (1024x1024): an amber V with a red crosshair dot in its notch, on the poster's dark panel colour with rounded corners. It uses the same amber, red and panel colours as the A3 poster, so the exe, the poster and the HUD read as one game.
+- Set as the Default Icon in Player Settings, so the exe, its window and the taskbar all use it.
+
+**Verified:** The rebuilt `Vantage.exe` shows the icon in Explorer and on the taskbar.
+
 ## Phase 19.23: Bigger win screen and credits; the clean-run tip names a time to beat
 
 **Why:** On seeing the win screen and the new credits page the designer said the text was small with "loads of space" round it, and asked why a clean run was still told "Now do it faster" (16 Nov). Both pages sat in the middle third of a 1920x1080 screen at 15 to 18 point. The tip is what a finished run gets when there is nothing to fix, but it gave no time to aim at, so it read as a complaint.
