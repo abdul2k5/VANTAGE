@@ -96,6 +96,19 @@ void Awake()
         }
     }
 
+    /// <summary>The EXIT GAME button under START. Nothing is lost by quitting here: best times are saved as they are set.
+    /// In the editor it stops Play mode instead, since Application.Quit does nothing there.</summary>
+    public void QuitGame()
+    {
+        if (AudioManager.Instance != null) AudioManager.Instance.PlayUIClick();
+        PlayerPrefs.Save();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+
     void OnDestroy()
     {
         IsOpen = false;

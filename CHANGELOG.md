@@ -2,6 +2,17 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.25: Menu text laid out as a briefing; an EXIT GAME button
+
+**Why:** The designer said the menu blurb was "not in a proper layout" (17 Nov). All three lines sat in one 540-wide box that wrapped wherever it ran out of room, so "still patrolling." was left on its own line and YOUR ORDERS started part-way down the block with its text running on beside it. There was also no way to leave the game except Alt+F4.
+
+**What changed:**
+- **Menu text:** split into the story (`Premise`, slightly dimmer) and the goal: a small amber `YOUR ORDERS` heading on its own line with `Orders` under it in white. Every line break is set by hand and the boxes no longer wrap, so the text breaks where the sense breaks. The words are unchanged.
+- **EXIT GAME** under START (`MainMenuController.QuitGame`): slimmer and outlined in amber, so START stays the main button. Nothing is lost by quitting from the menu (best times save as they are set), so there is no confirm box. START moved down 60 to make room under the orders.
+- The pause menu keeps QUIT TO MENU and gets no exit button: quitting straight out of a run would throw it away by accident, and the menu's exit is two clicks away.
+
+**Verified:** Play-mode screenshot of the menu: nothing overlaps or wraps. Pressing EXIT GAME in the editor stops Play mode (the editor stand-in for quitting). 45-test regression run after the change.
+
 ## Phase 19.24: An app icon for the exe
 
 **Why:** Before handing in, the designer asked for a logo on the exe (17 Nov). It showed the default Unity icon, which says nothing about the game in the build folder or on the taskbar.
