@@ -56,4 +56,4 @@ The four clips in `Assets/Audio/Gunshot/` are not downloaded sounds. They are mi
 
 > Stinger Drone by Aaron Clifford [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/6CUQX98vha4)
 
-Files: `Assets/Art/Models/BlasterKit/` (Blaster Kit), `Assets/Art/Models/Drone/StingerDrone/` (Stinger Drone). See `CHANGELOG.md`, Phase 6e, for how each was reworked (recolored to match the existing gunmetal/red/orange palette, weakpoint repositioned onto the drone's sensor pod).
+Files: `Assets/Art/Models/BlasterKit/` (Blaster Kit), `Assets/Art/Models/Drone/StingerDrone/` (Stinger Drone).
