@@ -2,6 +2,16 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.26: An amber mouse cursor
+
+**Why:** The designer asked for a yellow in-game cursor (18 Nov). The menus, loadout, pause, game over and win screens all used the plain white Windows arrow, the one bit of UI not in the game's amber.
+
+**What changed:**
+- `Assets/Resources/VantageCursor.png` (32x32, imported as a Cursor texture): an arrow in the HUD's amber (#E2A53C) with a dark outline, so it still shows on the bright win and credits screens.
+- `GameCursor.cs` sets it once at startup (`RuntimeInitializeOnLoadMethod`), so it needs no scene object and covers every screen that shows the pointer. The scripts that show or hide the pointer are unchanged, so it is still hidden and locked during play. The crosshair is unchanged.
+
+**Verified:** Imports as a 32x32 RGBA32 Cursor texture; Play mode starts with no errors; the rebuilt exe shows the amber pointer on the menu.
+
 ## Phase 19.25: Menu text laid out as a briefing; an EXIT GAME button
 
 **Why:** The designer said the menu blurb was "not in a proper layout" (17 Nov). All three lines sat in one 540-wide box that wrapped wherever it ran out of room, so "still patrolling." was left on its own line and YOUR ORDERS started part-way down the block with its text running on beside it. There was also no way to leave the game except Alt+F4.
