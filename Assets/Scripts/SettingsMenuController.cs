@@ -371,7 +371,14 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
     void OnSensitivityChanged(float v)
     {
         if (player != null) player.SetSensitivity(v);
-        if (sensitivityValueText != null) sensitivityValueText.text = v.ToString("0.0");
+        if (sensitivityValueText != null) sensitivityValueText.text = FormatSensitivity(v);
+    }
+
+    // Two decimals at most: one wasn't enough once a value could be typed, so a typed 0.24 read back as 0.2.
+    static string FormatSensitivity(float v)
+    {
+        // Invariant, like the typed value box: a decimal point on every PC, never a comma.
+        return v.ToString("0.0#", System.Globalization.CultureInfo.InvariantCulture);
     }
 
     void OnLengthChanged(float v)
@@ -473,7 +480,7 @@ void OnCheckpointsToggleClicked()
         if (player != null && sensitivitySlider != null)
         {
             sensitivitySlider.SetValueWithoutNotify(player.mouseSensitivity);
-            if (sensitivityValueText != null) sensitivityValueText.text = player.mouseSensitivity.ToString("0.0");
+            if (sensitivityValueText != null) sensitivityValueText.text = FormatSensitivity(player.mouseSensitivity);
         }
 
         var cc = CrosshairController.Instance;

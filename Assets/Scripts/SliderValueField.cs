@@ -93,6 +93,8 @@ public class SliderValueField : MonoBehaviour
         float v;
         if (float.TryParse(typed, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out v))
         {
+            // Two decimals as shown, so the box never reads back a different number from the one in effect.
+            v = Mathf.Round(v * 100f) / 100f;
             v = Mathf.Clamp(v / scale, slider.minValue, slider.maxValue);
             if (slider.wholeNumbers) v = Mathf.Round(v);
             slider.value = v; // the slider's own listener applies it and rewrites the display text

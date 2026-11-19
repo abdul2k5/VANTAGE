@@ -2,6 +2,14 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.33: Sensitivity shows two decimals
+
+**Why:** Playtest (19 Nov): typing 0.24 into the sensitivity box and pressing Enter showed 0.2. The 0.24 was applied, but the label only ever showed one decimal, so the box read back a different number from the one in effect.
+
+**What changed:** The sensitivity label shows up to two decimals (`0.0#`, with a decimal point on every PC). Typed values are rounded to two decimals before they are applied, so the label always matches the setting.
+
+**Verified:** Play mode: typed 0.24 shows 0.24 (sensitivity 0.24), 1.5 shows 1.5, 2.345 shows 2.34 (sensitivity 2.34), and 3 shows 3.0. A dragged 2.3471 shows 2.35.
+
 ## Phase 19.32: Settings sliders sit flush, and their values can be typed
 
 **Why:** Playtest feedback (19 Nov). At its lowest the sensitivity handle sat in from the end of its track, leaving a strip of bare track beside it, and the same on every other slider at both ends. Picking an exact value such as a sensitivity of 1.5 meant nudging the slider by hand.
