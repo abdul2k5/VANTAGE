@@ -2,6 +2,17 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.32: Settings sliders sit flush, and their values can be typed
+
+**Why:** Playtest feedback (19 Nov). At its lowest the sensitivity handle sat in from the end of its track, leaving a strip of bare track beside it, and the same on every other slider at both ends. Picking an exact value such as a sensitivity of 1.5 meant nudging the slider by hand.
+
+**What changed:**
+- The handle now travels half its width (6 px) in from each end of the track, not Unity's default 10 px, so at minimum and maximum it is flush with the track's end. The fill runs from the track's end to the handle's centre. `SettingsPanelBuilder.SliderRow` does the same, so a rebuild keeps it.
+- New `SliderValueField`: every slider's value box can be clicked and typed in. It shows the bare number (no % sign) all selected, and Enter or clicking away applies it. The number is clamped to the slider's range, rounded for pixel sliders, and read as a percent on the audio rows. Anything that isn't a number is ignored. The box brightens on hover so it reads as clickable.
+- An Escape that cancels typing no longer also closes the settings panel, from the pause menu or the main menu.
+
+**Verified:** Play mode, from the main menu: sensitivity at minimum, master at 0%, music at 100% and SFX at 50% all screenshot flush with the track ends. Typed 2.5 set sensitivity to 2.5, 50 set master volume to 0.5 (50%), 999 clamped the gap to 20, and "abc" left thickness unchanged. Escape while typing kept the panel open, and Escape after it closed settings as before.
+
 ## Phase 19.31: Leaving The Round through Room Select stops the round
 
 **Why:** Same bug sweep (19 Nov). Room Select (pause menu) is open during The Round. Planting and then jumping back to an earlier room left the round running with no one there: the bomb timer and reinforcements carried on, and a few seconds later the run ended in MISSION FAILED in a room the player had already cleared.

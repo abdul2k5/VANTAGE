@@ -269,8 +269,19 @@ public static class SettingsPanelBuilder
         if (slider.fillRect != null) slider.fillRect.GetComponent<Image>().color = Accent;
         if (slider.handleRect != null)
         {
-            slider.handleRect.sizeDelta = new Vector2(12f, 0f);
+            slider.handleRect.sizeDelta = new Vector2(HandleW, 0f);
             slider.handleRect.GetComponent<Image>().color = LightText;
+        }
+        // The handle travels half its width in from each end, so at min and max it sits flush with the end of the
+        // track. Unity's default 10px left a strip of bare track beside it. The fill runs from the track's end to
+        // the handle's centre.
+        const float halfHandle = HandleW / 2f;
+        if (slider.handleRect != null) InsetX((RectTransform)slider.handleRect.parent, halfHandle);
+        if (slider.fillRect != null)
+        {
+            InsetX((RectTransform)slider.fillRect.parent, halfHandle);
+            slider.fillRect.offsetMin = new Vector2(-halfHandle, slider.fillRect.offsetMin.y);
+            slider.fillRect.offsetMax = new Vector2(0f, slider.fillRect.offsetMax.y);
         }
 
         // The number sits in a small dark box so it reads as a value, not a second label.
@@ -288,6 +299,14 @@ public static class SettingsPanelBuilder
         Size(box.gameObject, 72f, 32f);
         Stretch(value.rectTransform);
         StyleText(value, font, null, 15, Accent, TextAnchor.MiddleCenter);
+    }
+
+    const float HandleW = 12f;
+
+    static void InsetX(RectTransform rt, float inset)
+    {
+        rt.offsetMin = new Vector2(inset, rt.offsetMin.y);
+        rt.offsetMax = new Vector2(-inset, rt.offsetMax.y);
     }
 
     static void ToggleRow(Button toggle, Font font, string hint)

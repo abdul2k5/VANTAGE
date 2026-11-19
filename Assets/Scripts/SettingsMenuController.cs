@@ -126,6 +126,16 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
         if (masterSlider != null) masterSlider.onValueChanged.AddListener(OnMasterChanged);
         if (musicSlider != null) musicSlider.onValueChanged.AddListener(OnMusicChanged);
         if (sfxSlider != null) sfxSlider.onValueChanged.AddListener(OnSfxChanged);
+
+        // Each value box can also be clicked and typed in.
+        SliderValueField.Attach(sensitivitySlider, sensitivityValueText, 1f);
+        SliderValueField.Attach(lengthSlider, lengthValueText, 1f);
+        SliderValueField.Attach(thicknessSlider, thicknessValueText, 1f);
+        SliderValueField.Attach(gapSlider, gapValueText, 1f);
+        SliderValueField.Attach(dotSizeSlider, dotSizeValueText, 1f);
+        SliderValueField.Attach(masterSlider, masterValueText, 100f);
+        SliderValueField.Attach(musicSlider, musicValueText, 100f);
+        SliderValueField.Attach(sfxSlider, sfxValueText, 100f);
     }
 
     void Update()
@@ -135,7 +145,8 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
         var kb = Keyboard.current;
         // Escape pauses live play only. Over a screen that has already paused the game (Game Over, the win
         // screen) it used to open settings, and closing that restarted time and locked the pointer behind it.
-        if (kb != null && kb.escapeKey.wasPressedThisFrame && CanToggle()) Toggle();
+        // An Escape that cancels typing in a value box leaves the panel open.
+        if (kb != null && kb.escapeKey.wasPressedThisFrame && !SliderValueField.IsEditing && CanToggle()) Toggle();
 
         if (panel != null && panel.activeSelf) RefreshHighlights();
     }

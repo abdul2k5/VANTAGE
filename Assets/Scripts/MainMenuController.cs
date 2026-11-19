@@ -103,7 +103,7 @@ void Awake()
         if (kb == null) return;
 
         // Escape steps back from whatever is open over the title screen.
-        if (kb.escapeKey.wasPressedThisFrame)
+        if (kb.escapeKey.wasPressedThisFrame && !SliderValueField.IsEditing)
         {
             var settings = SettingsMenuController.Instance;
             if (settings != null && settings.IsOpenFromMainMenu) { settings.Close(); return; }
