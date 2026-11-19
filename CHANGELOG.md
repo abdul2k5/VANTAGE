@@ -2,6 +2,14 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.28: The camera no longer clips into walls
+
+**Why:** A student at the expo (19 Nov) said they could see through a wall in Room 4 (Recon). The camera's near clip plane was 0.3 m, but the player's capsule only keeps the eye about 0.43 m from a wall. Looking along a wall at an angle, the corners of the near plane reached past the wall's surface, so the wall was cut away at the edge of the screen and whatever was behind it showed.
+
+**What changed:** Main Camera near clip 0.3 -> 0.1. That is still far enough that the gun and depth precision are unaffected (far plane 1000).
+
+**Verified:** Sampled every spot the player can stand next to a full-height wall in all rooms, at 12 headings x 5 pitches. At 0.3, 13% of those views had the near plane inside a wall (15% in Recon); at 0.1, none did. A play-mode screenshot shows the gun as before. Recon Dart and Overwatch markers still show drones through walls on purpose.
+
 ## Phase 19.27: Locked doors can no longer be walked through
 
 **Why:** At the expo (19 Nov) the lecturer walked through the Range's exit door without hitting the targets while it was still locked. Each door's airlock trigger, which moves the player on to the next room, sits on the door line and is 0.6 m deep, so it reached 0.3 m in front of the closed panels. The player's capsule touched it just by walking into a locked door, and the trigger never checked the door. Every gated door (Range, Weak Point and the cleared-room exits) had the same hole.
