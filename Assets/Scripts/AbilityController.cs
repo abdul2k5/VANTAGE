@@ -25,7 +25,8 @@ public class AbilityController : MonoBehaviour
 
     void Update()
     {
-        if (MainMenuController.IsOpen || AbilityUnlockCardUI.IsShowingCard) return;
+        // Pointer free = paused, Game Over or the win screen. Q and Shift used to drop a smoke or start a frozen dash behind them.
+        if (MainMenuController.IsOpen || AbilityUnlockCardUI.IsShowingCard || Cursor.lockState != CursorLockMode.Locked) return;
 
         var kb = Keyboard.current;
         if (kb == null) return;

@@ -2,6 +2,16 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.30: Escape and the ability keys do nothing behind Game Over, the win screen or the pause menu
+
+**Why:** A bug sweep after the expo (19 Nov), prompted by how quickly the lecturer found the door bug by playing "wrong". Two input paths ignored screens that had already paused the game:
+- **Escape on Game Over or the win screen** opened settings on top. Closing it set time running and locked and hid the pointer while Game Over was still up, so the run carried on behind the screen and its buttons couldn't be clicked.
+- **Q and Shift while paused** (pause menu, Game Over) dropped a smoke wall or started a dash that froze until play resumed, spending the charge, and the use counted towards opening a room's exit door. Weapon, Overwatch and the plant already checked for a free pointer; AbilityController didn't.
+
+**What changed:** Escape (and the gear icon) only opens settings during live play, or closes it when it's open. AbilityController takes no input while the pointer is free, the same check the other input scripts use.
+
+**Verified:** Play mode with simulated key presses through the Input System: on Game Over, Escape left settings closed and time paused; on the pause menu, Q and Shift used no charges; in live play, Q used a smoke charge and Escape opened the pause menu as before.
+
 ## Phase 19.29: SETTINGS and CREDITS on the main menu
 
 **Why:** After the expo (19 Nov) the designer asked for the menu to read START, SETTINGS, CREDITS, EXIT GAME. Settings could only be reached from inside a run (Escape), so sensitivity and volume couldn't be set before the first room. The credits only showed after a win, which most players at the expo never reached.

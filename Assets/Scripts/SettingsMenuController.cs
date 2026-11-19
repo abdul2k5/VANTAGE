@@ -133,14 +133,23 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
         if (MainMenuController.IsOpen || AbilityUnlockCardUI.IsShowingCard) return;
 
         var kb = Keyboard.current;
-        if (kb != null && kb.escapeKey.wasPressedThisFrame) Toggle();
+        // Escape pauses live play only. Over a screen that has already paused the game (Game Over, the win
+        // screen) it used to open settings, and closing that restarted time and locked the pointer behind it.
+        if (kb != null && kb.escapeKey.wasPressedThisFrame && CanToggle()) Toggle();
 
         if (panel != null && panel.activeSelf) RefreshHighlights();
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Toggle();
+        if (CanToggle()) Toggle();
+    }
+
+    bool CanToggle()
+    {
+        if (panel != null && panel.activeSelf) return true;
+        bool somethingElsePaused = Time.timeScale == 0f || Cursor.lockState != CursorLockMode.Locked;
+        return !somethingElsePaused;
     }
 
     public void Toggle()
