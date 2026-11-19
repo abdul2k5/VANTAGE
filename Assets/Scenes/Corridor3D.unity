@@ -8797,6 +8797,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 10618b40e15b1a541b24300ca9e5fe01, type: 3}
   m_Name: 
+  door: {fileID: 0}
   m_EditorClassIdentifier: Assembly-CSharp::DoorTrigger
 --- !u!65 &95203383
 BoxCollider:
@@ -44949,6 +44950,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 538018387}
   m_Enabled: 1
   m_EditorHideFlags: 0
+  door: {fileID: 0}
   m_Script: {fileID: 11500000, guid: 10618b40e15b1a541b24300ca9e5fe01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorTrigger
@@ -57561,6 +57563,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 696498632}
   m_Enabled: 1
   m_EditorHideFlags: 0
+  door: {fileID: 0}
   m_Script: {fileID: 11500000, guid: 10618b40e15b1a541b24300ca9e5fe01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorTrigger
@@ -104612,6 +104615,7 @@ MonoBehaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1295995752}
   m_Enabled: 1
+  door: {fileID: 0}
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 10618b40e15b1a541b24300ca9e5fe01, type: 3}
   m_Name: 
@@ -137177,6 +137181,7 @@ MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
+  door: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1718887332}
   m_Enabled: 1
@@ -170478,6 +170483,7 @@ MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
+  door: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3100000032}
   m_Enabled: 1
@@ -171531,6 +171537,7 @@ MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
+  door: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3200000033}
   m_Enabled: 1

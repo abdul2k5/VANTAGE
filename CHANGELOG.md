@@ -2,6 +2,14 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.27: Locked doors can no longer be walked through
+
+**Why:** At the expo (19 Nov) the lecturer walked through the Range's exit door without hitting the targets while it was still locked. Each door's airlock trigger, which moves the player on to the next room, sits on the door line and is 0.6 m deep, so it reached 0.3 m in front of the closed panels. The player's capsule touched it just by walking into a locked door, and the trigger never checked the door. Every gated door (Range, Weak Point and the cleared-room exits) had the same hole.
+
+**What changed:** `DoorTrigger` now holds its door (the nearest one, found at load) and only moves the player on while that door is open. It checks every physics step, not only on first contact, so a player already pressed against the door when it unlocks goes straight through.
+
+**Verified:** Play mode, Range: the player held against the locked door for 3.5 s, overlapping the trigger, stayed in Room 1. Unlocking the door then took them on to Room 2 without moving.
+
 ## Phase 19.26: An amber mouse cursor
 
 **Why:** The designer asked for a yellow in-game cursor (18 Nov). The menus, loadout, pause, game over and win screens all used the plain white Windows arrow, the one bit of UI not in the game's amber.
