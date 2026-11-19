@@ -86,6 +86,13 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
     int currentTab;
     Coroutine tabFade;
     string shownHint;
+    bool fromMainMenu;
+    string resumeLabel;
+
+    const int RoomsTab = 1;
+
+    /// <summary>True while the panel is up over the main menu (its SETTINGS button) rather than as the pause menu.</summary>
+    public bool IsOpenFromMainMenu { get { return fromMainMenu && panel != null && panel.activeSelf; } }
 
     void Awake()
     {
@@ -171,6 +178,43 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
         ShowTab(currentTab);
     }
 
+    /// <summary>The main menu's SETTINGS button. Same panel as the pause menu, minus what needs a run in progress:
+    /// Room Select and QUIT TO MENU are hidden, and RESUME reads BACK. Closing it leaves the menu as it was.</summary>
+    public void OpenFromMainMenu()
+    {
+        fromMainMenu = true;
+        if (currentTab == RoomsTab) currentTab = 0;
+        SetRunOnlyControlsVisible(false);
+        Open();
+    }
+
+    void SetRunOnlyControlsVisible(bool visible)
+    {
+        if (tabButtons != null && RoomsTab < tabButtons.Length && tabButtons[RoomsTab] != null) tabButtons[RoomsTab].gameObject.SetActive(visible);
+        if (quitToMenuButton != null) quitToMenuButton.gameObject.SetActive(visible);
+        var label = resumeButton != null ? resumeButton.GetComponentInChildren<Text>(true) : null;
+        if (label != null)
+        {
+            if (resumeLabel == null) resumeLabel = label.text;
+            label.text = visible ? resumeLabel : "BACK";
+        }
+        // The sidebar's "PAUSED" and "ESC · RESUME" don't fit the title screen.
+        SwapSidebarText("Eyebrow", ref eyebrowLabel, visible, "MAIN MENU");
+        SwapSidebarText("EscHint", ref escHintLabel, visible, "ESC  ·  BACK");
+    }
+
+    string eyebrowLabel, escHintLabel;
+
+    void SwapSidebarText(string childName, ref string original, bool runText, string menuText)
+    {
+        var sidebar = panel != null ? panel.transform.Find("Sidebar") : null;
+        var child = sidebar != null ? sidebar.Find(childName) : null;
+        var text = child != null ? child.GetComponent<Text>() : null;
+        if (text == null) return;
+        if (original == null) original = text.text;
+        text.text = runText ? original : menuText;
+    }
+
     public void Close()
     {
         if (panel == null) return;
@@ -180,6 +224,15 @@ public class SettingsMenuController : MonoBehaviour, IPointerClickHandler
         if (dimOverlay != null) dimOverlay.gameObject.SetActive(false);
 
         SetHudVisible(true);
+
+        if (fromMainMenu)
+        {
+            // Back to the title screen: it keeps the cursor, the paused time and its own music.
+            fromMainMenu = false;
+            SetRunOnlyControlsVisible(true);
+            if (CrosshairController.Instance != null) CrosshairController.Instance.SetCrosshairVisible(true);
+            return;
+        }
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;

@@ -11,6 +11,9 @@ public class MainMenuController : MonoBehaviour
     public GameObject menuPanel;
     [Tooltip("Choose Your Weapon - shown by the Start button, on top of the menu. Built by Vantage > Rebuild Guns.")]
     public GameObject loadoutPanel;
+    [Tooltip("The CREDITS page over the menu. Its body text is filled from GameCredits, the same text as the win screen's credits.")]
+    public GameObject creditsPanel;
+    public UnityEngine.UI.Text creditsBody;
     public Weapon weapon;
 
     public static bool IsOpen { get; private set; }
@@ -21,6 +24,8 @@ public class MainMenuController : MonoBehaviour
 void Awake()
     {
         if (loadoutPanel != null) loadoutPanel.SetActive(false);
+        if (creditsPanel != null) creditsPanel.SetActive(false);
+        if (creditsBody != null) creditsBody.text = GameCredits.Build(creditsBody.fontSize);
         if (SkipMainMenuOnNextLoad)
         {
             SkipMainMenuOnNextLoad = false;
@@ -68,11 +73,44 @@ void Awake()
         StartGame();
     }
 
+    /// <summary>The SETTINGS button: the pause menu's settings panel, opened over the title screen.</summary>
+    public void OpenSettings()
+    {
+        if (SettingsMenuController.Instance != null) SettingsMenuController.Instance.OpenFromMainMenu();
+    }
+
+    /// <summary>The CREDITS button.</summary>
+    public void OpenCredits()
+    {
+        if (creditsPanel == null) return;
+        if (AudioManager.Instance != null) AudioManager.Instance.PlayUIClick();
+        creditsPanel.SetActive(true);
+        creditsPanel.transform.SetAsLastSibling();
+    }
+
+    /// <summary>The credits page's BACK button, and Escape.</summary>
+    public void CloseCredits()
+    {
+        if (creditsPanel == null) return;
+        if (AudioManager.Instance != null) AudioManager.Instance.PlayUIClick();
+        creditsPanel.SetActive(false);
+    }
+
     void Update()
     {
-        if (loadoutPanel == null || !loadoutPanel.activeInHierarchy) return;
+        if (!IsOpen) return;
         var kb = Keyboard.current;
         if (kb == null) return;
+
+        // Escape steps back from whatever is open over the title screen.
+        if (kb.escapeKey.wasPressedThisFrame)
+        {
+            var settings = SettingsMenuController.Instance;
+            if (settings != null && settings.IsOpenFromMainMenu) { settings.Close(); return; }
+            if (creditsPanel != null && creditsPanel.activeSelf) { CloseCredits(); return; }
+        }
+
+        if (loadoutPanel == null || !loadoutPanel.activeInHierarchy) return;
         if (kb.digit1Key.wasPressedThisFrame) ChooseGun(0);
         else if (kb.digit2Key.wasPressedThisFrame) ChooseGun(1);
         else if (kb.digit3Key.wasPressedThisFrame) ChooseGun(2);

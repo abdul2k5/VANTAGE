@@ -4,7 +4,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Second page of the win screen. The run debrief comes first with a CONTINUE button; that opens the
 /// credits (who made the game, and the music, sounds and models it uses), where PLAY AGAIN and MAIN MENU
-/// now sit. Kept in step with CREDITS.md - the Stinger Drone line is a CC-BY attribution and is required.
+/// now sit. The text itself is GameCredits, shared with the main menu's CREDITS page.
 /// The page is built here from copies of the win panel's own text and buttons, so it matches them.
 /// </summary>
 public class WinCreditsUI : MonoBehaviour
@@ -18,17 +18,11 @@ public class WinCreditsUI : MonoBehaviour
 
     [Header("Credits")]
     public string gameTitle = "VANTAGE";
-    public string authorName = "Abdul Hadi Ghani";
-    public string authorRoles = "Game design, programming, level design, interface and sound mixing";
-    public string madeFor = "COMP3218 Game Design and Development, University of Southampton Malaysia, 2026";
     [Tooltip("Height of the BACK TO RESULTS button, under MAIN MENU.")]
     public float backButtonY = -423f;
     [Tooltip("Top edge of the credits block, and its size. It must end above PLAY AGAIN.")]
     public float creditsTopY = 346f;
     public Vector2 creditsSize = new Vector2(1485f, 540f);
-
-    const string Heading = "#E2A53C";
-    const string Dim = "#9EA699";
 
     string resultsTitle;
     Text creditsText;
@@ -64,7 +58,7 @@ public class WinCreditsUI : MonoBehaviour
             creditsText.verticalOverflow = VerticalWrapMode.Overflow;
             creditsText.lineSpacing = 1.1f;
             creditsText.raycastTarget = false;
-            creditsText.text = BuildCredits();
+            creditsText.text = GameCredits.Build(creditsText.fontSize);
         }
     }
 
@@ -97,30 +91,6 @@ public class WinCreditsUI : MonoBehaviour
         playAgainButton.gameObject.SetActive(credits);
         if (mainMenuButton != null) mainMenuButton.gameObject.SetActive(credits);
         backButton.gameObject.SetActive(credits);
-    }
-
-    string BuildCredits()
-    {
-        return
-            "<color=" + Dim + ">A game by</color>\n" +
-            "<size=" + Mathf.RoundToInt(creditsText.fontSize * 1.75f) + "><b>" + authorName + "</b></size>\n" +
-            authorRoles + "\n" +
-            "<color=" + Dim + ">" + madeFor + "</color>\n" +
-            "\n" +
-            "<color=" + Heading + ">MUSIC</color>\n" +
-            "Loading Screen Loop  -  Brandon Morris\n" +
-            "Dark City  -  cinameng\n" +
-            "Fast Fight / Battle Music Looped  -  Ville Nousiainen\n" +
-            "\n" +
-            "<color=" + Heading + ">SOUND EFFECTS</color>\n" +
-            "Sci-fi Sounds, Impact Sounds, Interface Sounds and Music Jingles  -  Kenney\n" +
-            "\n" +
-            "<color=" + Heading + ">3D MODELS</color>\n" +
-            "Blaster Kit  -  Kenney\n" +
-            "Stinger Drone by Aaron Clifford [CC-BY 3.0] via Poly Pizza (poly.pizza/m/6CUQX98vha4)\n" +
-            "\n" +
-            "<color=" + Dim + ">All music, sounds and the Blaster Kit are CC0. Made with Unity 6.</color>\n" +
-            "Thank you for playing.";
     }
 
     static Button CloneButton(Button source, string name, string label)

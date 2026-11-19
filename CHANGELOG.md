@@ -2,6 +2,18 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.29: SETTINGS and CREDITS on the main menu
+
+**Why:** After the expo (19 Nov) the designer asked for the menu to read START, SETTINGS, CREDITS, EXIT GAME. Settings could only be reached from inside a run (Escape), so sensitivity and volume couldn't be set before the first room. The credits only showed after a win, which most players at the expo never reached.
+
+**What changed:**
+- **Menu:** SETTINGS and CREDITS sit between START and EXIT GAME, in EXIT's outlined style, so START stays the one filled button. EXIT GAME moved down to make room.
+- **SETTINGS** opens the pause menu's own panel (`SettingsMenuController.OpenFromMainMenu`), so there's no second copy to keep in step. What needs a run in progress is hidden: the Room Select tab and QUIT TO MENU. RESUME reads BACK, and the sidebar reads MAIN MENU and ESC · BACK instead of PAUSED and ESC · RESUME. Closing it leaves the menu as it was (paused, pointer free, menu music). Opened in a run, it's unchanged.
+- **CREDITS** opens a page over the menu with a BACK button. Its text and the win screen's credits now both come from `GameCredits`, so the two can't drift apart; the Stinger Drone CC-BY line is in both.
+- **Escape** closes settings or credits and goes back to the menu.
+
+**Verified:** Play mode: SETTINGS -> BACK and CREDITS -> BACK both return to the menu still paused with the pointer free; START -> gun pick then starts a run normally; Escape in a run still opens the full pause menu with Room Select, RESUME and QUIT TO MENU. Screenshots of the menu, settings-from-menu and the credits page. 45/45 regression tests pass.
+
 ## Phase 19.28: The camera no longer clips into walls
 
 **Why:** A student at the expo (19 Nov) said they could see through a wall in Room 4 (Recon). The camera's near clip plane was 0.3 m, but the player's capsule only keeps the eye about 0.43 m from a wall. Looking along a wall at an angle, the corners of the near plane reached past the wall's surface, so the wall was cut away at the edge of the screen and whatever was behind it showed.
