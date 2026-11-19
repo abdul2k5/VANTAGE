@@ -2,6 +2,14 @@
 
 Running log of design decisions and the reasoning behind them, kept for the Game Notes feedback section. Each entry says what changed and why, not just what was built — see git log for full implementation detail.
 
+## Phase 19.31: Leaving The Round through Room Select stops the round
+
+**Why:** Same bug sweep (19 Nov). Room Select (pause menu) is open during The Round. Planting and then jumping back to an earlier room left the round running with no one there: the bomb timer and reinforcements carried on, and a few seconds later the run ended in MISSION FAILED in a room the player had already cleared.
+
+**What changed:** `RoomManager.TransitionTo` resets The Round (`ResetRoom`: round, site, reinforcements, its drones) when the player leaves it for another room, the same reset a revisit already applies on the way in. Coming back to Room 8 later starts it fresh.
+
+**Verified:** Play mode: planted, then Room Select to Room 3. Before the fix: MISSION FAILED a few seconds later. After: round stopped and site unplanted on arrival, and 44 game seconds later (past the 20 s fuse) no Game Over, player at full health in Room 3.
+
 ## Phase 19.30: Escape and the ability keys do nothing behind Game Over, the win screen or the pause menu
 
 **Why:** A bug sweep after the expo (19 Nov), prompted by how quickly the lecturer found the door bug by playing "wrong". Two input paths ignored screens that had already paused the game:

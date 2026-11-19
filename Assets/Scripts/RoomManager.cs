@@ -240,6 +240,9 @@ public void EnterRoom(int index, bool movePlayer = true)
         yield return Fade(0f, 1f);
 
         HoldEntryGrace();
+        // Room Select out of The Round mid-round: stop it. The bomb timer and reinforcements used to carry on
+        // without the player and end the run with MISSION FAILED in whatever room they'd gone to.
+        if (currentRoom == rooms.Length - 1 && index != currentRoom) ResetRoom(currentRoom);
         if (index <= furthestRoom) PrepareRevisit(index);
         EnterRoom(index);
         yield return new WaitForSeconds(holdSeconds);
